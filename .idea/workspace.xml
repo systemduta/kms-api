@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="118a7dc2-d9fd-47e2-902a-ac3daabc6ed4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/GolonganController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/GolonganController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/LeaderboardController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/LeaderboardController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/MobileController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/MobileController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/Api/UserController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Golongan.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Golongan.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/User.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/User.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/GolonganSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/GolonganSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book5fc4964bd81e8.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book5fc496634a283.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc4a7545d4c8.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc4a7e72d5a5.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5ef83ca0b7.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5efaca70b7.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5efd383302.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5efeb710e8.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5f00d5170d.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5f13ba2fbb.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5f153055c7.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_5fc5f39599931.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_600556d02cf74.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_600557194d990.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_600557472037f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_6052dd820aab5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_6077f7d2c623e.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/book_nclfood.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6e5d5fe3d.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6efd87271.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6f25f0d0b.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6f44f3aa6.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6f5d0ba93.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6f67749c0.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6fe659a20.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc6ff28bb45.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fbc70b226ab3.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fc0b4ab5e442.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fc5f3ba5ea8c.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fc9b3773f9ab.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fcf4c463e0cb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fcf4ca256a3d.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fcf4cf0d2ef0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd03caccfd19.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd08440602ae.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd17f269f56a.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd180c1f1bfd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd180ee98def.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd1816558bcd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd1bc15475cc.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd1bc59c86a2.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd1bc6de3f90.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd1f30f20e00.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd2d8e99ce75.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd2ebd4b65bc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd81d69336bc.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fd85b4871719.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fda1d7cde5ed.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc13f87d171.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc144c2ceda.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc1c0a7185e.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc1c4a47e9c.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc279db838b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc44e08ae6d.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc4bf9d78b9.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fdc509bdecaa.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5fe18dbc48c62.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ff2926edab89.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ff6cf3eaac1a.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ff6d32d422cf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffbfaf1b770f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffbfde6a3caa.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffbff22e47af.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc064126a33.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc66faea8bc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc67558dabd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc67c720e07.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc6856881bd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc6cb711df2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffc6e2ecee68.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_5ffeec4171ac0.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60054b5f056df.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60054e6365403.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60055280b1a43.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60063c6a6ff08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60063d6218364.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60063e0daf3cc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60063f55a90a1.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60063fe7c235e.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_6006427469321.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60064553efaa8.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_600657c4739df.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_600659c4c3f2e.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60065d24ad0bc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_6006f25ab76d4.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_6006fbd53ef29.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_6006fd1f43723.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60586e6a0da46.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60586e704adee.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/course_60586e717ae6d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fc9b380690e9.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fc9bc3dad596.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fcdacec7800d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fcdb0ea2ebb7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fcdd5337f71d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5fcde85ddc916.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5ff6cebdeedcc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_5ffeec6f05c94.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_6006fc9f7762d.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_60126b1e757bf.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/event_60545c66a8705.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/01xdRDRCcx.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/0kTpO2NEG8.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/1YIjCl5je0.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/1YY7Nyk7Kz.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/1kGEElRAbK.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/288xu55fLo.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2BZqYQhplr.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2IBBmwfUCP.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2Nn5JRVhNa.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2TXc8Jhyfm.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2hzVqs7MNE.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2p0t3K83ZD.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/2zJJkYLhWg.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/3RkztS339Q.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/3r5J3MEvBA.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/4aLh0KlBEV.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/4eoK576xUL.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/4xZA9Z50Dx.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/5SVzCynEPD.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/6V8ib2PB8I.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/6WUenzdYWx.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/7D2H1roGhz.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/7EmJ6Vyc9r.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/7IraYPLkgg.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/7WsRGe0nRV.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/7srZxMfAVj.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/8BC1CJIWiJ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/8ZMb6L9X3q.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/91L7PnV3z5.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9GxY9IsVfw.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9IMNWxQbiE.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9YRXZfJPaL.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9j6G4RxyQt.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9mFWBsj86j.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/9verXhPyJk.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/BYAvMoNBWF.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/BqkivkzHWC.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/CB9wJAHicO.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/CZJGleGtsS.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/CelQSlB9kX.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/DOcIkeyryO.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/DeIe0eo660.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Dj8XKc4bDV.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/EC2HLi81Ou.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/ETaZIXxH7S.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/EWAJffNW4g.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/EwfCrDadgi.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/F40IuNGQlg.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/FIbYKLafD1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/FPHM0pGhv6.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/FU5etHThtc.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/H5CVMS16AA.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/HEchaMwDiM.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/HWloG2GVML.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/IcGnAHnSOf.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/JvT8bWgZRo.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Jx00JpH187.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/L84ZjsoVcf.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Lar8QPNODT.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/LeGbJMjRxv.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/M0D1xtO6IY.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/M6p7Pn7SCO.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/MGqmcQvAlv.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/MSbUXL11l4.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/MSeOhguPil.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/N33gmFLLPR.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/NXeoIKr4DG.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/OOb1sBFukU.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/OSCKPOIyRT.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Oqh67Mn9Bl.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/P5pQj294sA.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/PDmYlh1reM.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/QRqXbhUf66.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/QWK3yT719Q.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/QzqNEu5EqR.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/R6sGeYWv4M.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/RhwN2J3eVg.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/RldRRVq4Zs.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/SHWrrCLoyU.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/SRlcoBWIHo.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/SbbmPs2P6v.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Spq5qwVbTx.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/TUJCrCNs5Y.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/TiOpBTMUxX.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Tv2ixVlEK4.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/TzZrr5ACN0.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/U97Bt9JCp1.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/UvRjGQ0Dlo.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/VKSikj2fCh.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/VYWvdQwfMF.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/VaCu9dzgRu.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/WHEMhB3ULd.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/WJjvPDzoTm.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/WMLp1q8EPJ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/WMNklyxD1z.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/WN3OOlV3SL.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/Wro7EiPxQ9.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/X396Oj4eWk.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/XCTAV5PoH3.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/YBQN5mhgFa.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/YIHxoesmBN.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/YPptWzxfEH.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/YpotJAlKgH.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/YsdY5wDo2T.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/ZL9XYoQvbQ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/ZVAr3UmroQ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/ZilsYsD7As.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/ZxsnDkXHj5.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/a39PC0cucX.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/a9buBjOm1j.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/aPvUH0ea5z.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/aYmtp5O4wA.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/b9Qg6D48z1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/caKtxwWfVE.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/fpaXfIB3Sr.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/gP9WAdXmGV.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/gXRVnuTUS1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/gfMAdYHTx6.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/hDLnGFV3uu.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/hQn2FBZjkL.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/hdDnCsZFAy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/hiTZgUr3z5.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/i0odOsg6S2.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/iucBwJv2NZ.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/j3iUkGXSYx.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/k1XutbvySG.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/k7Qr8hymA9.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/l4PGKGqLMQ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/l5VBJy0N7q.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/n1lAMYYeXY.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nE8pnk1fAW.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nXUhWK0iES.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nsUWhmBf9o.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nuOI5gMo9p.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nySZbmjxDR.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/nzXxbQhXeX.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/omDbRO2j4X.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/p4luhc2uat.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/q4Vtx7XizP.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/q5N6z79mXY.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/qKqeK3ncr6.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/qSx2AArlT7.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/qVTb9Xws3h.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/qe0ouZu9lM.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/r9tcYzs5hN.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/rC7S8f2OKz.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/rMtKA26X6G.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/s9ToA7QZHw.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/srfSbUGhgq.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/tAS9Veiad5.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/tEeVZGUlrC.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/tIGOu9p9R9.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/tLRRRzHx8U.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/tiwE2bS5yU.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/uH2NBag3mZ.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/video_komunikasi_skill.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/w2V9xJ5ZML.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/wj9tVbky5a.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/wqDUGLmYEF.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/wwxCMbOPLI.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/wyAHhJlgwe.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/xN6bbf142C.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/xSnXhAamAk.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/xT2iMh46jB.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/yMRNXI6531.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/yOrBhYe53Y.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/yia5kBtmgm.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/yyFbOYECd1.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/z4UvMgL4P3.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/files/zRjMawGUKw.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_5fe18e071b2cb.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_5fe18e15c5a01.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_5fe18eb1ea73c.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_5ff6ceeeee72b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_5ffeebeb40d94.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_6006508774d1a.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_6006fd8c0589f.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_600f99f9b70ba.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_600f9baee8bf3.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_60110a13b3a2d.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_6077f58ebcec9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/files/user_ncl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/fruitcake/laravel-cors" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/php-http/message-factory" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/vendor/asm89/stack-cors" />
+      <path value="$PROJECT_DIR$/vendor/kawankoding/laravel-fcm" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/nyholm/psr7" />
+      <path value="$PROJECT_DIR$/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/psr-http-message-bridge" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/lcobucci/jwt" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/laravel/passport" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/facade/flare-client-php" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/phpseclib/phpseclib" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/vendor/defuse/php-encryption" />
+      <path value="$PROJECT_DIR$/vendor/league/event" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/vendor/league/oauth2-server" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/vendor/paragonie/constant_time_encoding" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1s6dQCwW6Ulj6Kn6GEA8Yix7Ha1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
+  <component name="RunManager">
+    <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <TestRunner scope="XML" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="118a7dc2-d9fd-47e2-902a-ac3daabc6ed4" name="Default Changelist" comment="" />
+      <created>1620196954398</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1620196954398</updated>
+      <workItem from="1620196955437" duration="7829000" />
+      <workItem from="1620262556952" duration="22629000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="172" y="31" width="1022" height="737" key="SettingsEditor" timestamp="1620292535317">
+      <screen x="0" y="27" width="1366" height="741" />
+    </state>
+    <state x="172" y="31" width="1022" height="737" key="SettingsEditor/0.27.1366.741@0.27.1366.741" timestamp="1620292535317" />
+    <state x="425" y="275" width="616" height="284" key="org.intellij.images.editor.actions.BackgroundImageDialog" timestamp="1620292466993">
+      <screen x="0" y="27" width="1366" height="741" />
+    </state>
+    <state x="425" y="275" width="616" height="284" key="org.intellij.images.editor.actions.BackgroundImageDialog/0.27.1366.741@0.27.1366.741" timestamp="1620292466993" />
+    <state x="346" y="89" width="672" height="678" key="search.everywhere.popup" timestamp="1620280809316">
+      <screen x="0" y="27" width="1366" height="741" />
+    </state>
+    <state x="346" y="89" width="672" height="678" key="search.everywhere.popup/0.27.1366.741@0.27.1366.741" timestamp="1620280809316" />
+  </component>
+</project>

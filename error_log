@@ -1,0 +1,6 @@
+[03-May-2021 04:28:17 UTC] PHP Notice:  include(): read of 4322 bytes failed with errno=12 Cannot allocate memory in /home/duatanga/kms-api-bkp/vendor/composer/ClassLoader.php on line 444
+[03-May-2021 04:28:17 UTC] PHP Warning:  include(): Failed opening '/home/duatanga/kms-api-bkp/vendor/composer/../symfony/console/Output/ConsoleOutput.php' for inclusion (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/vendor/composer/ClassLoader.php on line 444
+[03-May-2021 04:28:17 UTC] PHP Fatal error:  Uncaught Error: Class 'Symfony\Component\Console\Output\ConsoleOutput' not found in /home/duatanga/kms-api-bkp/artisan:37
+Stack trace:
+#0 {main}
+  thrown in /home/duatanga/kms-api-bkp/artisan on line 37

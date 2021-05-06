@@ -1,0 +1,48 @@
+[12-Jan-2021 06:05:13 UTC] PHP Warning:  require(/home/duatanga/kms-api/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api/public/index.php on line 34
+[12-Jan-2021 06:05:13 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/duatanga/kms-api/public/index.php on line 34
+[12-Jan-2021 06:05:18 UTC] PHP Warning:  require(/home/duatanga/kms-api/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api/public/index.php on line 34
+[12-Jan-2021 06:05:18 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api/public/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php56/root/usr/share/pear') in /home/duatanga/kms-api/public/index.php on line 34
+[12-Jan-2021 06:08:13 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:08:19 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:08:38 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:17:44 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:17:46 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:17:51 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:21:57 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:22:30 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:29:38 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:32:09 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/maesa-grow-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:42:30 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:47:46 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 06:52:54 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:01:53 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:01:56 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:02:54 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:06:51 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:08:43 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:08:47 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:09:11 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:09:36 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:09:40 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:09:43 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:15:09 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:15:13 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:15:35 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:23:44 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:25:05 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:26:39 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:30:27 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 07:30:43 UTC] PHP Parse error:  syntax error, unexpected ':', expecting '{' in /home/duatanga/kms-api/vendor/symfony/polyfill-php80/bootstrap.php on line 23
+[12-Jan-2021 15:38:44 UTC] PHP Warning:  require(/home/duatanga/kms-api-bkp/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:38:44 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api-bkp/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:39:01 UTC] PHP Warning:  require(/home/duatanga/kms-api-bkp/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:39:01 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api-bkp/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:44:00 UTC] PHP Warning:  require(/home/duatanga/kms-api-bkp/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:44:00 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api-bkp/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:44:02 UTC] PHP Warning:  require(/home/duatanga/kms-api-bkp/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:44:02 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api-bkp/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:45:46 UTC] PHP Warning:  require(/home/duatanga/kms-api-bkp/public/../vendor/autoload.php): failed to open stream: No such file or directory in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[12-Jan-2021 15:45:46 UTC] PHP Fatal error:  require(): Failed opening required '/home/duatanga/kms-api-bkp/public/../vendor/autoload.php' (include_path='.:/opt/alt/php74/usr/share/pear') in /home/duatanga/kms-api-bkp/public/index.php on line 34
+[28-Jan-2021 02:51:57 UTC] PHP Warning:  Unknown: POST Content-Length of 9089974 bytes exceeds the limit of 8388608 bytes in Unknown on line 0
+[04-Feb-2021 07:13:59 UTC] PHP Warning:  Unknown: POST Content-Length of 8588457 bytes exceeds the limit of 8388608 bytes in Unknown on line 0
+[04-Feb-2021 07:22:38 UTC] PHP Warning:  Unknown: POST Content-Length of 8588457 bytes exceeds the limit of 8388608 bytes in Unknown on line 0
