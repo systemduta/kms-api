@@ -64,8 +64,10 @@ class MobileController extends Controller
         $user = auth()->user();
         $dt = DB::table('courses as c');
         $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
-        $dt = $dt->where('c.organization_id', auth()->user()->organization_id);
         $dt = $dt->where('c.type', $request->type);
+        $dt = $dt->when($request->type==1, function ($query){
+            return $query->where('c.organization_id', auth()->user()->organization_id);
+        });
         // $dt = $dt->whereRaw("(us.id is null or IF(us.user_id = $user->id,c.id))")
         // $dt = $dt->where(function($q){
         //     $q->where('us.id', null);
