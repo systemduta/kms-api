@@ -52,7 +52,7 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'organization_id' => 'required',
+            'organization_id' => 'numeric|nullable',
             'title' => 'required',
             'description' => 'required',
             'image' => 'required',
@@ -91,7 +91,7 @@ class CourseController extends Controller
 
         DB::beginTransaction();
         $courseGetId=DB::table('courses')->insertGetId([
-            'organization_id' => $request->organization_id,
+            'organization_id' => $request->organization_id ?? null,
             'title' => $request->title,
             'description' => $request->description,
             'image' => '',
