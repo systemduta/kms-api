@@ -155,7 +155,17 @@ class MobileController extends Controller
             sum(us.score) as total_score
         ');
         $dt = $dt->orderBy('total_score','desc')->get();
-        return response()->json(['data' => $dt]);
+//        add ui avatar
+        $data = collect([]);
+        foreach ($dt as $d) {
+            $data->push([
+                'name' => $d->name,
+                'image' => $d->image,
+                'ui_avatar' => 'https://ui-avatars.com/api/?background=0D8ABC&color=fff&name='.$d->name,
+                'total_score' => $d->total_score,
+            ]);
+        }
+        return response()->json(['data' => $data]);
     }
 
     public function course_detail($id)
