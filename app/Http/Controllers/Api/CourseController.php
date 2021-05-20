@@ -101,9 +101,13 @@ class CourseController extends Controller
             'type' => $request->type
         ]);
 
-        $tokenUser = DB::table('users')->where('organization_id', $request->organization_id)
-        ->where('token','!=',"")
-        ->pluck('token')->toArray();
+        $organization_id = $request->organization_id ?? null;
+        $tokenUser = DB::table('users')
+            ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
+                return $query->where('organization_id', $organization_id);
+            })
+            ->where('token','!=',"")
+            ->pluck('token')->toArray();
         if($tokenUser) {
             $tokens=(Array) $tokenUser;
 
