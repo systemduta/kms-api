@@ -17,7 +17,7 @@ class VhsController extends Controller
      */
     public function index()
     {
-        $data = Vhs::all();
+        $data = Vhs::orderBy('created_at', 'desc')->get();
         return response()->json(['data' => $data]);
     }
 
