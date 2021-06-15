@@ -47,6 +47,7 @@ Route::group([
             Route::resource('leaderboard','LeaderboardController');
             Route::resource('event','EventController');
             Route::resource('test','TestController');
+            Route::resource('vhs','VhsController');
         });
     });
 

@@ -13,8 +13,12 @@ class CreateVhsesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vhses', function (Blueprint $table) {
+        Schema::create('vhs', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->string('video')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +30,6 @@ class CreateVhsesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vhses');
+        Schema::dropIfExists('vhs');
     }
 }

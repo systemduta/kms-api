@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Vhs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Validator;
 
 class VhsController extends Controller
 {
@@ -15,7 +17,8 @@ class VhsController extends Controller
      */
     public function index()
     {
-        //
+        $data = Vhs::all();
+        return response()->json(['data' => $data]);
     }
 
     /**
@@ -36,7 +39,39 @@ class VhsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'thumbnail' => 'image|max:2084|nullable',
+            'video' => 'file|nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        /* START VIDEO UPLOAD */
+        $video_name = null;
+        if ($request->hasFile('video')) {
+            $video_name = Storage::disk('public')->put('files/vhs/video', $request->video);
+        }
+        /* END VIDEO UPLOAD */
+
+        /* START VIDEO UPLOAD */
+        $thumbnail_name = null;
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail_name = Storage::disk('public')->put('files/vhs/thumbnail', $request->thumbnail);
+        }
+        /* END VIDEO UPLOAD */
+
+        $vhs = new Vhs();
+        $vhs->title = $request->title;
+        $vhs->description = $request->description;
+        $vhs->thumbnail = $thumbnail_name;
+        $vhs->video = $video_name;
+        $vhs->save();
+
+        return response()->json(['data' => $vhs, 'message' => 'Data berhasil disimpan!'], 200);
     }
 
     /**
