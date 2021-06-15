@@ -25,6 +25,8 @@ class User extends Authenticatable
         'id'
     ];
 
+    protected $appends = ['ui_avatar'];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -48,5 +50,10 @@ class User extends Authenticatable
     public function golongan()
     {
         return $this->belongsTo(Golongan::class);
+    }
+
+    public function getUiAvatarAttribute()
+    {
+        return 'https://ui-avatars.com/api/?background=0D8ABC&color=fff&name='.$this->name;
     }
 }

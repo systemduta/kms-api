@@ -16,6 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-//Route::get('/clean_video', 'CleanController@clean_video');
-//Route::get('/clean_pdf', 'CleanController@clean_pdf');
-//Route::get('/clean_course_img', 'CleanController@clean_course_img');
+Route::get('/clean_video', 'CleanController@clean_video');
+Route::get('/clean_pdf', 'CleanController@clean_pdf');
+Route::get('/clean_course_img', 'CleanController@clean_course_img');

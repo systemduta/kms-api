@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -22,7 +23,13 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
-        $data = DB::table('courses')->where('organization_id', $request->organization_id)->orderBy('id', 'DESC')->get();
+        $data = Course::query()
+            ->where('type', '!=' , 1)
+            ->orWhere(function (Builder $query) use ($request) {
+                return $query->where('type',1)
+                    ->where('organization_id',$request->organization_id);
+            })->orderBy('id', 'DESC')
+            ->get();
         return response()->json(['data' => $data]);
     }
 
@@ -45,19 +52,18 @@ class CourseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'organization_id' => 'required',
+            'organization_id' => 'numeric|nullable',
             'title' => 'required',
             'description' => 'required',
             'image' => 'required',
-            'video' => 'required',
+            'video' => 'nullable',
             'file' => 'required',
             'link' => 'required',
             'type' => 'required',
-            'video' => 'required'
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error'=>$validator->errors()], 401);
         }
 
         /* START FILE UPLOAD */
@@ -66,35 +72,42 @@ class CourseController extends Controller
         $replace = substr($file64, 0, strpos($file64, ',')+1);
         $file = str_replace($replace, '', $file64);
         $file = str_replace(' ', '+', $file);
-        $filename = Str::random(10).'.'.$ext;
+        $filename = 'file_'.Str::random(10).'.'.$ext;
         Storage::disk('public')->put('files/'.$filename, base64_decode($file));
         /* END FILE UPLOAD */
 
         /* START VIDEO UPLOAD */
-        $video64 = $request->video;
-        $ext = explode('/', explode(':', substr($video64, 0, strpos($video64, ';')))[1])[1];
-        $replace = substr($video64, 0, strpos($video64, ',')+1);
-        $video = str_replace($replace, '', $video64);
-        $video = str_replace(' ', '+', $video);
-        $videoname = Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$videoname, base64_decode($video));
+        $video_name = null;
+        if ($request->hasFile('video')) {
+            $video64 = $request->video;
+//            $ext = explode('/', explode(':', substr($video64, 0, strpos($video64, ';')))[1])[1];
+//            $replace = substr($video64, 0, strpos($video64, ',')+1);
+//            $video = str_replace($replace, '', $video64);
+//            $video = str_replace(' ', '+', $video);
+//            $video_name = 'video_'.Str::random(10).'.'.$video64->extension();
+            $video_name = Storage::disk('public')->put('files', $video64);
+        }
         /* END VIDEO UPLOAD */
 
         DB::beginTransaction();
         $courseGetId=DB::table('courses')->insertGetId([
-            'organization_id' => $request->organization_id,
+            'organization_id' => $request->organization_id ?? null,
             'title' => $request->title,
             'description' => $request->description,
             'image' => '',
-            'video' => 'files/'.$videoname,
+            'video' => $request->hasFile('video') ? $video_name:null,
             'file' => 'files/'.$filename,
             'link' => $request->link,
             'type' => $request->type
         ]);
-        
-        $tokenUser = DB::table('users')->where('organization_id', $request->organization_id)
-        ->where('token','!=',"")
-        ->pluck('token')->toArray();
+
+        $organization_id = $request->organization_id ?? null;
+        $tokenUser = DB::table('users')
+            ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
+                return $query->where('organization_id', $organization_id);
+            })
+            ->where('token','!=',"")
+            ->pluck('token')->toArray();
         if($tokenUser) {
             $tokens=(Array) $tokenUser;
 
@@ -111,7 +124,7 @@ class CourseController extends Controller
             ])
             ->send();
         }
-        
+
         if($request->filled('image')) {
             $imgName='';
             $baseString = explode(';base64,', $request->image);
@@ -130,7 +143,7 @@ class CourseController extends Controller
         }
         DB::commit();
         return response()->json([
-            'data' => $courseGetId, 
+            'data' => $courseGetId,
             'message' => 'Data berhasil disimpan!',
             'token' => $tokenUser
         ], $this->successStatus);
@@ -208,7 +221,7 @@ class CourseController extends Controller
         // DB::commit();
         return response()->json([
             'success'=>$course,
-            'message'=>'update successfully'], 
+            'message'=>'update successfully'],
         $this->successStatus);
     }
 

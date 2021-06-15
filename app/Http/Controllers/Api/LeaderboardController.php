@@ -16,18 +16,29 @@ class LeaderboardController extends Controller
      */
     public function index(Request $request)
     {
-        $data = DB::table('leaderboards as s')
-        ->leftJoin('users as u','u.id','s.user_id')
-//        ->where('u.organization_id', $request->organization_id)
-        ->where('u.golongan_id', $request->golongan_id)
-        ->orderBy('s.point', 'DESC')
-        ->select([
-            'u.username',
-            'u.name',
-            's.point',
-            's.level'
-        ])->get();
-        return response()->json(['data' => $data]);
+//        $data = DB::table('leaderboards as s')
+//        ->leftJoin('users as u','u.id','s.user_id')
+////        ->where('u.organization_id', $request->organization_id)
+//        ->where('u.golongan_id', $request->golongan_id)
+//        ->orderBy('s.point', 'DESC')
+//        ->select([
+//            'u.username',
+//            'u.name',
+//            's.point',
+//            's.level'
+//        ])->get();
+        $dt = DB::table('user_scores as us');
+        $dt = $dt->leftJoin('users as u','u.id','us.user_id');
+//        $dt = $dt->where('u.organization_id', auth()->user()->organization_id);
+        $dt = $dt->where('u.golongan_id', $request->golongan_id);
+        $dt = $dt->groupByRaw('us.user_id,u.username,u.name');
+        $dt = $dt->selectRaw('
+            u.username,
+            u.name,
+            sum(us.score) as point
+        ');
+        $dt = $dt->orderBy('point','desc')->get();
+        return response()->json(['data' => $dt]);
     }
 
     // public function user_course(Request $request)
