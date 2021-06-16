@@ -125,4 +125,20 @@ class LeaderboardController extends Controller
     {
         //
     }
+
+    public function exam_result(Request $request){
+        $result = \Illuminate\Support\Facades\DB::table('user_scores as us')
+            ->leftJoin('users as u','u.id','us.user_id')
+            ->leftJoin('courses as c','c.id','us.course_id')
+            ->selectRaw('
+                us.id,
+                u.name,
+                c.title,
+                score,
+                status
+            ')
+            ->orderByDesc('us.id')
+            ->get();
+        return response()->json(['data' => $result]);
+    }
 }

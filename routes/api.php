@@ -44,6 +44,7 @@ Route::group([
             Route::get('golongan/list_by_company','GolonganController@get_golongan_by_company');
             Route::resource('golongan','GolonganController');
             Route::resource('course','CourseController');
+            Route::get('leaderboard/exam_result','LeaderboardController@exam_result');
             Route::resource('leaderboard','LeaderboardController');
             Route::resource('event','EventController');
             Route::resource('test','TestController');
