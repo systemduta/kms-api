@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Vhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Validator;
 use Exception;
 use File;
@@ -52,16 +53,16 @@ class VhsController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
 
-        /* START VIDEO UPLOAD */
+        /* PREPARE VIDEO UPLOAD */
         $video_name = null;
+        $video_path = null;
+        $video = null;
         if ($request->hasFile('video')) {
-            try {
-                $video_name = Storage::disk('public')->put('files/vhs/video', $request->video);
-            } catch (Exception $e){
-                return response()->json(['error'=>$e->getMessage()], 401);
-            }
+            $video = $request->video;
+            $video_path = 'files/vhs/video/';
+            $video_name = Str::random(20).'.'.$video->getClientOriginalExtension();
         }
-        /* END VIDEO UPLOAD */
+        /* END PREPARE VIDEO UPLOAD */
 
         /* START VIDEO UPLOAD */
         $thumbnail_name = null;
@@ -74,8 +75,18 @@ class VhsController extends Controller
         $vhs->title = $request->title;
         $vhs->description = $request->description;
         $vhs->thumbnail = $thumbnail_name;
-        $vhs->video = $video_name;
+        $vhs->video = $video_path.$video_name;
         $vhs->save();
+
+        /* START VIDEO UPLOAD */
+        if ($request->hasFile('video')) {
+            try {
+                Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
+            } catch (Exception $e){
+                return response()->json(['error'=>$e->getMessage()], 401);
+            }
+        }
+        /* END VIDEO UPLOAD */
 
         return response()->json(['data' => $vhs, 'message' => 'Data berhasil disimpan!'], 200);
     }
