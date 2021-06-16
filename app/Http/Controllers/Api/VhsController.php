@@ -7,6 +7,7 @@ use App\Models\Vhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
+use Exception;
 use File;
 
 class VhsController extends Controller
@@ -54,7 +55,11 @@ class VhsController extends Controller
         /* START VIDEO UPLOAD */
         $video_name = null;
         if ($request->hasFile('video')) {
-            $video_name = Storage::disk('public')->put('files/vhs/video', $request->video);
+            try {
+                $video_name = Storage::disk('public')->put('files/vhs/video', $request->video);
+            } catch (Exception $e){
+                return response()->json(['error'=>$e->getMessage()], 401);
+            }
         }
         /* END VIDEO UPLOAD */
 
