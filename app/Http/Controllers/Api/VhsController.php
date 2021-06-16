@@ -7,6 +7,7 @@ use App\Models\Vhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
+use File;
 
 class VhsController extends Controller
 {
@@ -111,11 +112,15 @@ class VhsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\\Models\\Vhs  $vhs
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Vhs $vhs)
+    public function destroy($id)
     {
-        //
+        $vhs = Vhs::find($id);
+        $video_path = public_path().'/files/'.$vhs->video;
+        $thumbnail_path = public_path().'/files/'.$vhs->thumbnail;
+        $res = File::delete($video_path, $thumbnail_path);
+        $vhs->delete();
+        return response()->json(['message' => 'delete successfully']);
     }
 }
