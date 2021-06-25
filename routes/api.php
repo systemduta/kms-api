@@ -61,7 +61,7 @@ Route::group([
             Route::get('user_course','MobileController@user_course');
             Route::get('detail_user', 'MobileController@details');
             Route::post('logout', 'MobileController@logout');
-            Route::get('course_list','MobileController@course_list');
+//            Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
             Route::get('course_list_dashboard','MobileController@course_list_dashboard');
             Route::get('leaderboards','MobileController@leaderboards');
             Route::get('calendar','MobileController@get_calendar');

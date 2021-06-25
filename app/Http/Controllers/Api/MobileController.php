@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -41,24 +42,24 @@ class MobileController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
-
-    public function course_list(Request $request)
-    {
-        $dt = DB::table('courses as c');
-        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
-        $dt = $dt->where('c.organization_id', auth()->user()->organization_id);
-        $dt = $dt->where('c.type', $request->type);
-        $dt = $dt->where('us.id','!=', null);
-        $dt = $dt->selectRaw('
-            c.id,
-            c.title,
-            c.description,
-            c.image,
-            if(us.id is not null, 1, 0) as is_going
-        ')->get();
-        $data=array();
-        return response()->json(['data' => $dt]);
-    }
+//    Sementara ndak dipakai
+//    public function course_list(Request $request)
+//    {
+//        $dt = DB::table('courses as c');
+//        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+//        $dt = $dt->where('c.organization_id', auth()->user()->organization_id);
+//        $dt = $dt->where('c.type', $request->type);
+//        $dt = $dt->where('us.id','!=', null);
+//        $dt = $dt->selectRaw('
+//            c.id,
+//            c.title,
+//            c.description,
+//            c.image,
+//            if(us.id is not null, 1, 0) as is_going
+//        ')->get();
+//        $data=array();
+//        return response()->json(['data' => $dt]);
+//    }
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();
@@ -86,7 +87,6 @@ class MobileController extends Controller
         ')->get();
 
         $data = array();
-        $excludecourseid=array();
         foreach($dt as $value){
             $exclude = explode(",",$value->user_list);
             if(in_array($user->id,$exclude)) continue;
@@ -94,6 +94,115 @@ class MobileController extends Controller
         }
 
         return response()->json(['data' => $data]);
+    }
+
+    public function covert_question ($value) {
+        return $value->whenNotEmpty(function ($pre) {
+            $temp = collect([]);
+            $pre->each(function ($item) use (&$temp) {
+                $nameA ='';
+                $nameB ='';
+                $nameC ='';
+                $nameD ='';
+                $answer = '';
+                $item->test_answers->each(function ($it, $key) use (&$nameA, &$nameB, &$nameC, &$nameD, &$answer) {
+                    if ($key == 0) $nameA = $it->name;
+                    if ($key == 1) $nameB = $it->name;
+                    if ($key == 2) $nameC = $it->name;
+                    if ($key == 3) $nameD = $it->name;
+                    if ($it->is_true == 1) $answer = $it->name;
+                });
+
+                $temp->push([
+                    'question' => $item->description,
+                    'nameA' => $nameA,
+                    'nameB' => $nameB,
+                    'nameC' => $nameC,
+                    'nameD' => $nameD,
+                    'answer' => $answer,
+                ]);
+            });
+            return $temp;
+        });
+    }
+
+    public function course_detail($id)
+    {
+        $ori_data = Course::query()
+            ->with(['pre_test_questions.test_answers'])
+            ->with(['post_test_questions.test_answers'])
+            ->findOrFail($id);
+
+        $pre_test = $this->covert_question($ori_data->pre_test_questions);
+        $post_test = $this->covert_question($ori_data->post_test_questions);
+
+        $result = collect([
+            'id' => $ori_data->id,
+            'title' => $ori_data->title,
+            'organization_id' => $ori_data->organization_id,
+            'description' => $ori_data->description,
+            'image' => $ori_data->image,
+            'file' => $ori_data->file,
+            'video' => $ori_data->video,
+            'link' => $ori_data->link,
+            'type' => $ori_data->type,
+            'created_at' => $ori_data->created_at,
+            'updated_at' => $ori_data->updated_at,
+            'pre_test' => $pre_test,
+            'post_test' => $post_test,
+        ]);
+
+
+//        $dt = DB::table('courses')->where('id', $id)->first();
+//        $question = DB::table('test_questions')
+//            ->where('course_id', $dt->id)
+//            ->selectRaw('id, description')
+//            ->get();
+//        $arr_question = array();
+//        $question->map(function($value) use (&$arr_question){
+//            $answer = DB::table('test_answers')
+//                ->where('test_question_id', $value->id)
+//                ->selectRaw('id,name,is_true')
+//                ->get();
+//            $q_array = [
+//                'question' => $value->description
+//            ];
+//            $letter = "A";
+//            for($i=0;$i<count($answer);$i++) {
+//                $dt = $answer[$i];
+//                $q_array = array_merge($q_array,[
+//                    'name'.$letter => $dt->name
+//                ]);
+//                $letter++;
+//                if ($dt->is_true) {
+//                    $q_array = array_merge($q_array,[
+//                        'answer_true' => $dt->name,
+//                    ]);
+//                }
+//            }
+//            array_push($arr_question,$q_array);
+//        });
+//        $data = (Array) $dt;
+//        $data['test'] = $arr_question;
+        return response()->json(['data' => $result]);
+    }
+
+    public function user_course(Request $request)
+    {
+        $dt = DB::table('user_scores as us');
+        $dt = $dt->leftJoin('courses as c','c.id','us.course_id');
+        $dt = $dt->where('us.user_id', auth()->id());
+        $dt = $dt->orderBy('c.id','DESC');
+        $dt = $dt->selectRaw('
+            us.id,
+            us.score,
+            us.status,
+            c.id,
+            c.image,
+            c.title,
+            c.description
+        ')->get();
+        return response()->json(['data' => $dt]);
     }
 
 
@@ -168,36 +277,6 @@ class MobileController extends Controller
         return response()->json(['data' => $data]);
     }
 
-    public function course_detail($id)
-    {
-        $dt = DB::table('courses')->where('id', $id)->first();
-        $question = DB::table('test_questions')->where('course_id', $dt->id)->selectRaw('id, description')->get();
-        $arr_question = array();
-        $question->map(function($value) use (&$arr_question){
-            $answer = DB::table('test_answers')->where('test_question_id', $value->id)->selectRaw('id,name,is_true')->get();
-		    $q_array = [
-                'question' => $value->description
-            ];
-            $letter = "A";
-            for($i=0;$i<count($answer);$i++) {
-                $dt = $answer[$i];
-                $q_array = array_merge($q_array,[
-                    'name'.$letter => $dt->name
-                ]);
-                $letter++;
-                if ($dt->is_true) {
-                    $q_array = array_merge($q_array,[
-                        'answer_true' => $dt->name,
-                    ]);
-                }
-        	}
-            array_push($arr_question,$q_array);
-        });
-        $data = (Array) $dt;
-        $data['test'] = $arr_question;
-        return response()->json(['data' => $data]);
-    }
-
     public function post_calendar(Request $request)
     {
         DB::beginTransaction();
@@ -213,24 +292,6 @@ class MobileController extends Controller
     public function get_calendar()
     {
         $dt=DB::table('calendars')->where('user_id', auth()->id())->selectRaw('date, description')->get();
-        return response()->json(['data' => $dt]);
-    }
-
-    public function user_course(Request $request)
-    {
-        $dt = DB::table('user_scores as us');
-        $dt = $dt->leftJoin('courses as c','c.id','us.course_id');
-        $dt = $dt->where('us.user_id', auth()->id());
-        $dt = $dt->orderBy('c.id','DESC');
-        $dt = $dt->selectRaw('
-            us.id,
-            us.score,
-            us.status,
-            c.id,
-            c.image,
-            c.title,
-            c.description
-        ')->get();
         return response()->json(['data' => $dt]);
     }
 

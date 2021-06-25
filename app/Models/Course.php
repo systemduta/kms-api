@@ -12,4 +12,14 @@ class Course extends Model
     protected $guarded = [
         'id'
     ];
+
+    public function pre_test_questions()
+    {
+        return $this->hasMany(TestQuestion::class)->where('is_pre_test','=',1);
+    }
+
+    public function post_test_questions()
+    {
+        return $this->hasMany(TestQuestion::class)->whereNull('is_pre_test');
+    }
 }

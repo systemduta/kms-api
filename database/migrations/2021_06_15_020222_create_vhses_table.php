@@ -19,6 +19,7 @@ class CreateVhsesTable extends Migration
             $table->text('description')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('video')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }
