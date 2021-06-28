@@ -104,7 +104,7 @@ class MobileController extends Controller
         $dt = DB::table('courses as c');
         $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
         $dt = $dt->where('c.type', $type);
-        $dt = $dt->groupBy('c.id','c.title','c.description','c.image');
+        $dt = $dt->groupBy('c.id','c.title','c.description','c.image','c.video');
         $dt = $dt->orderBy('c.id','DESC');
         $dt = $dt->selectRaw('
             c.id,
