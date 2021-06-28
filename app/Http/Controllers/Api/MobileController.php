@@ -308,7 +308,7 @@ class MobileController extends Controller
         DB::beginTransaction();
         $user=auth()->user();
         $params = array();
-        if ($request->filled('pre_test')) {
+        if ($request->filled('pre_test') && $request->pre_test) {
             $params = [
                 'course_id' => $request->course_id,
                 'user_id' => $user->id,
