@@ -112,8 +112,6 @@ class MobileController extends Controller
             c.description,
             c.image as thumbnail,
             c.video,
-            c.created_at,
-            c.updated_at,
             count(us.id) as jml,
             group_concat(us.user_id) as user_list
         ')->get();
