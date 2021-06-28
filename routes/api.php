@@ -69,6 +69,7 @@ Route::group([
             Route::get('course_detail/{id}','MobileController@course_detail');
             Route::post('accept_course','MobileController@accept_course');
             Route::post('submit_question','MobileController@submit_question');
+            Route::post('submit_answer','MobileController@submit_answer');
             Route::post('change_password', 'MobileController@change_password');
             Route::get('vhs','MobileController@list_vhs');
 //            Route::get('vhs','VhsController@index');

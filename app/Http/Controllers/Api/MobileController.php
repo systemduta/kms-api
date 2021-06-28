@@ -242,7 +242,7 @@ class MobileController extends Controller
         $course = Course::query()->findOrFail($course_id);
         $is_corp_value = $course->type == 3;
 
-        $result = UserScore::query()->when($is_corp_value, function ($query) use ($course_id){
+        UserScore::query()->when($is_corp_value, function ($query) use ($course_id){
             return $query->insert([
                 [
                     'course_id' => $course_id,
@@ -256,7 +256,7 @@ class MobileController extends Controller
                     'user_id' => auth()->id(),
                     'score' => 0,
                     'status' => 1,
-                    'is_pre_test' => null
+                    'is_pre_test' => 0
                 ]
             ]);
         }, function ($query) use ($course_id) {
@@ -299,6 +299,32 @@ class MobileController extends Controller
 //        DB::table('leaderboards')->where('user_id', $user->id)->update([
 //            'level' => $score
 //        ]);
+        DB::commit();
+        return response()->json(['message' => 'OK']);
+    }
+
+    public function submit_answer(Request $request)
+    {
+        DB::beginTransaction();
+        $user=auth()->user();
+        $params = array();
+        if ($request->filled('pre_test')) {
+            $params = [
+                'course_id' => $request->course_id,
+                'user_id' => $user->id,
+                'is_pre_test' => 1
+            ];
+        } else {
+            $params = [
+                'course_id' => $request->course_id,
+                'user_id' => $user->id,
+                'is_pre_test' => 0
+            ];
+        }
+        DB::table('user_scores')->updateOrInsert($params,[
+            'score' => $request->score,
+            'status' => 2
+        ]);
         DB::commit();
         return response()->json(['message' => 'OK']);
     }
