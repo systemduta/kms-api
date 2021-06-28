@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\UserScore;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -82,6 +83,37 @@ class MobileController extends Controller
             c.title,
             c.description,
             c.image,
+            count(us.id) as jml,
+            group_concat(us.user_id) as user_list
+        ')->get();
+
+        $data = array();
+        foreach($dt as $value){
+            $exclude = explode(",",$value->user_list);
+            if(in_array($user->id,$exclude)) continue;
+            array_push($data,$value);
+        }
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function list_vhs()
+    {
+        $type = 3;
+        $user = auth()->user();
+        $dt = DB::table('courses as c');
+        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+        $dt = $dt->where('c.type', $type);
+        $dt = $dt->groupBy('c.id','c.title','c.description','c.image');
+        $dt = $dt->orderBy('c.id','DESC');
+        $dt = $dt->selectRaw('
+            c.id,
+            c.title,
+            c.description,
+            c.image as thumbnail,
+            c.video,
+            c.created_at,
+            c.updated_at,
             count(us.id) as jml,
             group_concat(us.user_id) as user_list
         ')->get();
@@ -208,14 +240,36 @@ class MobileController extends Controller
 
     public function accept_course(Request $request)
     {
-        DB::beginTransaction();
-        DB::table('user_scores')->insert([
-            'course_id' => $request->course_id,
-            'user_id' => auth()->id(),
-            'score' => 0,
-            'status' => 1
-        ]);
-        DB::commit();
+        $course_id = $request->course_id;
+        $course = Course::query()->findOrFail($course_id);
+        $is_corp_value = $course->type == 3;
+
+        $result = UserScore::query()->when($is_corp_value, function ($query) use ($course_id){
+            return $query->insert([
+                [
+                    'course_id' => $course_id,
+                    'user_id' => auth()->id(),
+                    'score' => 0,
+                    'status' => 1,
+                    'is_pre_test' => 1
+                ],
+                [
+                    'course_id' => $course_id,
+                    'user_id' => auth()->id(),
+                    'score' => 0,
+                    'status' => 1,
+                    'is_pre_test' => null
+                ]
+            ]);
+        }, function ($query) use ($course_id) {
+            return $query->insert([
+                'course_id' => $course_id,
+                'user_id' => auth()->id(),
+                'score' => 0,
+                'status' => 1,
+            ]);
+        });
+
         return response()->json(['message' => 'OK']);
     }
 
@@ -237,16 +291,16 @@ class MobileController extends Controller
             'score' => $request->score,
             'status' => 2
         ]);
-        DB::table('leaderboards')->updateOrInsert([
-            'user_id' => $user->id,
-        ],[
-            'point' => DB::raw('point+'.$request->score)
-        ]);
-        $cek = DB::table('leaderboards')->where('user_id', $user->id)->first();
-        $score = ceil($cek->point/100);
-        DB::table('leaderboards')->where('user_id', $user->id)->update([
-            'level' => $score
-        ]);
+//        DB::table('leaderboards')->updateOrInsert([
+//            'user_id' => $user->id,
+//        ],[
+//            'point' => DB::raw('point+'.$request->score)
+//        ]);
+//        $cek = DB::table('leaderboards')->where('user_id', $user->id)->first();
+//        $score = ceil($cek->point/100);
+//        DB::table('leaderboards')->where('user_id', $user->id)->update([
+//            'level' => $score
+//        ]);
         DB::commit();
         return response()->json(['message' => 'OK']);
     }
