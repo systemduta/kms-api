@@ -149,7 +149,7 @@ class MobileController extends Controller
             'created_at' => $ori_data->created_at,
             'updated_at' => $ori_data->updated_at,
             'pre_test' => $pre_test,
-            'post_test' => $post_test,
+            'test' => $post_test,
         ]);
 
 

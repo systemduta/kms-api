@@ -70,7 +70,7 @@ Route::group([
             Route::post('accept_course','MobileController@accept_course');
             Route::post('submit_question','MobileController@submit_question');
             Route::post('change_password', 'MobileController@change_password');
-            Route::get('vhs','VhsController@index');
+//            Route::get('vhs','VhsController@index');
         });
     });
 
