@@ -149,7 +149,7 @@ class MobileController extends Controller
                     'nameB' => $nameB,
                     'nameC' => $nameC,
                     'nameD' => $nameD,
-                    'answer' => $answer,
+                    'answer_true' => $answer,
                 ]);
             });
             return $temp;
