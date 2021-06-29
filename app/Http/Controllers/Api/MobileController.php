@@ -222,7 +222,7 @@ class MobileController extends Controller
         $dt = DB::table('user_scores as us');
         $dt = $dt->leftJoin('courses as c','c.id','us.course_id');
         $dt = $dt->where('us.user_id', auth()->id());
-        $dt = $dt->orderBy('c.id','DESC');
+        $dt = $dt->orderBy('us.id','DESC');
         $dt = $dt->selectRaw('
             us.id,
             us.score,
@@ -232,7 +232,32 @@ class MobileController extends Controller
             c.title,
             c.description
         ')->get();
-        return response()->json(['data' => $dt]);
+
+        $data= collect();
+        $temp_id = null;
+        $dt->each(function ($item, $key) use (&$temp_id, &$data){
+            if ($item->id == $temp_id) {
+                $modifiedElement = array_merge($data[$key-1], [
+                    'pre_score' => $item->score,
+                    'pre_status' => $item->status
+                ]);
+                $data->put($key-1, $modifiedElement);
+            } else {
+                $data->push([
+                    "id" => $item->id,
+                    "image" => $item->image,
+                    "title" => $item->title,
+                    "description" => $item->description,
+                    "score" => $item->score,
+                    "status" => $item->status,
+                    "pre_score" => null,
+                    "pre_status" => null
+                ]);
+            }
+            $temp_id = $item->id;
+        });
+
+        return response()->json(['data' => $data]);
     }
 
 
@@ -333,7 +358,6 @@ class MobileController extends Controller
     {
         $dt = DB::table('user_scores as us');
         $dt = $dt->leftJoin('users as u','u.id','us.user_id');
-//        $dt = $dt->where('u.organization_id', auth()->user()->organization_id);
         $dt = $dt->where('u.golongan_id', auth()->user()->golongan_id);
         $dt = $dt->groupByRaw('us.user_id,u.name,u.image');
         $dt = $dt->selectRaw('
