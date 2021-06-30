@@ -24,11 +24,17 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         $data = Course::query()
-            ->where('type', '!=' , 1)
-            ->orWhere(function (Builder $query) use ($request) {
-                return $query->where('type',1)
-                    ->where('organization_id',$request->organization_id);
-            })->orderBy('id', 'DESC')
+            ->when(($request->filled('type') && $request->type == 3), function (Builder $query) use ($request){
+                return $query->where('type', '=', 3);
+            }, function (Builder $builder) use ($request) {
+                return $builder->where('type','!=',3)
+                    ->where('type', '!=' , 1)
+                    ->orWhere(function (Builder $query) use ($request) {
+                        return $query->where('type',1)
+                            ->where('organization_id',$request->organization_id);
+                    });
+            })
+            ->orderBy('id', 'DESC')
             ->get();
         return response()->json(['data' => $data]);
     }
@@ -76,18 +82,16 @@ class CourseController extends Controller
         Storage::disk('public')->put('files/'.$filename, base64_decode($file));
         /* END FILE UPLOAD */
 
-        /* START VIDEO UPLOAD */
+        /* PREPARE VIDEO UPLOAD */
         $video_name = null;
+        $video_path = null;
+        $video = null;
         if ($request->hasFile('video')) {
-            $video64 = $request->video;
-//            $ext = explode('/', explode(':', substr($video64, 0, strpos($video64, ';')))[1])[1];
-//            $replace = substr($video64, 0, strpos($video64, ',')+1);
-//            $video = str_replace($replace, '', $video64);
-//            $video = str_replace(' ', '+', $video);
-//            $video_name = 'video_'.Str::random(10).'.'.$video64->extension();
-            $video_name = Storage::disk('public')->put('files', $video64);
+            $video = $request->video;
+            $video_path = 'files/course/video/';
+            $video_name = Str::random(20).'.'.$video->getClientOriginalExtension();
         }
-        /* END VIDEO UPLOAD */
+        /* END PREPARE VIDEO UPLOAD */
 
         DB::beginTransaction();
         $courseGetId=DB::table('courses')->insertGetId([
@@ -100,6 +104,16 @@ class CourseController extends Controller
             'link' => $request->link,
             'type' => $request->type
         ]);
+
+        /* START VIDEO UPLOAD */
+        if ($request->hasFile('video')) {
+            try {
+                Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
+            } catch (Exception $e){
+                return response()->json(['error'=>$e->getMessage()], 401);
+            }
+        }
+        /* END VIDEO UPLOAD */
 
         $organization_id = $request->organization_id ?? null;
         $tokenUser = DB::table('users')

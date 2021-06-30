@@ -235,11 +235,14 @@ class MobileController extends Controller
 
         $data= collect();
         $temp_id = null;
-        $dt->each(function ($item, $key) use (&$temp_id, &$data){
+        $temp_score = null;
+        $dt->each(function ($item, $key) use (&$temp_id, &$data, &$temp_score){
             if ($item->id == $temp_id) {
                 $modifiedElement = array_merge($data[$key-1], [
-                    'pre_score' => $item->score,
-                    'pre_status' => $item->status
+                    "score" => $item->score,
+                    "status" => $item->status,
+                    "pre_score" => null,
+                    "post_score" => null,
                 ]);
                 $data->put($key-1, $modifiedElement);
             } else {
@@ -251,7 +254,7 @@ class MobileController extends Controller
                     "score" => $item->score,
                     "status" => $item->status,
                     "pre_score" => null,
-                    "pre_status" => null
+                    "post_score" => null,
                 ]);
             }
             $temp_id = $item->id;

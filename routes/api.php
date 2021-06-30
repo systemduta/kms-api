@@ -72,7 +72,7 @@ Route::group([
             Route::post('submit_answer','MobileController@submit_answer');
             Route::post('change_password', 'MobileController@change_password');
             Route::get('vhs','MobileController@list_vhs');
-//            Route::get('vhs','VhsController@index');
+            Route::get('vhs_dashboard','VhsController@index');
         });
     });
 
