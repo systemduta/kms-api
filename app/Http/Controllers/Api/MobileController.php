@@ -236,15 +236,16 @@ class MobileController extends Controller
         $data= collect();
         $temp_id = null;
         $temp_score = null;
-        $dt->each(function ($item, $key) use (&$temp_id, &$data, &$temp_score){
+        $temp_status = null;
+        $dt->each(function ($item) use (&$temp_id, &$data, &$temp_score, &$temp_status){
             if ($item->id == $temp_id) {
-                $modifiedElement = array_merge($data[$key-1], [
-                    "score" => $item->score,
-                    "status" => $item->status,
-                    "pre_score" => null,
-                    "post_score" => null,
+                $modifiedElement = array_merge($data[($data->count())-1], [
+                    "score" => $temp_score + $item->score,
+                    "status" => ($item->status==2 && $temp_status==2) ? 2 : 1,
+                    "pre_score" => $item->score,
+                    "post_score" => $temp_score,
                 ]);
-                $data->put($key-1, $modifiedElement);
+                $data->put((($data->count())-1), $modifiedElement);
             } else {
                 $data->push([
                     "id" => $item->id,
@@ -258,6 +259,8 @@ class MobileController extends Controller
                 ]);
             }
             $temp_id = $item->id;
+            $temp_score = $item->score;
+            $temp_status = $item->status;
         });
 
         return response()->json(['data' => $data]);
