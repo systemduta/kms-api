@@ -225,25 +225,29 @@ class MobileController extends Controller
         $dt = $dt->orderBy('us.id','DESC');
         $dt = $dt->selectRaw('
             us.id,
+            us.course_id,
             us.score,
             us.status,
-            c.id,
             c.image,
             c.title,
             c.description
         ')->get();
 
+//        start of formating response
         $data= collect();
         $temp_id = null;
+        $temp_course_id = null;
         $temp_score = null;
         $temp_status = null;
-        $dt->each(function ($item) use (&$temp_id, &$data, &$temp_score, &$temp_status){
-            if ($item->id == $temp_id) {
+        $dt->each(function ($item) use (&$temp_id, &$temp_course_id, &$data, &$temp_score, &$temp_status){
+            if (($item->id == $temp_id-1) && ($item->course_id == $temp_course_id)) {
                 $modifiedElement = array_merge($data[($data->count())-1], [
                     "score" => $temp_score + $item->score,
-                    "status" => ($item->status==2 && $temp_status==2) ? 2 : 1,
                     "pre_score" => $item->score,
                     "post_score" => $temp_score,
+                    "status" => ($item->status==2 && $temp_status==2) ? "2" : "1",
+                    "pre_status" => $item->status,
+                    "post_status" => $temp_status,
                 ]);
                 $data->put((($data->count())-1), $modifiedElement);
             } else {
@@ -256,12 +260,16 @@ class MobileController extends Controller
                     "status" => $item->status,
                     "pre_score" => null,
                     "post_score" => null,
+                    "pre_status" => null,
+                    "post_status" => null,
                 ]);
             }
             $temp_id = $item->id;
+            $temp_course_id = $item->course_id;
             $temp_score = $item->score;
             $temp_status = $item->status;
         });
+//        end of formating response
 
         return response()->json(['data' => $data]);
     }

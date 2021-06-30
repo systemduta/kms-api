@@ -62,9 +62,9 @@ class CourseController extends Controller
             'title' => 'required',
             'description' => 'required',
             'image' => 'required',
-            'video' => 'nullable',
+            'video' => 'file|nullable',
             'file' => 'required',
-            'link' => 'required',
+            'link' => 'string|nullable',
             'type' => 'required',
         ]);
 
@@ -99,7 +99,7 @@ class CourseController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'image' => '',
-            'video' => $request->hasFile('video') ? $video_name:null,
+            'video' => $video_path.$video_name,
             'file' => 'files/'.$filename,
             'link' => $request->link,
             'type' => $request->type
