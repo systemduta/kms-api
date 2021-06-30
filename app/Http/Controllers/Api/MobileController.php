@@ -253,6 +253,7 @@ class MobileController extends Controller
             } else {
                 $data->push([
                     "id" => $item->id,
+                    "course_id" => $item->course_id,
                     "image" => $item->image,
                     "title" => $item->title,
                     "description" => $item->description,
