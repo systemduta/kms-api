@@ -17,6 +17,7 @@ class TestController extends Controller
         DB::beginTransaction();
         $qId=DB::table('test_questions')->insertGetId([
             'course_id' => $request->course_id,
+            'is_pre_test' => $request->is_pre_test,
             'description' => $request->description,
         ]);
         foreach ($request->answers as $answer) {
