@@ -57,6 +57,7 @@ Route::group([
         'prefix' => 'mobile'
     ],function(){
         Route::resource('books','BookController');
+        Route::get('splash_screen','SplashScreenController@index');
 
         Route::group(['middleware' => 'auth:api'], function(){
             Route::get('user_course','MobileController@user_course');
@@ -74,7 +75,6 @@ Route::group([
             Route::post('change_password', 'MobileController@change_password');
             Route::get('vhs','MobileController@list_vhs');
             Route::get('vhs_dashboard','VhsController@index');
-            Route::get('splash_screen','SplashScreenController@index');
         });
     });
 
