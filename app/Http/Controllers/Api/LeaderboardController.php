@@ -135,7 +135,8 @@ class LeaderboardController extends Controller
                 u.name,
                 c.title,
                 score,
-                status
+                status,
+                is_pre_test
             ')
             ->orderByDesc('us.id')
             ->get();

@@ -49,6 +49,7 @@ Route::group([
             Route::resource('event','EventController');
             Route::resource('test','TestController');
             Route::resource('vhs','VhsController');
+            Route::resource('splash_screen','SplashScreenController');
         });
     });
 
@@ -73,6 +74,7 @@ Route::group([
             Route::post('change_password', 'MobileController@change_password');
             Route::get('vhs','MobileController@list_vhs');
             Route::get('vhs_dashboard','VhsController@index');
+            Route::get('splash_screen','SplashScreenController@index');
         });
     });
 
