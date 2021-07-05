@@ -204,8 +204,17 @@ class CourseController extends Controller
         $description = $request->description;
         $image = '';
         $video = $request->video;
-        $file = $request->file;
         $link = $request->link;
+
+        /* START FILE UPLOAD */
+        $file64 = $request->file;
+        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $file = str_replace($replace, '', $file64);
+        $file = str_replace(' ', '+', $file);
+        $filename = 'file_'.Str::random(10).'.'.$ext;
+        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        /* END FILE UPLOAD */
 
         if($request->filled('image')) {
             $imgName='';
@@ -228,7 +237,7 @@ class CourseController extends Controller
         $course->description = $description;
         $course->image = $imgName;
         $course->video = $video;
-        $course->file = $file;
+        $course->file = 'files/'.$filename;
         $course->link = $link;
         $course->save();
 
