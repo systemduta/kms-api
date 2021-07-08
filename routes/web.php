@@ -27,8 +27,12 @@ Route::get('storage', function () {
 });
 
 Route::get('migrate', function () {
-    \Illuminate\Support\Facades\Artisan::call('migrate');
-    dd("migrate");
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate');
+        dd("Success to migrate");
+    } catch (Exception $exception){
+        throw $exception;
+    }
 });
 
 Route::get('/', function () {
