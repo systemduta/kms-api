@@ -26,6 +26,7 @@ class UserController extends Controller
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
             }
             $success['company_id'] = $user->company_id;
+            $success['organization_id'] = $user->organization_id;
             $success['file'] = $user->file;
             $success['accessToken'] = $user->createToken('nApp')->accessToken;
             return response()->json($success, $this->successStatus);
