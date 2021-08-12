@@ -66,7 +66,9 @@ class MobileController extends Controller
         $user = auth()->user();
         $dt = DB::table('courses as c');
         $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
-        $dt = $dt->where('c.type', $request->type);
+        $dt = $dt->when($request->type, function ($query) use ($request){
+            return $query->where('c.type', $request->type);
+        });
         $dt = $dt->when($request->type==1, function ($query){
             return $query->where('c.organization_id', auth()->user()->organization_id);
         });
@@ -252,7 +254,8 @@ class MobileController extends Controller
                 $data->put((($data->count())-1), $modifiedElement);
             } else {
                 $data->push([
-                    "id" => $item->id,
+//                    "id" => $item->id,
+                    "id" => $item->course_id,
                     "course_id" => $item->course_id,
                     "image" => $item->image,
                     "title" => $item->title,
