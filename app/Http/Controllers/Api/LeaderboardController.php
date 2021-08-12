@@ -127,6 +127,7 @@ class LeaderboardController extends Controller
     }
 
     public function exam_result(Request $request){
+        $user = auth()->user();
         $result = \Illuminate\Support\Facades\DB::table('user_scores as us')
             ->leftJoin('users as u','u.id','us.user_id')
             ->leftJoin('courses as c','c.id','us.course_id')
@@ -138,6 +139,12 @@ class LeaderboardController extends Controller
                 status,
                 is_pre_test
             ')
+            ->when($user->organization_id==11, function ($query) {
+                return $query->where('c.type', '!=', 3);
+            })
+            ->when($user->organization_id==20, function ($query) {
+                return $query->where('c.type', '=', 3);
+            })
             ->orderByDesc('us.id')
             ->get();
         return response()->json(['data' => $result]);
