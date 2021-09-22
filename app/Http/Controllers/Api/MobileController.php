@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Validator;
 use Carbon\Carbon;
 
@@ -282,6 +282,13 @@ class MobileController extends Controller
     public function accept_course(Request $request)
     {
         $course_id = $request->course_id;
+        $user_score = UserScore::query()
+            ->where('course_id', $course_id)
+            ->where('user_id', auth()->id())
+            ->first();
+        if ($user_score)
+            return response()->json(['message' => 'you have taken this course'], 401);
+
         $course = Course::query()->findOrFail($course_id);
         $is_corp_value = $course->type == 3;
 

@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -21,10 +21,14 @@ class UserController extends Controller
                 'password' => $request->password
             ])){
             $user = Auth::user();
-            $org=DB::table('organizations')->where('id', $user->organization_id)->first();
+            $org= DB::table('organizations')->where('id', $user->organization_id)->first();
             if($request->isWeb=="1") {
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
             }
+            $company = DB::table('companies')->where('id', $user->company_id)->first();
+            $success['name'] = $user->name;
+            $success['avatar'] = $user->image;
+            $success['company_name'] = $company->name;
             $success['company_id'] = $user->company_id;
             $success['organization_id'] = $user->organization_id;
             $success['file'] = $user->file;

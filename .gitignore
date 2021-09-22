@@ -14,3 +14,4 @@ yarn-error.log
 .idea
 public/files
 public/.htaccess
+vendor.zip
