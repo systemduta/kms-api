@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller
 {
@@ -16,48 +16,22 @@ class LeaderboardController extends Controller
      */
     public function index(Request $request)
     {
-//        $data = DB::table('leaderboards as s')
-//        ->leftJoin('users as u','u.id','s.user_id')
-////        ->where('u.organization_id', $request->organization_id)
-//        ->where('u.golongan_id', $request->golongan_id)
-//        ->orderBy('s.point', 'DESC')
-//        ->select([
-//            'u.username',
-//            'u.name',
-//            's.point',
-//            's.level'
-//        ])->get();
-        $dt = DB::table('user_scores as us');
-        $dt = $dt->leftJoin('users as u','u.id','us.user_id');
-//        $dt = $dt->where('u.organization_id', auth()->user()->organization_id);
-        $dt = $dt->where('u.golongan_id', $request->golongan_id);
-        $dt = $dt->groupByRaw('us.user_id,u.username,u.name');
-        $dt = $dt->selectRaw('
-            u.username,
-            u.name,
-            sum(us.score) as point
-        ');
-        $dt = $dt->orderBy('point','desc')->get();
+        $auth = auth()->user();
+        $dt = DB::table('user_scores as us')
+            ->leftJoin('users as u','u.id','us.user_id')
+            ->when($auth->role!=1, function ($q) use ($auth) {
+                return $q->where('u.company_id', $auth->company_id);
+            })
+            ->where('u.golongan_id', $request->golongan_id)
+            ->groupByRaw('us.user_id,u.username,u.name')
+            ->selectRaw('
+                u.username,
+                u.name,
+                sum(us.score) as point
+            ')->orderBy('point','desc')->get();
+
         return response()->json(['data' => $dt]);
     }
-
-    // public function user_course(Request $request)
-    // {
-    //     $dt = DB::table('user_scores as us');
-    //     $dt = $dt->leftJoin('courses as c','c.id','us.course_id');
-    //     $dt = $dt->where('us.user_id', auth()->id());
-    //     $dt = $dt->orderBy('c.id','DESC');
-    //     $dt = $dt->selectRaw('
-    //         us.id,
-    //         us.score,
-    //         us.status,
-    //         c.id,
-    //         c.image,
-    //         c.title,
-    //         c.description
-    //     ')->get();
-    //     return response()->json(['data' => $dt]);
-    // }
 
 
     /**
@@ -139,10 +113,13 @@ class LeaderboardController extends Controller
                 status,
                 is_pre_test
             ')
-            ->when($user->organization_id==11, function ($query) {
+            ->when($user->role!=1, function ($q) use ($user) {
+                return $q->where('u.company_id', $user->company_id);
+            })
+            ->when(($user->company_id==1 && $user->organization_id==11), function ($query) {
                 return $query->where('c.type', '!=', 3);
             })
-            ->when($user->organization_id==20, function ($query) {
+            ->when(($user->company_id==1 && $user->organization_id==20), function ($query) {
                 return $query->where('c.type', '=', 3);
             })
             ->orderByDesc('us.id')

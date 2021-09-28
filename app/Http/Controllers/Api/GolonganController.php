@@ -87,8 +87,11 @@ class GolonganController extends Controller
 
     public function get_golongan_by_company()
     {
-        return response()->json(['data' => Golongan::query()->whereHas('users', function (Builder $q){
-            $q->where('company_id', auth()->user()->company_id);
-        })->get()]);
+        return response()->json([
+            'data' => Golongan::query()
+                ->whereHas('users', function (Builder $q){
+                    $q->where('company_id', auth()->user()->company_id);
+                })->get()
+        ]);
     }
 }

@@ -133,9 +133,7 @@ class UserController extends Controller
     {
         $auth = auth()->user();
         $user = User::with(['company','organization', 'golongan'])
-            ->when($auth->role==1, function ($q) {
-                return $q;
-            }, function ($q) use ($auth) {
+            ->when($auth->role!=1, function ($q) use ($auth) {
                 return $q->where('company_id', $auth->company_id);
             })
             ->orderBy('id', 'DESC')

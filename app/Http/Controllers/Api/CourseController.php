@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Course;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -23,7 +23,11 @@ class CourseController extends Controller
      */
     public function index(Request $request)
     {
+        $auth = auth()->user();
         $data = Course::query()
+            ->when($auth->role!=1, function ($q) use ($auth) {
+                return $q->where('company_id', $auth->company_id);
+            })
             ->when(($request->filled('type') && $request->type == 3), function (Builder $query) use ($request){
                 return $query->where('type', '=', 3);
             }, function (Builder $builder) use ($request) {
@@ -72,6 +76,7 @@ class CourseController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
         }
 
+        $auth = auth()->user();
         /* START FILE UPLOAD */
         $file64 = $request->file;
         $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
@@ -95,6 +100,7 @@ class CourseController extends Controller
 
         DB::beginTransaction();
         $courseGetId=DB::table('courses')->insertGetId([
+            'company_id' => $auth->company_id,
             'organization_id' => $request->organization_id ?? null,
             'title' => $request->title,
             'description' => $request->description,
@@ -117,6 +123,9 @@ class CourseController extends Controller
 
         $organization_id = $request->organization_id ?? null;
         $tokenUser = DB::table('users')
+            ->when($auth->role!=1, function ($q) use ($auth) {
+                return $q->where('company_id', $auth->company_id);
+            })
             ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
                 return $query->where('organization_id', $organization_id);
             })
