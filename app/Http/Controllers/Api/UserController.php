@@ -32,6 +32,7 @@ class UserController extends Controller
             $success['company_id'] = $user->company_id;
             $success['organization_id'] = $user->organization_id;
             $success['file'] = $user->file;
+            $success['role'] = $user->role;
             $success['accessToken'] = $user->createToken('nApp')->accessToken;
             return response()->json($success, $this->successStatus);
         }
@@ -88,7 +89,8 @@ class UserController extends Controller
             'organization_id' => $request->organization_id,
             'golongan_id' => $request->golongan_id,
             'nik' => $request->nik,
-            'username' => $username
+            'username' => $username,
+            'role' => 2
         ]);
 
         if($request->filled('image')) {
@@ -129,8 +131,13 @@ class UserController extends Controller
 
     public function index()
     {
+        $auth = auth()->user();
         $user = User::with(['company','organization', 'golongan'])
-            ->where('company_id', Auth::user()->company_id)
+            ->when($auth->role==1, function ($q) {
+                return $q;
+            }, function ($q) use ($auth) {
+                return $q->where('company_id', $auth->company_id);
+            })
             ->orderBy('id', 'DESC')
             ->get();
         return response()->json(['data' => $user]);

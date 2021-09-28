@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -15,7 +16,11 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $company = Company::get();
+        $user = auth()->user();
+        $company = Company::query()
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+                return $q->where('id', $user->company_id);
+            })->get();
         return response()->json(['data' => $company]);
     }
 

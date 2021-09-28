@@ -35,7 +35,9 @@ Route::group([
             Route::put('update_user/{id}', 'UserController@update');
             Route::delete('delete_user/{id}', 'UserController@delete');
             Route::post('logout', 'UserController@logout');
-            Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
+//            Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
+            Route::resource('organization','OrganizationController');
+            Route::resource('companies','CompanyController');
             Route::get('detail_event/{id}', 'EventController@detailsEvent');
             Route::get('detail_course/{id}', 'CourseController@detailsCourse');
             Route::get('get_question/{id}', 'TestController@index');
