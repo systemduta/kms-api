@@ -66,18 +66,15 @@ class MobileController extends Controller
         $user = auth()->user();
         $dt = DB::table('courses as c');
         $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+        $dt = $dt->when($user->role!=1, function ($q) use ($user) {
+            return $q->where('c.company_id', $user->company_id);
+        });
         $dt = $dt->when($request->type, function ($query) use ($request){
             return $query->where('c.type', $request->type);
         });
-        $dt = $dt->when($request->type==1, function ($query){
-            return $query->where('c.organization_id', auth()->user()->organization_id);
+        $dt = $dt->when($request->type==1, function ($query) use ($user) {
+            return $query->where('c.organization_id', $user->organization_id);
         });
-        // $dt = $dt->whereRaw("(us.id is null or IF(us.user_id = $user->id,c.id))")
-        // $dt = $dt->where(function($q){
-        //     $q->where('us.id', null);
-
-        //     $q->orWhere('us.user_id', '!=', auth()->user()->id);
-        // });
         $dt = $dt->groupBy('c.id','c.title','c.description','c.image');
         $dt = $dt->orderBy('c.id','DESC');
         $dt = $dt->selectRaw('
@@ -184,38 +181,6 @@ class MobileController extends Controller
             'test' => $post_test,
         ]);
 
-
-//        $dt = DB::table('courses')->where('id', $id)->first();
-//        $question = DB::table('test_questions')
-//            ->where('course_id', $dt->id)
-//            ->selectRaw('id, description')
-//            ->get();
-//        $arr_question = array();
-//        $question->map(function($value) use (&$arr_question){
-//            $answer = DB::table('test_answers')
-//                ->where('test_question_id', $value->id)
-//                ->selectRaw('id,name,is_true')
-//                ->get();
-//            $q_array = [
-//                'question' => $value->description
-//            ];
-//            $letter = "A";
-//            for($i=0;$i<count($answer);$i++) {
-//                $dt = $answer[$i];
-//                $q_array = array_merge($q_array,[
-//                    'name'.$letter => $dt->name
-//                ]);
-//                $letter++;
-//                if ($dt->is_true) {
-//                    $q_array = array_merge($q_array,[
-//                        'answer_true' => $dt->name,
-//                    ]);
-//                }
-//            }
-//            array_push($arr_question,$q_array);
-//        });
-//        $data = (Array) $dt;
-//        $data['test'] = $arr_question;
         return response()->json(['data' => $result]);
     }
 
@@ -323,15 +288,7 @@ class MobileController extends Controller
 
     public function submit_question(Request $request)
     {
-        DB::beginTransaction();
         $user=auth()->user();
-        // $score=0;
-        // foreach ($request->answer as $key => $value) {
-        //     $answer=DB::table('test_answers')->where('id', $value['question_answer_id'])->first();
-        //     if ($answer->is_true==1) {
-        //         $score+=20;
-        //     }
-        // }
         DB::table('user_scores')->updateOrInsert([
             'course_id' => $request->course_id,
             'user_id' => $user->id,
@@ -339,17 +296,6 @@ class MobileController extends Controller
             'score' => $request->score,
             'status' => 2
         ]);
-//        DB::table('leaderboards')->updateOrInsert([
-//            'user_id' => $user->id,
-//        ],[
-//            'point' => DB::raw('point+'.$request->score)
-//        ]);
-//        $cek = DB::table('leaderboards')->where('user_id', $user->id)->first();
-//        $score = ceil($cek->point/100);
-//        DB::table('leaderboards')->where('user_id', $user->id)->update([
-//            'level' => $score
-//        ]);
-        DB::commit();
         return response()->json(['message' => 'OK']);
     }
 
@@ -381,9 +327,13 @@ class MobileController extends Controller
 
     public function leaderboards()
     {
+        $user = auth()->user();
         $dt = DB::table('user_scores as us');
         $dt = $dt->leftJoin('users as u','u.id','us.user_id');
-        $dt = $dt->where('u.golongan_id', auth()->user()->golongan_id);
+        $dt = $dt->when($user->role!=1, function ($q) use ($user) {
+            return $q->where('u.company_id', $user->company_id);
+        });
+        $dt = $dt->where('u.golongan_id', $user->golongan_id);
         $dt = $dt->groupByRaw('us.user_id,u.name,u.image');
         $dt = $dt->selectRaw('
             u.name,
