@@ -15,6 +15,8 @@ class AddCompanyIdToCoursesTable extends Migration
     {
         Schema::table('courses', function (Blueprint $table) {
             $table->integer('company_id')->after('id')->nullable();
+            $table->integer('organization_id')->after('company_id')->nullable();
+            $table->integer('golongan_id')->after('organization_id')->nullable();
         });
     }
 
@@ -26,7 +28,7 @@ class AddCompanyIdToCoursesTable extends Migration
     public function down()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->dropColumn(['company_id']);
+            $table->dropColumn(['company_id','organization_id','golongan_id']);
         });
     }
 }

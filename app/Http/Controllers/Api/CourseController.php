@@ -57,12 +57,13 @@ class CourseController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'organization_id' => 'numeric|nullable',
+            'golongan_id' => 'numeric|nullable',
             'title' => 'required',
             'description' => 'required',
             'image' => 'required',
@@ -102,6 +103,7 @@ class CourseController extends Controller
         $courseGetId=DB::table('courses')->insertGetId([
             'company_id' => $auth->company_id,
             'organization_id' => $request->organization_id ?? null,
+            'golongan_id' => $request->golongan_id ?? null,
             'title' => $request->title,
             'description' => $request->description,
             'image' => '',

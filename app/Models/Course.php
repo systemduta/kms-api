@@ -12,6 +12,12 @@ class Course extends Model
     protected $guarded = [
         'id'
     ];
+    protected $hidden = ['golongan'];
+    protected $appends = ['golongan_name'];
+
+    public function golongan() {
+        return $this->belongsTo(Golongan::class);
+    }
 
     public function pre_test_questions()
     {
@@ -21,5 +27,10 @@ class Course extends Model
     public function post_test_questions()
     {
         return $this->hasMany(TestQuestion::class)->whereNull('is_pre_test');
+    }
+
+    public function getGolonganNameAttribute()
+    {
+        return $this->golongan ? $this->golongan->name : null;
     }
 }

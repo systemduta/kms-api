@@ -73,7 +73,10 @@ class MobileController extends Controller
             return $query->where('c.type', $request->type);
         });
         $dt = $dt->when($request->type==1, function ($query) use ($user) {
-            return $query->where('c.organization_id', $user->organization_id);
+            return $query->where('c.organization_id', $user->organization_id)
+                ->where(function ($query) use ($user){
+                    return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
+                });
         });
         $dt = $dt->groupBy('c.id','c.title','c.description','c.image');
         $dt = $dt->orderBy('c.id','DESC');
