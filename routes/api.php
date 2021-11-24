@@ -62,6 +62,7 @@ Route::group([
         Route::get('splash_screen','SplashScreenController@index');
 
         Route::group(['middleware' => 'auth:api'], function(){
+            Route::post('firebase_token','MobileController@firebase_token');
             Route::get('user_course','MobileController@user_course');
             Route::get('detail_user', 'MobileController@details');
             Route::post('logout', 'MobileController@logout');

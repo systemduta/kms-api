@@ -10,13 +10,31 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
 class MobileController extends Controller
 {
 
     public $successStatus = 200;
+
+    public function firebase_token(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "token" => "string|nullable"
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        $user = \auth()->user();
+        DB::table('users')->where('id', $user->id)->update([
+            'token' => $request->token
+        ]);
+        return response()->json([
+            'message' => 'update firebase token successfully'
+        ], $this->successStatus);
+    }
 
     public function login_mobile(Request $request){
         // return response()->json($request,500);

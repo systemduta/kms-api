@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CourseController extends Controller
 {
@@ -71,6 +72,7 @@ class CourseController extends Controller
             'file' => 'required',
             'link' => 'string|nullable',
             'type' => 'required',
+            'questions' => 'required|array',
         ]);
 
         if ($validator->fails()) {
@@ -98,79 +100,96 @@ class CourseController extends Controller
             $video_name = Str::random(20).'.'.$video->getClientOriginalExtension();
         }
         /* END PREPARE VIDEO UPLOAD */
+        try {
+            DB::beginTransaction();
+            $courseGetId=DB::table('courses')->insertGetId([
+                'company_id' => $auth->company_id,
+                'organization_id' => $request->organization_id ?? null,
+                'golongan_id' => $request->golongan_id ?? null,
+                'title' => $request->title,
+                'description' => $request->description,
+                'image' => '',
+                'video' => $video_path.$video_name,
+                'file' => 'files/'.$filename,
+                'link' => $request->link,
+                'type' => $request->type
+            ]);
 
-        DB::beginTransaction();
-        $courseGetId=DB::table('courses')->insertGetId([
-            'company_id' => $auth->company_id,
-            'organization_id' => $request->organization_id ?? null,
-            'golongan_id' => $request->golongan_id ?? null,
-            'title' => $request->title,
-            'description' => $request->description,
-            'image' => '',
-            'video' => $video_path.$video_name,
-            'file' => 'files/'.$filename,
-            'link' => $request->link,
-            'type' => $request->type
-        ]);
-
-        /* START VIDEO UPLOAD */
-        if ($request->hasFile('video')) {
-            try {
-                Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
-            } catch (Exception $e){
-                return response()->json(['error'=>$e->getMessage()], 401);
+            /* START VIDEO UPLOAD */
+            if ($request->hasFile('video')) {
+                try {
+                    Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
+                } catch (Exception $e){
+                    return response()->json(['error'=>$e->getMessage()], 401);
+                }
             }
-        }
-        /* END VIDEO UPLOAD */
+            /* END VIDEO UPLOAD */
 
-        $organization_id = $request->organization_id ?? null;
-        $tokenUser = DB::table('users')
-            ->when($auth->role!=1, function ($q) use ($auth) {
-                return $q->where('company_id', $auth->company_id);
-            })
-            ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
-                return $query->where('organization_id', $organization_id);
-            })
-            ->where('token','!=',"")
-            ->pluck('token')->toArray();
-        if($tokenUser) {
-            $tokens=(Array) $tokenUser;
-
-            $result = fcm()->to($tokenUser)
-            ->timeToLive(0)
-            ->priority('normal')
-            ->notification([
-                'title' => 'Hai, ada course baru nih buat kamu!',
-                'body' => $request->title,
-            ])
-            ->data([
-                'title' => 'Hai, ada course baru nih buat kamu!',
-                'body' => $request->title,
-            ])
-            ->send();
-        }
-
-        if($request->filled('image')) {
-            $imgName='';
-            $baseString = explode(';base64,', $request->image);
-            $image = base64_decode($baseString[1]);
-            $image = imagecreatefromstring($image);
-
-            $ext = explode('/', $baseString[0]);
-            $ext = $ext[1];
-            $imgName = 'course_'.uniqid().'.'.$ext;
-            if($ext=='png'){
-                imagepng($image,public_path().'/files/'.$imgName,8);
-            } else {
-                imagejpeg($image,public_path().'/files/'.$imgName,20);
+            $organization_id = $request->organization_id ?? null;
+            $tokenUser = DB::table('users')
+                ->when($auth->role!=1, function ($q) use ($auth) {
+                    return $q->where('company_id', $auth->company_id);
+                })
+                ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
+                    return $query->where('organization_id', $organization_id);
+                })
+                ->where('token','!=',"")
+                ->pluck('token')->toArray();
+            if($tokenUser) {
+                $result = fcm()->to($tokenUser)
+                ->timeToLive(0)
+                ->priority('high')
+                ->notification([
+                    'title' => 'Hai, ada course baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->data([
+                    'title' => 'Hai, ada course baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->send();
             }
-            DB::table('courses')->where('id', $courseGetId)->update(['image' => $imgName]);
+            if($request->filled('image')) {
+                $imgName='';
+                $baseString = explode(';base64,', $request->image);
+                $image = base64_decode($baseString[1]);
+                $image = imagecreatefromstring($image);
+
+                $ext = explode('/', $baseString[0]);
+                $ext = $ext[1];
+                $imgName = 'course_'.uniqid().'.'.$ext;
+                if($ext=='png'){
+                    imagepng($image,public_path().'/files/'.$imgName,8);
+                } else {
+                    imagejpeg($image,public_path().'/files/'.$imgName,20);
+                }
+                DB::table('courses')->where('id', $courseGetId)->update(['image' => $imgName]);
+            }
+
+            foreach ($request->questions as $question) {
+                if (!$question["answers"]) continue;
+                $qId=DB::table('test_questions')->insertGetId([
+                    'course_id' => $courseGetId,
+                    'is_pre_test' => $question['is_pre_test'],
+                    'description' => $question['description'],
+                ]);
+                foreach ($question['answers'] as $answer) {
+                    $ans = DB::table('test_answers')->insert([
+                        'test_question_id' => $qId,
+                        'name' => $answer['name'],
+                        'is_true' => $answer['is_true'],
+                    ]);
+                }
+            }
+
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
         }
-        DB::commit();
         return response()->json([
             'data' => $courseGetId,
-            'message' => 'Data berhasil disimpan!',
-            'token' => $tokenUser
+            'message' => 'Data berhasil disimpan!'
         ], $this->successStatus);
     }
 
