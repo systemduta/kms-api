@@ -143,11 +143,15 @@ class UserController extends Controller
 
     public function update(request $request, $id)
     {
+        $request->validate([
+            'password' => 'string|nullable',
+        ]);
         $name = $request->name;
         $nik = $request->nik;
         $company_id = $request->company_id;
         $organization_id = $request->organization_id;
         $golongan_id = $request->golongan_id;
+        // $password = $request->password;
 
         $filename = null;
         /* START FILE UPLOAD */
@@ -188,6 +192,7 @@ class UserController extends Controller
         $user->company_id = $company_id;
         $user->organization_id = $organization_id;
         $user->golongan_id = $golongan_id;
+        if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
 
         return response()->json([
