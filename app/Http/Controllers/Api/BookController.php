@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Book;
 use Validator;
-use DB;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 
 class BookController extends Controller
 {
@@ -49,7 +50,7 @@ class BookController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);            
+            return response()->json(['error'=>$validator->errors()], 401);
         }
 
         DB::beginTransaction();
@@ -86,7 +87,8 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = DB::table('books')->where('id',$id)->first();
+        return response()->json(['success' => $data], $this->successStatus);
     }
 
     /**
@@ -109,7 +111,37 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $title = $request->title;
+        $description = $request->description;
+        $image = '';
+
+
+        if($request->filled('image')) {
+            $imgName='';
+            $baseString = explode(';base64,', $request->image);
+            $image = base64_decode($baseString[1]);
+            $image = imagecreatefromstring($image);
+
+            $ext = explode('/', $baseString[0]);
+            $ext = $ext[1];
+            $imgName = 'book_'.uniqid().'.'.$ext;
+            if($ext=='png'){
+                imagepng($image,public_path().'/files/'.$imgName,8);
+            } else {
+                imagejpeg($image,public_path().'/files/'.$imgName,20);
+            }
+        }
+
+        $book = Book::find($id);
+        $book->title = $title;
+        $book->description = $description;
+        $book->image = $imgName;
+        $book->save();
+
+        return response()->json([
+            'success'=>$book,
+            'message'=>'update successfully'],
+        $this->successStatus);
     }
 
     /**
@@ -120,6 +152,9 @@ class BookController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Book::destroy($id);
+        return response()->json([
+            'message'=>'delete successfully'],
+        $this->successStatus);
     }
 }

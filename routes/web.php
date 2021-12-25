@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Course;
+use App\Models\TestAnswer;
+use App\Models\TestQuestion;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,7 +40,9 @@ Route::get('migrate', function () {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome',[
+
+    ]);
 });
 Route::get('/clean_video', 'CleanController@clean_video');
 Route::get('/clean_pdf', 'CleanController@clean_pdf');

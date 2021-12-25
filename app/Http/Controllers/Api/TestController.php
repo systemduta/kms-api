@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\TestAnswer;
+use App\Models\TestQuestion;
 use Illuminate\Http\Request;
 use App\User;
 use Validator;
@@ -40,10 +42,9 @@ class TestController extends Controller
         $array=array();
         foreach ($data as $key => $value) {
             $var = $value;
-            $var->answers = DB::table('test_answers')->where('test_question_id', $value->id)->select('name','is_true')->get();
+            $var->answers = DB::table('test_answers')->where('test_question_id', $value->id)->select('id','name','is_true')->get();
             array_push($array, $var);
         }
         return response()->json(['data' => $array]);
     }
-
 }

@@ -26,7 +26,7 @@ Route::group([
         Route::post('register', 'UserController@register');
         Route::get('get_company', 'CompanyController@index');
         Route::get('get_organization', 'OrganizationController@index');
-        Route::resource('books','BookController');
+        // Route::resource('books','BookController');
 
         Route::group(['middleware' => 'auth:api'], function(){
             Route::get('get_user', 'UserController@index');
@@ -41,7 +41,23 @@ Route::group([
             Route::get('detail_event/{id}', 'EventController@detailsEvent');
             Route::get('detail_course/{id}', 'CourseController@detailsCourse');
             Route::get('get_question/{id}', 'TestController@index');
+
             Route::post('store_question', 'TestController@store');
+
+            Route::delete('delete_question/{id}', 'TestQuestionController@destroy');
+            Route::get('detail_question/{id}', 'TestQuestionController@show');
+            Route::put('update_question/{id}', 'TestQuestionController@update');
+
+            Route::delete('delete_answer/{id}', 'TestAnswerController@destroy');
+            Route::put('update_answer/{id}', 'TestAnswerController@update');
+            Route::get('detail_answer/{id}', 'TestAnswerController@show');
+
+            Route::get('get_book', 'BookController@index');
+            Route::get('detail_book/{id}', 'BookController@show');
+            Route::post('create', 'BookController@store');
+            Route::put('update_book/{id}', 'BookController@update');
+            Route::delete('delete_book/{id}', 'BookController@destroy');
+
 
             Route::get('golongan/list_by_company','GolonganController@get_golongan_by_company');
             Route::resource('golongan','GolonganController');

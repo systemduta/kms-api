@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Course;
+use App\Models\TestAnswer;
+use App\Models\TestQuestion;
+use App\Models\UserScore;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -271,6 +274,7 @@ class CourseController extends Controller
         $course->link = $link;
         $course->save();
 
+
         // DB::commit();
         return response()->json([
             'success'=>$course,
@@ -284,10 +288,17 @@ class CourseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        $course = Course::find($id);
-        $course->delete();
+        $qId=DB::table('courses')->where('id',$id)->select('id')->get();
+        $tq = DB::table('test_questions')->where('course_id',$qId[0]->id)->select('id')->get();
+        // $ta = DB::table('user_scores')->where('course_id',$qId[0]->id)->select('id')->get();
+        DB::table('user_scores')->where('course_id',$qId[0]->id)->select('id')->delete();
+        DB::table('test_answers')->where('test_question_id',$tq[0]->id)->select('id')->delete();
+        DB::table('test_questions')->where('course_id',$qId[0]->id)->select('id')->delete();
+        DB::table('courses')->where('id',$id)->select('id')->delete();
+
+        // // return $qId;
         return response()->json(['message' => 'delete successfully']);
     }
 }
