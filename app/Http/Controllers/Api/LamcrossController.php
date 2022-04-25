@@ -101,7 +101,7 @@ class LamcrossController extends Controller
 
         if ($st_sekarang == 1) {
             $sop = Lamcross::find($id);
-            $sop->status = 0;
+            $sop->status = 2;
             $sop->save();
         }else{
             $sop = Lamcross::find($id);

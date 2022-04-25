@@ -225,6 +225,86 @@ class MobileController extends Controller
         );
     }
 
+    public function sop_status($id)
+    {
+        $data = Sop::where('id',$id)->first();
+        // dd($data->title);
+
+        $st_sekarang = $data->status;
+
+        if ($st_sekarang == 1) {
+            $sop = Sop::find($id);
+            $sop->status = 0;
+            $sop->save();
+        }else{
+            $sop = Sop::find($id);
+            $sop->status = 1;
+            $sop->save();
+        }
+
+        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+    }
+
+    public function lamp_sop_status($id)
+    {
+        $data = Sop::where('id',$id)->first();
+        // dd($data->title);
+
+        $st_sekarang = $data->status;
+
+        if ($st_sekarang == 1) {
+            $sop = Sop::find($id);
+            $sop->status = 0;
+            $sop->save();
+        }else{
+            $sop = Sop::find($id);
+            $sop->status = 1;
+            $sop->save();
+        }
+
+        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+    }
+
+    public function cross_status($id)
+    {
+        $data = Sop::where('id',$id)->first();
+        // dd($data->title);
+
+        $st_sekarang = $data->status;
+
+        if ($st_sekarang == 1) {
+            $sop = Sop::find($id);
+            $sop->status = 0;
+            $sop->save();
+        }else{
+            $sop = Sop::find($id);
+            $sop->status = 1;
+            $sop->save();
+        }
+
+        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+    }
+
+    public function lamp_cross_status($id)
+    {
+        $data = Sop::where('id',$id)->first();
+        // dd($data->title);
+
+        $st_sekarang = $data->status;
+
+        if ($st_sekarang == 1) {
+            $sop = Sop::find($id);
+            $sop->status = 0;
+            $sop->save();
+        }else{
+            $sop = Sop::find($id);
+            $sop->status = 1;
+            $sop->save();
+        }
+
+        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+    }
+
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();

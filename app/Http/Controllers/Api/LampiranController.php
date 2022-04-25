@@ -50,7 +50,7 @@ class LampiranController extends Controller
 
         if ($st_sekarang == 1) {
             $sop = Lampiran::find($id);
-            $sop->status = 0;
+            $sop->status = 2;
             $sop->save();
         }else{
             $sop = Lampiran::find($id);

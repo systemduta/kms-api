@@ -136,7 +136,7 @@ class CrossfunctionController extends Controller
 
         if ($st_sekarang == 1) {
             $sop = Crossfunction::find($id);
-            $sop->status = 0;
+            $sop->status = 2;
             $sop->save();
         }else{
             $sop = Crossfunction::find($id);
