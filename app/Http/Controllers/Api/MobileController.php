@@ -4,9 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
+use App\Models\Crossfunction;
+use App\Models\Lamcross;
+use App\Models\Lampiran;
+use App\Models\Sop;
 use App\Models\UserScore;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +54,7 @@ class MobileController extends Controller
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
             }
             $success['company_id'] = $user->company_id;
+            $success['organization_id'] = $user->organization_id;
             $success['file'] = $user->file;
             $success['accessToken'] = $user->createToken('nApp')->accessToken;
 
@@ -61,6 +68,106 @@ class MobileController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
+
+    // public function sop_detail($id)
+    // {
+    //     $data = Sop::findOrFail($id);
+
+    //     return response()->json(['success' => $data]);
+    // }
+    public function sop_detail(Request $request)
+    {
+        $sop_id = $request->sop_id;
+        $data = Sop::with(['company','organization','lampiran'])->findOrFail($sop_id);
+
+        return response()->json(['data'=>$data]);
+    }
+
+    public function accept_sop(Request $request)
+    {
+        $sop_id = $request->sop_id;
+        $sop    = Sop::with(['company','organization','lampiran'])
+        // $sop    = Sop::with(['company','organization','lampiran'])->query()
+                ->where('id', $sop_id)
+                ->first();
+        if ($sop)
+            return response()->json(['message' => 'you have taken this SOP'], 401);
+
+        $data = Sop::with(['company','organization','lampiran'])->findOrFail($sop_id);
+
+        return response()->json([
+            'data'    => $data,
+            'message' => 'OK'
+        ]);
+    }
+
+    public function cross_detail($id)
+    {
+        $data = Crossfunction::with(['company','organization','lamcross'])->findOrFail($id);
+
+        $result = collect([
+            'id'                => $data->id,
+            'title'             => $data->title,
+            'company_id'        => $data->company_id,
+            'organization_id'   => $data->organization_id,
+            'file'              => $data->file,
+            'image'             => $data->image,
+            'description'       => $data->description,
+            'status'            => $data->status,
+            'created_at'        => $data->created_at,
+            'updated_at'        => $data->updated_at,
+        ]);
+
+        return response()->json(['success' => $result]);
+    }
+
+    public function sop_list()
+    {
+        $auth = auth()->user();
+        $data = Sop::with(['company','organization','lampiran'])
+                ->when($auth->role!=1, function ($q) use ($auth) {
+                    return $q->where('organization_id', $auth->organization_id);
+                })
+                ->orderBy('id', 'DESC')
+                ->get();
+        return response()->json(['data' => $data]);
+    }
+
+   public function lampiran()
+   {
+        $auth       = auth()->user();
+        $lampiran   = Lampiran::with(['company','organization','sop'])
+                    ->when($auth->role!=1, function ($q) use ($auth) {
+                        return $q->where('organization_id', $auth->organization_id);
+                    })
+                    ->orderBy('id', 'DESC')
+                    ->get();
+        return response()->json(['data' => $lampiran]);
+   }
+
+   public function cross_list()
+   {
+    $auth = auth()->user();
+    $data = Crossfunction::with(['company','organization','lamcross'])
+            ->when($auth->role!=1, function ($q) use ($auth) {
+                return $q->where('organization_id', $auth->organization_id);
+            })
+            ->orderBy('id', 'DESC')
+            ->get();
+    return response()->json(['data' => $data]);
+   }
+
+   public function lamcross()
+   {
+        $auth       = auth()->user();
+        $lampiran   = Lamcross::with(['company','organization','crossfunction'])
+                    ->when($auth->role!=1, function ($q) use ($auth) {
+                        return $q->where('company_id', $auth->company_id);
+                    })
+                    ->orderBy('id', 'DESC')
+                    ->get();
+        return response()->json(['data' => $lampiran]);
+   }
 //    Sementara ndak dipakai
 //    public function course_list(Request $request)
 //    {
@@ -79,6 +186,45 @@ class MobileController extends Controller
 //        $data=array();
 //        return response()->json(['data' => $dt]);
 //    }
+
+    public function downFileSop($id)
+    {
+        $data = Sop::where('id',$id)->first();
+        return response()->download(public_path(
+                'files/'.$data->file,
+            ),
+            'File SOP'
+        );
+    }
+    public function downFileLampiran($id)
+    {
+        $data = Lampiran::where('id',$id)->first();
+        return response()->download(public_path(
+                'files/'.$data->file,
+            ),
+            'File Lampiran'
+        );
+    }
+
+    public function downFileCross($id)
+    {
+        $data = Crossfunction::where('id',$id)->first();
+        return response()->download(public_path(
+                'files/'.$data->file,
+            ),
+            'File SOP'
+        );
+    }
+    public function downFileLamCross($id)
+    {
+        $data = Lamcross::where('id',$id)->first();
+        return response()->download(public_path(
+                'files/'.$data->file,
+            ),
+            'File Lampiran'
+        );
+    }
+
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();

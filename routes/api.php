@@ -44,6 +44,10 @@ Route::group([
 
             Route::post('store_question', 'TestController@store');
 
+            Route::post('store_cross', 'CrossfunctionController@store');
+            Route::get('getcross/{id}', 'CrossfunctionController@index');
+            Route::delete('delete_cross/{id}', 'CrossfunctionController@destroy');
+
             Route::delete('delete_question/{id}', 'TestQuestionController@destroy');
             Route::get('detail_question/{id}', 'TestQuestionController@show');
             Route::put('update_question/{id}', 'TestQuestionController@update');
@@ -57,6 +61,21 @@ Route::group([
             Route::post('create', 'BookController@store');
             Route::put('update_book/{id}', 'BookController@update');
             Route::delete('delete_book/{id}', 'BookController@destroy');
+
+            // Route::get('get_sop', 'Api/SOPController@index');
+            // Route::post('create_sop', 'SOPController@store');
+            Route::resource('sop','SOPController');
+            Route::get('get_sop','SOPController@sop');
+            Route::get('sop_status/{id}','SOPController@status');
+
+            Route::resource('lampiran','LampiranController');
+            Route::get('lamp_status/{id}','LampiranController@status');
+
+            Route::resource('crossfunction','CrossfunctionController');
+            Route::get('cross_status/{id}' ,'CrossfunctionController@status');
+            Route::get('get_cross' ,'CrossfunctionController@cross');
+            Route::resource('cros_lamp','LamcrossController');
+            Route::get('lamcross_status/{id}','LamcrossController@status');
 
 
             Route::get('golongan/list_by_company','GolonganController@get_golongan_by_company');
@@ -84,6 +103,20 @@ Route::group([
             Route::post('logout', 'MobileController@logout');
 //            Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
             Route::get('course_list_dashboard','MobileController@course_list_dashboard');
+
+            Route::post('accept_sop','MobileController@accept_sop');
+            Route::get('sop_detail','MobileController@sop_detail');
+            Route::get('sop_list','MobileController@sop_list');
+            Route::get('sop_download/{id}','MobileController@downFileSop');
+            Route::get('lampiran_download/{id}','MobileController@downFileLampiran');
+            Route::get('lampiran','MobileController@lampiran');
+
+            Route::get('cross_download/{id}','MobileController@downFileCross');
+            Route::get('lamcross_download/{id}','MobileController@downFileLamCross');
+            Route::get('cross_list','MobileController@cross_list');
+            Route::get('cross_detail/{id}','MobileController@cross_detail');
+            Route::get('lamcross','MobileController@lamcross');
+
             Route::get('leaderboards','MobileController@leaderboards');
             Route::get('calendar','MobileController@get_calendar');
             Route::post('calendar','MobileController@post_calendar');
