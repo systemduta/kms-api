@@ -16,16 +16,13 @@ class CreateCrossfunctionsTable extends Migration
         Schema::create('crossfunctions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('organization_id');
-            $table->string('image');
-            $table->string('title');
-            $table->string('description');
-            $table->string('status')->default(0);
+            $table->unsignedBigInteger('sop_id');
+            $table->string('name');
             $table->string('file');
             $table->timestamps();
 
             $table->foreign('company_id')->references('id')->on('companies');
-            $table->foreign('organization_id')->references('id')->on('organizations');
+            $table->foreign('sop_id')->references('id')->on('sops');
         });
     }
 

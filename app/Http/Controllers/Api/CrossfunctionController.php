@@ -21,17 +21,16 @@ class CrossfunctionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $auth = auth()->user();
-        $data = Crossfunction::with(['company','organization'])
-              -> when($auth->role!=1, function($q) use ($auth) {
-                  return $q->where('company_id', $auth->company_id);
-              })
-              ->where('organization_id', $request->organization_id)
-              ->orderBy('id')
-              ->get();
-        return response()->json(['data' => $data]);
+        $auth       = auth()->user();
+        $lampiran   = Crossfunction::with(['company','organization','sop'])
+                    ->when($auth->role!=1, function ($q) use ($auth) {
+                        return $q->where('company_id', $auth->company_id);
+                    })
+                    ->orderBy('id', 'DESC')
+                    ->get();
+        return response()->json(['data' => $lampiran]);
     }
 
     /**
@@ -39,92 +38,9 @@ class CrossfunctionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function cross()
+    public function create()
     {
-        return response()->json(['data' => Crossfunction::get()]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'organization_id'   => 'required',
-            'image'             => 'required',
-            'title'             => 'required',
-            'description'       => 'required',
-            'file'              => 'required',
-        ]);
-
-        if($validator->fails()){
-            return response()->json(['error' => $validator->errors()],401);
-        }
-
-        $auth = auth()->user();
-
-        //* START FILE UPLOAD */
-        $file64 = $request->file;
-        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
-        $file = str_replace($replace, '', $file64);
-        $file = str_replace(' ', '+', $file);
-        $filename = 'crossfunction_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
-        /* END FILE UPLOAD */
-        try {
-            DB::beginTransaction();
-            $crossGetId = DB::table('crossfunctions')->insertGetId([
-                'company_id'        => $auth->company_id,
-                'organization_id'   => $request->organization_id ?? null,
-                'title'             => $request->title,
-                'image'             => '',
-                'description'       => $request->description,
-                'file'              => 'files/'.$filename,
-                // 'file'              => env('APP_URL') . '/' . $url,
-            ]);
-
-            if($request->filled('image')) {
-                $imgName='';
-                $baseString = explode(';base64,', $request->image);
-                $image = base64_decode($baseString[1]);
-                $image = imagecreatefromstring($image);
-
-                $ext = explode('/', $baseString[0]);
-                $ext = $ext[1];
-                $imgName = 'cross_'.uniqid().'.'.$ext;
-                if($ext=='png'){
-                    imagepng($image,public_path().'/files/'.$imgName,8);
-                } else {
-                    imagejpeg($image,public_path().'/files/'.$imgName,20);
-                }
-                DB::table('crossfunctions')->where('id', $crossGetId)->update(['image' => $imgName]);
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw new HttpException(500, $exception->getMessage(), $exception);
-        }
-
-        return response()->json([
-            'data'      => $crossGetId,
-            'message'   => 'Data Berhasil disimpan!'
-        ], $this->successStatus);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $data = DB::table('crossfunctions')->where('id', $id)->first();
-        return response()->json(['success'=>$data],$this->successStatus);
+        //
     }
 
     public function status($id)
@@ -148,6 +64,69 @@ class CrossfunctionController extends Controller
     }
 
     /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        // error_reporting(0);
+        $validator = Validator::make($request->all(),[
+            'name'              => 'required',
+            'file'              => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()],400);
+        }
+
+        $auth   = auth()->user();
+
+        /* START FILE UPLOAD */
+        $file64 = $request->file;
+        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $file = str_replace($replace, '', $file64);
+        $file = str_replace(' ', '+', $file);
+        $filename = 'sop_'.Str::random(10).'.'.$ext;
+        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        /* END FILE UPLOAD */
+
+        try {
+            DB::beginTransaction();
+            $lampiranGetId = DB::table('crossfunctions')->insertGetId([
+                'company_id'        => $auth->company_id,
+                'name'              => $request->name,
+                'sop_id'            => $request->sop_id,
+                'file'              => 'files/'.$filename,
+            ]);
+
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+
+        return response()->json([
+            'data'      => $lampiranGetId,
+            'message'   => 'Data Berhasil disimpan!'
+        ], $this->successStatus);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $data = DB::table('crossfunctions')->where('id',$id)->first();
+        return response()->json(['success' => $data], $this->successStatus);
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -167,8 +146,8 @@ class CrossfunctionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $title = $request->title;
-        $description = $request->description;
+        $title = $request->name;
+        $description = $request->sop_id;
         $image = '';
 
         /* START FILE UPLOAD */
@@ -177,37 +156,20 @@ class CrossfunctionController extends Controller
         $replace = substr($file64, 0, strpos($file64, ',')+1);
         $file = str_replace($replace, '', $file64);
         $file = str_replace(' ', '+', $file);
-        $filename = 'crossfunction_'.Str::random(10).'.'.$ext;
+        $filename = 'Crossfunction_'.Str::random(10).'.'.$ext;
         Storage::disk('public')->put('files/'.$filename, base64_decode($file));
         /* END FILE UPLOAD */
 
-        if($request->filled('image')) {
-            $imgName='';
-            $baseString = explode(';base64,', $request->image);
-            $image = base64_decode($baseString[1]);
-            $image = imagecreatefromstring($image);
-
-            $ext = explode('/', $baseString[0]);
-            $ext = $ext[1];
-            $imgName = 'crossfunction_'.uniqid().'.'.$ext;
-            if($ext=='png'){
-                imagepng($image,public_path().'/files/'.$imgName,8);
-            } else {
-                imagejpeg($image,public_path().'/files/'.$imgName,20);
-            }
-        }
-
-        $course = Crossfunction::find($id);
-        $course->title = $title;
-        $course->description = $description;
-        $course->image = $imgName;
-        $course->file = 'files/'.$filename;
-        $course->save();
+        $lampiran               = Crossfunction::find($id);
+        $lampiran->name         = $title;
+        $lampiran->sop_id       = $description;
+        $lampiran->file         = 'files/'.$filename;
+        $lampiran->save();
 
 
         // DB::commit();
         return response()->json([
-            'success'=>$course,
+            'success'=>$lampiran,
             'message'=>'update successfully'],
         $this->successStatus);
     }
@@ -221,7 +183,8 @@ class CrossfunctionController extends Controller
     public function destroy($id)
     {
         Crossfunction::destroy($id);
-
-        return response()->json(['message', 'Data berhasil di hapus!']);
+        return response()->json([
+            'message' => 'Data Berhasil di Hapus'
+        ]);
     }
 }

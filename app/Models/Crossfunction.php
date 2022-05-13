@@ -11,12 +11,18 @@ class Crossfunction extends Model
     use HasApiTokens, HasFactory;
 
     protected $fillable = [
-        'company_id', 'organization_id', 'title', 'description', 'file','status'
+        // 'name', 'file', 'company_id', 'organization_id','image'
+        'sop_id','file','company_id','organization_id','status','name'
     ];
 
     protected $guarded = [
         'id'
     ];
+
+    public function sop()
+    {
+        return $this->belongsTo(Sop::class);
+    }
 
     public function company()
     {
@@ -26,10 +32,5 @@ class Crossfunction extends Model
     public function organization()
     {
         return $this->belongsTo(Organization::class);
-    }
-
-    public function lamcross()
-    {
-        return $this->hasMany(Lamcross::class);
     }
 }

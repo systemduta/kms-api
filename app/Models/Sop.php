@@ -29,4 +29,9 @@ class Sop extends Model
     {
         return $this->hasMany(Lampiran::class);
     }
+
+    public function crossfunction()
+    {
+        return $this->hasMany(Crossfunction::class);
+    }
 }

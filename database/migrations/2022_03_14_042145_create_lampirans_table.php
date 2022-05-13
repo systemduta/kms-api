@@ -19,7 +19,6 @@ class CreateLampiransTable extends Migration
             $table->unsignedBigInteger('sop_id');
             $table->string('name');
             $table->string('file');
-            $table->integer('status')->default(0);
             $table->timestamps();
 
             $table->foreign('company_id')->references('id')->on('companies');

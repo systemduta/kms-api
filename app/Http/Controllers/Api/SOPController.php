@@ -60,7 +60,7 @@ class SOPController extends Controller
      */
     public function store(Request $request)
     {
-        // error_reporting(0);
+        error_reporting(0);
         $validator = Validator::make($request->all(), [
             'organization_id'   => 'required',
             'image'             => 'required',
@@ -113,6 +113,7 @@ class SOPController extends Controller
                 }
                 DB::table('sops')->where('id', $sopGetId)->update(['image' => $imgName]);
             }
+
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
