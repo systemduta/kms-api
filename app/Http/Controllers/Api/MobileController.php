@@ -45,7 +45,7 @@ class MobileController extends Controller
     public function login_mobile(Request $request){
         // return response()->json($request,500);
         if(Auth::attempt([
-                'username' => $request->username,
+                'nik' => $request->nik,
                 'password' => $request->password
             ])){
             $user = Auth::user();
