@@ -74,6 +74,7 @@ class VhsController extends Controller
         $vhs = new Vhs();
         $vhs->title = $request->title;
         $vhs->description = $request->description;
+        $vhs->type = $request->type;
         $vhs->thumbnail = $thumbnail_name;
         $vhs->video = $video_path.$video_name;
         $vhs->save();
