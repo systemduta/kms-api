@@ -17,12 +17,12 @@ class CreateDaftaruservhsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('jadwal_id');
-            $table->unsignedBigInteger('vhs_id');
+            $table->unsignedBigInteger('course_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('jadwal_id')->references('id')->on('jadwalvhs');
-            $table->foreign('vhs_id')->references('id')->on('vhses');
+            $table->foreign('course_id')->references('id')->on('courses');
         });
     }
 

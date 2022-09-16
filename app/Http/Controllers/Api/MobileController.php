@@ -75,10 +75,10 @@ class MobileController extends Controller
 
     //     return response()->json(['success' => $data]);
     // }
-    public function sop_detail(Request $request)
+    public function sop_detail($id)
     {
-        $sop_id = $request->sop_id;
-        $data = Sop::with(['company','organization','lampiran','crossfunction'])->findOrFail($sop_id);
+        // $sop_id = $request->sop_id;
+        $data = Sop::with(['company','organization','lampiran','crossfunction'])->findOrFail($id);
 
         return response()->json(['data'=>$data]);
     }

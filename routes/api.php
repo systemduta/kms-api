@@ -100,13 +100,13 @@ Route::group([
             Route::post('logout', 'MobileController@logout');
 //            Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
             Route::get('course_list_dashboard','MobileController@course_list_dashboard');
-            
+
             // Route::post('accept_sop','MobileController@accept_sop');
             Route::get('/sop_status/{id}','MobileController@sop_status');
-            Route::get('sop_detail','MobileController@sop_detail');
+            Route::get('sop_detail/{id}','MobileController@sop_detail');
             Route::get('sop_list','MobileController@sop_list');
             Route::get('lampiran','MobileController@lampiran');
-            
+
             Route::get('sop_download/{id}','MobileController@downFileSop');
             Route::get('lampiran_download/{id}','MobileController@downFileLampiran');
             Route::get('cross_download/{id}','MobileController@downFileCross');
