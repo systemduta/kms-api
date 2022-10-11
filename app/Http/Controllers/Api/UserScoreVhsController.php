@@ -84,22 +84,29 @@ class UserScoreVhsController extends Controller
             return response()->json(['error' => $validator->errors()],400);
         }
 
+        $cekData = UserScoreVhs::where('user_id',$request->user_id)->count();
+        if ($cekData==0) {
+            try {
+                DB::beginTransaction();
+                $data = DB::table('user_score_vhs')->insertGetId([
+                    'materi_id'         => $request->materi_id,
+                    'user_id'           => $request->user_id,
+                    'score'             => $request->score,
+                ]);
+                DB::commit();
+    
+                return response()->json([
+                    'success'=>$data,
+                    'message'=>'get successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            } 
+        } else {
+            return response()->json(['error' => 'user sudah dinilai'], 500);
+        }
+        
 
-        try {
-            DB::beginTransaction();
-            $data = DB::table('user_score_vhs')->insertGetId([
-                'materi_id'         => $request->materi_id,
-                'user_id'           => $request->user_id,
-                'score'             => $request->score,
-            ]);
-            DB::commit();
-
-            return response()->json([
-                'success'=>$data,
-                'message'=>'get successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }   
+          
     }
 
 
