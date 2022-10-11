@@ -52,7 +52,6 @@ class AnswerVhsController extends Controller
                 ->get();
 
             $data3 = QuestionVhs::where('question_vhs.id',$id)->first();
-            // dd($data3->question);
          return response()->json([
             'question'=>$data3,
             'success'=>$data,
