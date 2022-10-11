@@ -20,10 +20,6 @@ class UserScoreVhsController extends Controller
     public function index()
     {
         try {
-            // $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
-            //         ->join('materi_vhs','user_score_vhs.materi_id','=','materi_vhs.id')
-            //         ->select('users.id as id_user','users.name as nama_user','materi_vhs.name as nama_materi','user_score_vhs.*')
-            //         ->get();
             $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
                 ->join('companies','companies.id','=','users.company_id')
                 ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
