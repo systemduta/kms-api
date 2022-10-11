@@ -21,6 +21,7 @@ class UserController extends Controller
                 'password' => $request->password
             ])){
             $user = Auth::user();
+            // dd($user);
             $org= DB::table('organizations')->where('id', $user->organization_id)->first();
             if($request->isWeb=="1") {
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
@@ -31,6 +32,8 @@ class UserController extends Controller
             $success['company_name'] = $company->name;
             $success['company_id'] = $user->company_id;
             $success['organization_id'] = $user->organization_id;
+            $success['city'] = $user->kota;
+            $success['phone'] = $user->phone;
             $success['file'] = $user->file;
             $success['role'] = $user->role;
             $success['accessToken'] = $user->createToken('nApp')->accessToken;
@@ -92,6 +95,8 @@ class UserController extends Controller
             'username' => $username,
             'role' => 2
         ]);
+
+        // dd($userGetId);
 
         if($request->filled('image')) {
             $imgName='';

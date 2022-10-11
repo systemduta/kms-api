@@ -43,6 +43,7 @@ class MobileController extends Controller
     }
 
     public function login_mobile(Request $request){
+        // dd($request->all());
         // return response()->json($request,500);
         if(Auth::attempt([
                 'nik' => $request->nik,

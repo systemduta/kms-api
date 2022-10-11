@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\JadwalVhsController;
+use App\Http\Controllers\Api\MateriVHsController;
+use App\Http\Controllers\Api\ZoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +87,37 @@ Route::group([
             Route::resource('test','TestController');
             Route::resource('vhs','VhsController');
             Route::resource('splash_screen','SplashScreenController');
+
+            //uji
+            // Route::resource('jadwal','JadwalVhsController');
+            Route::get('get_jadwal',[JadwalVhsController::class, 'sop_all']);
+            Route::post('store_jadwal', [JadwalVhsController::class, 'store']);
+            Route::delete('jadwal/{id}', [JadwalVhsController::class, 'destroy']);
+            Route::get('show_jadwal/{id}', [JadwalVhsController::class, 'show']);
+            Route::put('update_jadwal/{id}', [JadwalVhsController::class, 'update']);
+
+            //zoom
+            Route::resource('zoom','ZoomController');
+            Route::put('update_zoom/{id}','ZoomController@update');
+            Route::get('getvhs', [ZoomController::class, 'getvhs']);
+
+            //materivhs
+            Route::resource('materivhs','MateriVHsCOntroller');
+            Route::put('update_materi/{id}','MateriVHsCOntroller@update');
+
+            //questionvhs
+            Route::resource('questionvhs','QuestionVhsController');
+            Route::get('listmateri','QuestionVhsController@listMateriVhs');
+
+            //TODO besok
+            //answervhs
+            Route::resource('answervhs','AnswerVhsController');
+            Route::get('getanswervhs/{id}','AnswerVhsController@getAnswer');
+            Route::get('getsingleanswer/{id}','AnswerVhsController@getSingleAnswer');
+            //TODO besok
+            //userscorevhs
+            Route::resource('userscorevhs','UserScoreVhsController');
+            Route::get('getuserpercompany/{id}','UserScoreVhsController@getUserPerCompany');
         });
     });
 
