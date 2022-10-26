@@ -109,15 +109,18 @@ Route::group([
             Route::resource('questionvhs','QuestionVhsController');
             Route::get('listmateri','QuestionVhsController@listMateriVhs');
 
-            //TODO besok
             //answervhs
             Route::resource('answervhs','AnswerVhsController');
             Route::get('getanswervhs/{id}','AnswerVhsController@getAnswer');
             Route::get('getsingleanswer/{id}','AnswerVhsController@getSingleAnswer');
-            //TODO besok
+
             //userscorevhs
             Route::resource('userscorevhs','UserScoreVhsController');
             Route::get('getuserpercompany/{id}','UserScoreVhsController@getUserPerCompany');
+
+            //jadwaluservhs
+            Route::resource('jadwalvhsuser','JadwalUserVhsController');
+            Route::get('getcompany','JadwalUserVhsController@getCompany');
         });
     });
 
@@ -155,6 +158,35 @@ Route::group([
             Route::post('change_password', 'MobileController@change_password');
             Route::get('vhs','MobileController@list_vhs');
             Route::get('vhs_dashboard','VhsController@index');
+            
+
+            //OJOLALI sblm upload set answer_vhs->create_at ->default : current_timestamp()	
+            Route::get('getvhsnotfinish','MobileController@getVHSNotFinish');
+            //vhs_basic
+            Route::post('getvhsbasic','MobileController@getVhsBasic');
+            Route::post('getvhsbasicdetail','MobileController@getVhsBasicDetail');
+            Route::post('getvhsbasicquestion','MobileController@getVhsBasicQuestion');
+            Route::post('confirmpickipbasic','MobileController@confirmPickUpBasic');
+            Route::post('setanswervhsbasic','MobileController@setAnswerVhsBasic');
+            Route::post('getvhsbasicpending','MobileController@getVhsBasicPending');
+            
+            
+            //vhs_class
+            Route::post('getvhsclass','MobileController@getVhsClass');
+            Route::post('getvhsclassdetail','MobileController@getVhsClassDetail');
+            Route::post('confirmpickipclass','MobileController@confirmPickUpClass');
+            Route::post('getvhsclassquestion','MobileController@getVhsClassQuestion');
+            Route::post('setanswervhsclass','MobileController@setAnswerVhsClass');
+            Route::post('getvhsclasspending','MobileController@getVhsClassPending');
+            
+            
+            //vhs_academy
+            Route::post('getvhsacademy','MobileController@getVhsAcademy');
+            Route::post('getvhsacademydetail','MobileController@getVhsClassDetail');
+            Route::post('confirmpickipacademy','MobileController@confirmPickUpAcademy');
+            Route::post('getvhsacademyquestion','MobileController@getVhsAcademyQuestion');
+            Route::post('setanswervhsacademy','MobileController@setAnswerVhsAcademy');
+            Route::post('getvhsacademypending','MobileController@getVhsAcademyPending');
         });
     });
 

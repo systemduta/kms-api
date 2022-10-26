@@ -18,15 +18,30 @@ class UserScoreVhsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    {        
         try {
-            $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
-                ->join('companies','companies.id','=','users.company_id')
-                ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-                ->join('answer_vhs','answer_vhs.user_id','=','users.id')
-                ->select('users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')
-                ->get();
+            // $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
+            //     ->join('companies','companies.id','=','users.company_id')
+            //     ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
+            //     ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
+            //     ->join('answer_vhs','answer_vhs.user_id','=','users.id')
+            //     ->select('user_score_vhs.id','users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')
+            //     ->get();
+            $data = DB::table('users')
+                    ->join('user_score_vhs','user_score_vhs.user_id','users.id')
+                    ->join('companies','companies.id','users.company_id')
+                    ->join('materi_vhs','materi_vhs.id','user_score_vhs.materi_id')
+                    ->join('question_vhs','question_vhs.materi_id','materi_vhs.id')
+                    ->join('answer_vhs','answer_vhs.question_id','question_vhs.id')
+                    ->select('user_score_vhs.id',
+                    'users.name as nama_user',
+                    'users.username as username',
+                    'materi_vhs.name as namamateri',
+                    'question_vhs.question as question',
+                    'answer_vhs.answer as answer',
+                    'materi_vhs.type',
+                    'user_score_vhs.score')
+                    ->get();
             return response()->json([
                 'success'=>$data,
                 'message'=>'get successfully']);
@@ -38,11 +53,12 @@ class UserScoreVhsController extends Controller
     public function getUserPerCompany($id) {
         try {
 
-            $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
+            $data=DB::table('users')
                     ->join('companies','companies.id','=','users.company_id')
-                    ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
+                    ->join('user_score_vhs','user_score_vhs.user_id','=','users.id')
+                    ->join('materi_vhs','materi_vhs.id','=','user_Score_vhs.materi_id')
                     ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-                    ->join('answer_vhs','answer_vhs.user_id','=','users.id')
+                    ->join('answer_vhs','answer_vhs.question_id','=','question_vhs.id')
                     ->select('users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')
                     ->where('users.company_id',$id)
                     ->get();
@@ -84,7 +100,7 @@ class UserScoreVhsController extends Controller
             return response()->json(['error' => $validator->errors()],400);
         }
 
-        $cekData = UserScoreVhs::where('user_id',$request->user_id)->count();
+        $cekData = UserScoreVhs::where('user_id',$request->user_id)->where('materi_id',$request->materi_id)->count();
         if ($cekData==0) {
             try {
                 DB::beginTransaction();
@@ -92,6 +108,7 @@ class UserScoreVhsController extends Controller
                     'materi_id'         => $request->materi_id,
                     'user_id'           => $request->user_id,
                     'score'             => $request->score,
+                    'status'             => "1",                    
                 ]);
                 DB::commit();
     
@@ -104,13 +121,7 @@ class UserScoreVhsController extends Controller
         } else {
             return response()->json(['error' => 'user sudah dinilai'], 500);
         }
-        
-
-          
     }
-
-
-
     /**
      * Display the specified resource.
      *
@@ -119,7 +130,22 @@ class UserScoreVhsController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $data=DB::table('user_score_vhs')
+                ->join('users','user_score_vhs.user_id','=','users.id')
+                ->join('companies','companies.id','=','users.company_id')
+                ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
+                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
+                ->join('answer_vhs','answer_vhs.user_id','=','users.id')
+                ->select('user_score_vhs.id as user_score_vhs_id','users.id as users_id','materi_vhs.id as id_materi_vhs','users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')
+                ->where('user_score_vhs.id',$id)
+                ->get();
+            return response()->json([
+                'success'=>$data,
+                'message'=>'get successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }   
     }
 
     /**
@@ -142,7 +168,30 @@ class UserScoreVhsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // dd($request->all());
+        $validator = Validator::make($request->all(),[
+            'materi_id'             => 'required',
+            'user_id'               => 'required',
+            'score'                 => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()],400);
+        }
+
+            try {
+                $data = UserScoreVhs::findOrfail($id)->update([
+                    'materi_id'         => $request->materi_id,
+                    'user_id'           => $request->user_id,
+                    'score'             => $request->score,
+                ]);
+    
+                return response()->json([
+                    'success'=>$data,
+                    'message'=>'get successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500);
+            } 
     }
 
     /**
@@ -153,6 +202,14 @@ class UserScoreVhsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            UserScoreVhs::destroy($id);
+            return response()->json([
+                'message' => 'Data Berhasil di Hapus'
+            ]);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
     }
 }
