@@ -16,7 +16,9 @@ class GolonganController extends Controller
      */
     public function index()
     {
-        return response()->json(['data' => Golongan::get()]);
+        return response()->json(
+            ['data' => Golongan::whereNotIn('name',['Staff','Ass. Manager','Ass. Supervisor'])->orderBy('code','ASC')->get()]
+        );
     }
 
     /**

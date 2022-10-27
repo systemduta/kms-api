@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Company;
+use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CompanyController extends Controller
 {
@@ -16,12 +18,68 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        $company = Company::query()
-            ->when(($user && $user->role!=1), function ($q) use ($user) {
-                return $q->where('id', $user->company_id);
-            })->get();
-        return response()->json(['data' => $company]);
+        // $user = auth()->user();
+        // $company = Company::query()
+        //     ->when(($user && $user->role!=1), function ($q) use ($user) {
+        //         return $q->where('id', $user->company_id);
+        //     })->get();
+        // return response()->json(['data' => $company]);
+        return response()->json(
+            ['data' => Company::whereNotIn('name',[
+                'MAESA HOLDING', 
+                'ANUGERAH UTAMA MOTOR',
+                'BANK ARTHAYA',
+                'CUN MOTOR GROUP',
+                'DUA TANGAN INDONESIA',
+                'ES KRISTAL PMP GROUP',
+                'HENNESY CUISINE',
+                'KOPERASI SDM',
+                'MAESA FOUNDATION',
+                'MAESA HOTEL',
+                'MIXTRA INTI TEKINDO',
+                'PABRIK ES PMP GROUP',
+                'PANDHU DISTRIBUTOR',
+                'PRAMA LOGISTIC',
+                'PT. PUTRA MAESA PERSADA',
+                'Panen Mutiara Pakis',
+                'HENNESSY CUISINE',
+                'WERKST MATERIAL HANDLING'
+                ])->orderBy('id','ASC')->get()]
+        );
+    }
+
+    public function getCompany($id)
+    {
+        $detailCompany =  Company::whereNotIn('name',[
+            'MAESA HOLDING', 
+            'ANUGERAH UTAMA MOTOR',
+            'BANK ARTHAYA',
+            'CUN MOTOR GROUP',
+            'DUA TANGAN INDONESIA',
+            'ES KRISTAL PMP GROUP',
+            'HENNESY CUISINE',
+            'KOPERASI SDM',
+            'MAESA FOUNDATION',
+            'MAESA HOTEL',
+            'MIXTRA INTI TEKINDO',
+            'PABRIK ES PMP GROUP',
+            'PANDHU DISTRIBUTOR',
+            'PRAMA LOGISTIC',
+            'PT. PUTRA MAESA PERSADA',
+            'Panen Mutiara Pakis',
+            'HENNESSY CUISINE',
+            'WERKST MATERIAL HANDLING'
+            ])->where('id',$id)->orderBy('id','ASC')->get();
+        $listDivision = DB::table('companies')
+            ->join('organizations','organizations.company_id','=','companies.id')
+            ->where('companies.id',$id)
+            ->get();
+        return response()->json(
+            [
+                'detailcompany' =>$detailCompany,
+                'listorganizations' =>$listDivision,
+            ]
+        );
     }
 
     /**
