@@ -37,6 +37,26 @@ class JadwalUserVhsController extends Controller
     public function getCompany() {
         try {
             $data = DB::table('companies')
+                    ->whereNotIn('name',[
+                        'MAESA HOLDING', 
+                        'ANUGERAH UTAMA MOTOR',
+                        'BANK ARTHAYA',
+                        'CUN MOTOR GROUP',
+                        'DUA TANGAN INDONESIA',
+                        'ES KRISTAL PMP GROUP',
+                        'HENNESY CUISINE',
+                        'KOPERASI SDM',
+                        'MAESA FOUNDATION',
+                        'MAESA HOTEL',
+                        'MIXTRA INTI TEKINDO',
+                        'PABRIK ES PMP GROUP',
+                        'PANDHU DISTRIBUTOR',
+                        'PRAMA LOGISTIC',
+                        'PT. PUTRA MAESA PERSADA',
+                        'Panen Mutiara Pakis',
+                        'HENNESSY CUISINE',
+                        'WERKST MATERIAL HANDLING'
+                        ])
                     ->select('id as idCompany','name as nameCompany')
                     ->get();
             return response()->json(
