@@ -42,6 +42,7 @@ Route::group([
             Route::resource('organization','OrganizationController');
             Route::resource('companies','CompanyController');
             Route::get('getcompany/{id}','CompanyController@getCompany');
+            Route::post('getdetailcompany','CompanyController@getDetail');
 
             Route::get('detail_event/{id}', 'EventController@detailsEvent');
             Route::get('detail_course/{id}', 'CourseController@detailsCourse');

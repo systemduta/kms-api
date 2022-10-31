@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CompanyController extends Controller
 {
@@ -85,6 +86,28 @@ class CompanyController extends Controller
                 'listorganizations' =>$listDivision,
             ]
         );
+    }
+
+    public function getDetail(Request $request)
+    {
+        try {
+            $datas=DB::table('users')
+                ->join('organizations','organizations.id','=','users.organization_id')
+                ->join('companies','companies.id','=','users.company_id')
+                ->where('organizations.id',$request->iddivision)
+                ->where('companies.id',$request->idcompany)
+                ->select('users.id','users.nik','users.name')
+                ->get();
+            return response()->json(
+                    [
+                        'data' =>$datas,
+                        'message' =>'success',
+                    ]
+                );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
     }
 
     /**
