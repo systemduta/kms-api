@@ -24,6 +24,7 @@ class CompanyController extends Controller
         //         return $q->where('id', $user->company_id);
         //     })->get();
         // return response()->json(['data' => $company]);
+
         return response()->json(
             ['data' => Company::whereNotIn('name',[
                 'MAESA HOLDING', 
@@ -46,6 +47,10 @@ class CompanyController extends Controller
                 'WERKST MATERIAL HANDLING'
                 ])->orderBy('id','ASC')->get()]
         );
+
+        // return response()->json(
+        //     ['data' => Company::orderBy('id','DESC')->get()]
+        // );
     }
 
     public function getCompany($id)
