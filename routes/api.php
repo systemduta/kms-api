@@ -105,8 +105,8 @@ Route::group([
             Route::get('getvhs', [ZoomController::class, 'getvhs']);
 
             //materivhs
-            Route::resource('materivhs','MateriVHsCOntroller');
-            Route::put('update_materi/{id}','MateriVHsCOntroller@update');
+            Route::resource('materivhs','MateriVHsController');
+            Route::put('update_materi/{id}','MateriVHsController@update');
 
             //questionvhs
             Route::resource('questionvhs','QuestionVhsController');

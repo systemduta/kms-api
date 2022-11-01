@@ -14,7 +14,7 @@ class CompanyTambahanSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('Companies')->insert([
+        DB::table('companies')->insert([
             [
                 'code'  => 'MCC',
                 'name'  => '001 - PT. Maesa Cipta Corporindo'

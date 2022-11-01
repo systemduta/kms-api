@@ -678,8 +678,10 @@ class MobileController extends Controller
     {
         // dd($request->all());
         $validator = Validator::make($request->all(),[
-            'is_take'            => 'required',
-            'idjadwaluser'            => 'required',
+            'is_take'           =>'required',
+            'idjadwaluser'      =>'required',
+            'name'              =>'required',
+            'idmateri'          =>'required',
         ]);
         
         if ($validator->fails()) {
@@ -690,10 +692,25 @@ class MobileController extends Controller
             $JadwalGetId=JadwalUserVhs::findOrfail($request->idjadwaluser)->update([
                 'is_take'           => $request->is_take,
             ]);
+            $userid = Auth::guard('api')->user()->id;
+            $type = $request->name;
+            $idmateri = $request->idmateri;
+            $data= DB::table('jadwalvhs')
+                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
+                ->join('users','users.id','=','jadwal_user_vhs.user_id')
+                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
+                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
+                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
+                ->where('users.id','=',$userid)
+                ->where('jadwalvhs.name','=',$type)
+                ->where('materi_vhs.id','=',$idmateri)
+                ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
+                ->get();
             return response()->json(
                 [
                     'message'=>'success',
                     'success'=>$JadwalGetId,
+                    'question'=>$data,
                 ],200);
         } catch (\Exception $exception) {
             DB::rollBack();

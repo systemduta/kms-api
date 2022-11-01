@@ -25,7 +25,6 @@ class CompanyController extends Controller
         //         return $q->where('id', $user->company_id);
         //     })->get();
         // return response()->json(['data' => $company]);
-
         return response()->json(
             ['data' => Company::whereNotIn('name',[
                 'MAESA HOLDING', 
@@ -45,7 +44,8 @@ class CompanyController extends Controller
                 'PT. PUTRA MAESA PERSADA',
                 'Panen Mutiara Pakis',
                 'HENNESSY CUISINE',
-                'WERKST MATERIAL HANDLING'
+                'WERKST MATERIAL HANDLING',
+                'PT. Prama Madya Parama'
                 ])->orderBy('id','ASC')->get()]
         );
 
@@ -74,7 +74,8 @@ class CompanyController extends Controller
             'PT. PUTRA MAESA PERSADA',
             'Panen Mutiara Pakis',
             'HENNESSY CUISINE',
-            'WERKST MATERIAL HANDLING'
+            'WERKST MATERIAL HANDLING',
+            'PT. Prama Madya Parama'
             ])->where('id',$id)->orderBy('id','ASC')->get();
         $listDivision = DB::table('companies')
             ->join('organizations','organizations.company_id','=','companies.id')

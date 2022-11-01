@@ -16,23 +16,19 @@ class GolonganSeeder extends Seeder
     {
         DB::table('golongans')->insert([
             [
-                'name'  => 'CEO/Direktur',
-                'code'  => '8'
+                'name'  => 'PKWTT',
+                'code'  => '1'
             ],
             [
-                'name'  => 'CSO/CFO/CPO/COO/CMO/GM',
-                'code'  => '7'
+                'name'  => 'PKWTT',
+                'code'  => '2'
             ],
             [
-                'name'  => 'Manager',
-                'code'  => '6'
+                'name'  => 'Karyawan PKWT',
+                'code'  => '3'
             ],
             [
-                'name'  => 'Supervisor',
-                'code'  => '5'
-            ],
-            [
-                'name'  => 'Staff',
+                'name'  => 'Karyawan PKWT',
                 'code'  => '4'
             ]
         ]);

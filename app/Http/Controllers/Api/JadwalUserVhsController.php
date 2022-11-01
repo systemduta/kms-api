@@ -55,7 +55,8 @@ class JadwalUserVhsController extends Controller
                         'PT. PUTRA MAESA PERSADA',
                         'Panen Mutiara Pakis',
                         'HENNESSY CUISINE',
-                        'WERKST MATERIAL HANDLING'
+                        'WERKST MATERIAL HANDLING',
+                        'PT. Prama Madya Parama'
                         ])
                     ->select('id as idCompany','name as nameCompany')
                     ->get();
