@@ -162,8 +162,6 @@ Route::group([
             Route::get('vhs','MobileController@list_vhs');
             Route::get('vhs_dashboard','VhsController@index');
             
-
-            //OJOLALI sblm upload set answer_vhs->create_at ->default : current_timestamp()	
             Route::get('getvhsnotfinish','MobileController@getVHSNotFinish');
             //vhs_basic
             Route::post('getvhsbasic','MobileController@getVhsBasic');
