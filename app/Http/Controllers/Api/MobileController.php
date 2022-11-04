@@ -354,7 +354,7 @@ class MobileController extends Controller
                     "post_status" => $temp_status,
                 ]);
                 
-        dd($modifiedElement);
+        // dd($modifiedElement);
                 $data->put((($data->count())-1), $modifiedElement);
             } else {
                 $data->push([
@@ -1260,6 +1260,31 @@ class MobileController extends Controller
                     ->where('jadwal_user_vhs.is_take','=',1)
                     ->where('jadwalvhs.name','=',$type)
                     ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri')
+                    ->get();
+                    return response()->json(
+                    [
+                        'message'=>'success',
+                        'success'=>$data,
+                    ],
+                        200);
+                } catch (\Exception $exception) {
+                    DB::rollBack();
+                    throw new HttpException(500, $exception->getMessage(), $exception);
+                }
+        }
+
+        public function getAllVhs()
+        {
+            $userid = Auth::guard('api')->user()->id;
+            try {
+                $data= DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
+                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
+                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
+                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
+                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
+                    ->where('users.id','=',$userid)
+                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri','jadwal_user_vhs.is_take','materi_vhs.*')
                     ->get();
                     return response()->json(
                     [

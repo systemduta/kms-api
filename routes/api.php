@@ -188,6 +188,9 @@ Route::group([
             Route::post('getvhsacademyquestion','MobileController@getVhsAcademyQuestion');
             Route::post('setanswervhsacademy','MobileController@setAnswerVhsAcademy');
             Route::post('getvhsacademypending','MobileController@getVhsAcademyPending');
+
+            //get All vhs by user
+            Route::get('getallvhs','MobileController@getAllVhs');
         });
     });
 
