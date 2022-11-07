@@ -96,26 +96,36 @@ class JadwalUserVhsController extends Controller
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()],400);
         }
-
-        try {
-            DB::beginTransaction();
-            $JadwalGetId = DB::table('jadwal_user_vhs')->insertGetId([
-                'jadwal_id'         => $request->jadwal_id,
-                'company_id'        => $request->company_id,
-                'user_id'           => $request->user_id,
-                'is_take'           => 0,
-            ]);
-
-            DB::commit();
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw new HttpException(500, $exception->getMessage(), $exception);
+        
+        $cekData = DB::table('jadwal_user_vhs')
+                    ->where('jadwal_id',$request->jadwal_id)
+                    ->where('user_id',$request->user_id)
+                    ->where('company_id',$request->company_id)
+                    ->count();
+        if ($cekData==1) {
+            return response()->json(['error' => $validator->errors()],400);
         }
+        else{
+                try {
+                    DB::beginTransaction();
+                    $JadwalGetId = DB::table('jadwal_user_vhs')->insertGetId([
+                        'jadwal_id'         => $request->jadwal_id,
+                        'company_id'        => $request->company_id,
+                        'user_id'           => $request->user_id,
+                        'is_take'           => 0,
+                    ]);
 
-        return response()->json([
-            'data'      => $JadwalGetId,
-            'message'   => 'Data Berhasil disimpan!'
-        ],200);
+                    DB::commit();
+                } catch (\Exception $exception) {
+                    DB::rollBack();
+                    throw new HttpException(500, $exception->getMessage(), $exception);
+                }
+
+                return response()->json([
+                    'data'      => $JadwalGetId,
+                    'message'   => 'Data Berhasil disimpan!'
+                ],200);
+            }
     }
 
     /**
