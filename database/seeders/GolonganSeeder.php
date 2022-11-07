@@ -16,19 +16,19 @@ class GolonganSeeder extends Seeder
     {
         DB::table('golongans')->insert([
             [
-                'name'  => 'PKWTT',
+                'name'  => 'Staf PKWT',
                 'code'  => '1'
             ],
             [
-                'name'  => 'PKWTT',
+                'name'  => 'Staf PKWT',
                 'code'  => '2'
             ],
             [
-                'name'  => 'Karyawan PKWT',
+                'name'  => 'Staf PKWTT',
                 'code'  => '3'
             ],
             [
-                'name'  => 'Karyawan PKWT',
+                'name'  => 'Staf PKWTT',
                 'code'  => '4'
             ]
         ]);
