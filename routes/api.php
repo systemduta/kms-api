@@ -124,6 +124,10 @@ Route::group([
             //jadwaluservhs
             Route::resource('jadwalvhsuser','JadwalUserVhsController');
             Route::get('getcompany','JadwalUserVhsController@getCompany');
+
+            //dashboard
+            
+            Route::resource('dashbrd','DashboardController');
         });
     });
 
