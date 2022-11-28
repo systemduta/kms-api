@@ -59,11 +59,8 @@ class MobileController extends Controller
     public function firebase_token(Request $request)
 
     {
-
         $validator = Validator::make($request->all(), [
-
             "token" => "string|nullable"
-
         ]);
 
         if ($validator->fails()) {
@@ -71,9 +68,6 @@ class MobileController extends Controller
             return response()->json(['error'=>$validator->errors()], 401);
 
         }
-
-
-
         $user = \auth()->user();
 
         DB::table('users')->where('id', $user->id)->update([
@@ -87,17 +81,9 @@ class MobileController extends Controller
             'message' => 'update firebase token successfully'
 
         ], $this->successStatus);
-
     }
 
-
-
     public function login_mobile(Request $request){
-
-        // dd($request->all());
-
-        // return response()->json($request,500);
-
         if(Auth::attempt([
 
                 'nik' => $request->nik,
@@ -2481,14 +2467,8 @@ class MobileController extends Controller
                 DB::rollBack();
 
                 throw new HttpException(500, $exception->getMessage(), $exception);
-
             }
-
-        }
-
-
-
-        
+        }        
 
         public function getVhsAcademyPending(Request $request)
 
@@ -2568,11 +2548,13 @@ class MobileController extends Controller
 
                     ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
 
+                    ->leftJoin('user_score_vhs','user_score_vhs.materi_id','=','materi_vhs.id')
+
                     ->where('users.id','=',$userid)
 
                     ->where('jadwal_user_vhs.is_take','!=',0)
 
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri','jadwal_user_vhs.is_take','materi_vhs.*')
+                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri','jadwal_user_vhs.is_take','materi_vhs.*','user_score_vhs.score')
                     ->orderBy('jadwal_user_vhs.is_take','ASC')
                     ->get();
 

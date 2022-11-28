@@ -56,7 +56,7 @@ class UserScoreVhsController extends Controller
             $data=DB::table('users')
                     ->join('companies','companies.id','=','users.company_id')
                     ->join('user_score_vhs','user_score_vhs.user_id','=','users.id')
-                    ->join('materi_vhs','materi_vhs.id','=','user_Score_vhs.materi_id')
+                    ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
                     ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
                     ->join('answer_vhs','answer_vhs.question_id','=','question_vhs.id')
                     ->select('users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')

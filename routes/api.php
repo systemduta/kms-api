@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\JadwalVhsController;
 use App\Http\Controllers\Api\MateriVHsController;
+use App\Http\Controllers\Api\SOPController;
 use App\Http\Controllers\Api\ZoomController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +32,6 @@ Route::group([
         Route::get('get_company', 'CompanyController@index');
         Route::get('get_organization', 'OrganizationController@index');
         // Route::resource('books','BookController');
-
         Route::group(['middleware' => 'auth:api'], function(){
             Route::get('get_user', 'UserController@index');
             Route::get('detail_admin', 'UserController@details');
@@ -38,7 +39,7 @@ Route::group([
             Route::put('update_user/{id}', 'UserController@update');
             Route::delete('delete_user/{id}', 'UserController@delete');
             Route::post('logout', 'UserController@logout');
-//            Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
+            // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
             Route::resource('organization','OrganizationController');
             Route::resource('companies','CompanyController');
             Route::get('getcompany/{id}','CompanyController@getCompany');
@@ -84,6 +85,11 @@ Route::group([
             Route::get('golongan/list_by_company','GolonganController@get_golongan_by_company');
             Route::resource('golongan','GolonganController');
             Route::resource('course','CourseController');
+            
+            //download
+            Route::get('downcourse/{id}',[CourseController::class,'coursedown']);
+            Route::get('downsop/{id}',[SOPController::class,'sopdown']);
+
             Route::get('leaderboard/exam_result','LeaderboardController@exam_result');
             Route::resource('leaderboard','LeaderboardController');
             Route::resource('event','EventController');
@@ -142,7 +148,7 @@ Route::group([
             Route::get('user_course','MobileController@user_course');
             Route::get('detail_user', 'MobileController@details');
             Route::post('logout', 'MobileController@logout');
-//            Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
+            // Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
             Route::get('course_list_dashboard','MobileController@course_list_dashboard');
 
             // Route::post('accept_sop','MobileController@accept_sop');

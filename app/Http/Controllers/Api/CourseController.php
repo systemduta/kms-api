@@ -25,6 +25,17 @@ class CourseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    public function coursedown($id)
+    {
+        $course = DB::table('courses')->select('file')->where('id',$id)->first();
+        // $sprt = explode('/',$course->file);
+        return response()->json(['data' => $course->file]);
+
+        // return Storage::download('files/files',$sprt[1]);
+    }
+     
     public function index(Request $request)
     {
         $auth = auth()->user();

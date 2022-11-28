@@ -19,7 +19,8 @@ class UserController extends Controller
         if(Auth::attempt([
                 'nik' => $request->nik,
                 'password' => $request->password
-            ])){
+            ]))
+            {
             $user = Auth::user();
             // dd($user);
             $org= DB::table('organizations')->where('id', $user->organization_id)->first();

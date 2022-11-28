@@ -3,40 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
-class DashboardController extends Controller
+class UjiController extends Controller
 {
-    
-    public $successStatus   =   200;
-    public $errorStatus     =   403;
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function uji() {
-
-    }
     public function index()
     {
-        $users = DB::table('users')->count();
-        $sop = DB::table('sops')->count();
-        $courses = DB::table('courses')->count();
-        $vhs = DB::table('jadwalvhs')->count();
-        $lastUser = DB::table('users')->skip(0)->take(4)->orderBy('id','DESC')->get();
-        return response()->json(
-            [
-                'code'      =>'200',
-                'users'     =>$users,
-                'sop'       =>$sop,
-                'courses'   =>$courses,
-                'vhs'       =>$vhs,
-                'lastuser'  =>$lastUser,
-            ]
-        );
+        //
     }
 
     /**

@@ -42,6 +42,12 @@ class SOPController extends Controller
         return response()->json(['data' => Sop::get()]);
     }
 
+    public function sopdown($id)
+    {
+        $sop = DB::table('sops')->select('file')->where('id',$id)->first();
+        return response()->json(['data' => $sop->file]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
