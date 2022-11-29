@@ -21,6 +21,11 @@ class CrossfunctionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function cfdown($id)
+    {
+        $sop = DB::table('crossfunctions')->select('file')->where('id',$id)->first();
+        return response()->json(['data' => $sop->file]);
+    }
     public function index()
     {
         $auth       = auth()->user();

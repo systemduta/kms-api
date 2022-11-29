@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CourseController;
+use App\Http\Controllers\Api\CrossfunctionController;
 use App\Http\Controllers\Api\JadwalVhsController;
 use App\Http\Controllers\Api\MateriVHsController;
 use App\Http\Controllers\Api\SOPController;
@@ -89,6 +90,7 @@ Route::group([
             //download
             Route::get('downcourse/{id}',[CourseController::class,'coursedown']);
             Route::get('downsop/{id}',[SOPController::class,'sopdown']);
+            Route::get('downcf/{id}',[CrossfunctionController::class,'cfdown']);
 
             Route::get('leaderboard/exam_result','LeaderboardController@exam_result');
             Route::resource('leaderboard','LeaderboardController');
