@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CrossfunctionController;
 use App\Http\Controllers\Api\JadwalVhsController;
+use App\Http\Controllers\Api\LampiranController;
 use App\Http\Controllers\Api\MateriVHsController;
 use App\Http\Controllers\Api\SOPController;
 use App\Http\Controllers\Api\ZoomController;
@@ -38,7 +39,11 @@ Route::group([
             Route::get('detail_admin', 'UserController@details');
             Route::get('detail_user/{id}', 'UserController@detailsUser');
             Route::put('update_user/{id}', 'UserController@update');
+            
+
             Route::delete('delete_user/{id}', 'UserController@delete');
+
+
             Route::post('logout', 'UserController@logout');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
             Route::resource('organization','OrganizationController');
@@ -91,6 +96,8 @@ Route::group([
             Route::get('downcourse/{id}',[CourseController::class,'coursedown']);
             Route::get('downsop/{id}',[SOPController::class,'sopdown']);
             Route::get('downcf/{id}',[CrossfunctionController::class,'cfdown']);
+            Route::get('downlamp/{id}',[LampiranController::class,'lampdown']);
+            Route::get('downmateri/{id}',[MateriVHsController::class,'downloadfile']);
 
             Route::get('leaderboard/exam_result','LeaderboardController@exam_result');
             Route::resource('leaderboard','LeaderboardController');

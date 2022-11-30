@@ -19,6 +19,11 @@ class LampiranController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function lampdown($id)
+    {
+        $sop = DB::table('lampirans')->select('file')->where('id',$id)->first();
+        return response()->json(['data' => $sop->file]);
+    }
     public function index()
     {
         $auth       = auth()->user();

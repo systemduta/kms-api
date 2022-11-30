@@ -7,9 +7,11 @@ use App\Models\MateriVhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+
 
 class MateriVHsController extends Controller
 {
@@ -18,6 +20,14 @@ class MateriVHsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function downloadfile($id)
+    {
+        $materi = DB::table('materi_vhs')->select('file')->where('id',$id)->first();
+        // $path = public_path('file/materivhs/file/'.$sop->file);
+        // $response = response()->download($path);
+        // ob_end_clean();
+        return response()->json(['data' => $materi->file]);
+    }
     public function index()
     {
         try {
