@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CompanyController extends Controller
@@ -18,15 +19,17 @@ class CompanyController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
+    { 
         // $user = auth()->user();
+        // dd($user);
         // $company = Company::query()
         //     ->when(($user && $user->role!=1), function ($q) use ($user) {
         //         return $q->where('id', $user->company_id);
         //     })->get();
         // return response()->json(['data' => $company]);
         return response()->json(
-            ['data' => Company::whereNotIn('name',[
+            ['data' => Company::
+            whereNotIn('name',[
                 'MAESA HOLDING', 
                 'ANUGERAH UTAMA MOTOR',
                 'BANK ARTHAYA',
@@ -97,7 +100,7 @@ class CompanyController extends Controller
                 ->join('companies','companies.id','=','users.company_id')
                 ->where('organizations.id',$request->iddivision)
                 ->where('companies.id',$request->idcompany)
-                ->select('users.id','users.nik','users.name')
+                ->select('users.id','users.nik','users.name','users.status')
                 ->get();
             return response()->json(
                     [
@@ -129,7 +132,31 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|string',
+            'name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        try {
+            $data= Company::create([
+                'code'   => $request->code,
+                'name'   => $request->name,
+            ]);
+            return response()->json(
+                [
+                    'data'      => $data,
+                    'message'   => "saved successfully",
+                ]
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => $th->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -140,7 +167,19 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $data = Company::find($id);
+            return response()->json(
+                [
+                    'data'      => $data,
+                    'message'   => "saved successfully",
+                ]
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => $th->getMessage(),
+            ]);
+        }
     }
 
     /**
@@ -163,7 +202,31 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'code' => 'required|string',
+            'name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        try {
+            $data= Company::findOrFail($id)->update([
+                'code'   => $request->code,
+                'name'   => $request->name,
+            ]);
+            return response()->json(
+                [
+                    'data'      => $data,
+                    'message'   => "saved successfully",
+                ]
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => $th->getMessage(),
+            ]);
+        }
     }
 
     /**

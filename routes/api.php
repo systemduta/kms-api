@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\CrossfunctionController;
 use App\Http\Controllers\Api\JadwalVhsController;
 use App\Http\Controllers\Api\LampiranController;
 use App\Http\Controllers\Api\MateriVHsController;
+use App\Http\Controllers\Api\MobileController;
+use App\Http\Controllers\Api\SetAdminController;
 use App\Http\Controllers\Api\SOPController;
 use App\Http\Controllers\Api\ZoomController;
 use Illuminate\Http\Request;
@@ -35,11 +37,14 @@ Route::group([
         Route::get('get_organization', 'OrganizationController@index');
         // Route::resource('books','BookController');
         Route::group(['middleware' => 'auth:api'], function(){
+            //setadmin nlm bisa
+            Route::resource('setadmin','SetAdminController');
+
             Route::get('get_user', 'UserController@index');
             Route::get('detail_admin', 'UserController@details');
             Route::get('detail_user/{id}', 'UserController@detailsUser');
             Route::put('update_user/{id}', 'UserController@update');
-            
+
 
             Route::delete('delete_user/{id}', 'UserController@delete');
 
@@ -47,6 +52,8 @@ Route::group([
             Route::post('logout', 'UserController@logout');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
             Route::resource('organization','OrganizationController');
+
+            //companies
             Route::resource('companies','CompanyController');
             Route::get('getcompany/{id}','CompanyController@getCompany');
             Route::post('getdetailcompany','CompanyController@getDetail');
@@ -77,9 +84,15 @@ Route::group([
 
             // Route::get('get_sop', 'Api/SOPController@index');
             // Route::post('create_sop', 'SOPController@store');
+
+            //sop
             Route::resource('sop','SOPController');
             Route::get('get_sop','SOPController@sop');
             Route::get('sop_status/{id}','SOPController@status');
+            Route::get('getsopcompany','SOPController@getall');
+            Route::get('getsoporganization/{id}','SOPController@getOrg');
+
+            //course
 
             Route::resource('lampiran','LampiranController');
             Route::get('lamp_status/{id}','LampiranController@status');
@@ -140,9 +153,11 @@ Route::group([
             Route::resource('jadwalvhsuser','JadwalUserVhsController');
             Route::get('getcompany','JadwalUserVhsController@getCompany');
 
-            //dashboard
-            
+            //dashboard            
             Route::resource('dashbrd','DashboardController');
+
+            //certi_vhs
+            Route::resource('vhscerti','VhsCertiController');
         });
     });
 
@@ -210,6 +225,10 @@ Route::group([
 
             //get All vhs by user
             Route::get('getallvhs','MobileController@getAllVhs');
+
+            //serti vhs
+            // Route::get('course_detail/{id}','MobileController@course_detail');
+            Route::get('sertifall','MobileController@getSerti');
         });
     });
 

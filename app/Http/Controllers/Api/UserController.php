@@ -17,7 +17,8 @@ class UserController extends Controller
 
     public function login(Request $request){
         if(Auth::attempt([
-                'nik' => $request->nik,
+                'nik' => $request->nik,            
+                // 'username' => $request->username,
                 'password' => $request->password
             ]))
             {
@@ -88,6 +89,7 @@ class UserController extends Controller
             'name' => $request->name,
             'password' => bcrypt($request->password),
             'company_id' => $request->company_id,
+            'status' => $request->status,
             'image' => '',
             'file' => 'files/'.$filename,
             'organization_id' => $request->organization_id,
@@ -198,6 +200,7 @@ class UserController extends Controller
         $user->company_id = $company_id;
         $user->organization_id = $organization_id;
         $user->golongan_id = $golongan_id;
+        $user->status = $request->status;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
 

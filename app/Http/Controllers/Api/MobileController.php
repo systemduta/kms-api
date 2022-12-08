@@ -25,7 +25,7 @@ use App\Models\UserScore;
 use Illuminate\Http\Request;
 
 use App\Models\User;
-
+use App\Models\Vhs_certi;
 use Illuminate\Support\Str;
 
 use Illuminate\Support\Facades\Storage;
@@ -87,6 +87,7 @@ class MobileController extends Controller
         if(Auth::attempt([
 
                 'nik' => $request->nik,
+                // 'username' => $request->username,
 
                 'password' => $request->password
 
@@ -2580,4 +2581,23 @@ class MobileController extends Controller
 
         }
 
+
+        //sertif
+        public function getSerti()
+        {
+            try {
+                $user=auth()->user();
+                $data = Vhs_certi::where('user_id',$user->id)->get();
+
+                return response()->json(
+                    [
+                        'message'=>'success',
+                        'success'=>$data,
+                    ],200);
+                } catch (\Exception $exception) {
+                    DB::rollBack();
+                    throw new HttpException(500, $exception->getMessage(), $exception);
+
+                }
+        }
 }

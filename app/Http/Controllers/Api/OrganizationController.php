@@ -15,14 +15,22 @@ class OrganizationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
 
     public function index()
     {
         $user = auth()->user();
-        $organization = Organization::query()
-            ->when(($user && $user->role!=1), function ($q) use ($user) {
-                return $q->where('company_id', $user->company_id);
-            })
+        // $organization = Organization::query()
+        //     ->when(($user && $user->role!=1), function ($q) use ($user) {
+        //         return $q->where('company_id', $user->company_id);
+        //     })
+        //     ->get();
+        $organization = DB::table('organizations')
+            ->join('companies','organizations.company_id','=','companies.id')
+            // ->when(($user && $user->role!=1), function ($q) use ($user) {
+            //     return $q->where('company_id', $user->company_id);
+            //     })
+            ->select('organizations.*','companies.name as name_company')
             ->get();
         return response()->json(['data' => $organization]);
     }
@@ -65,7 +73,7 @@ class OrganizationController extends Controller
         $organization->name = $request->name;
         $organization->code = $request->code;
         $organization->iterasi = 0;
-        $organization->is_str = 0;
+        $organization->is_str = $request->is_str ?? 0;
         $organization->save();
 
         return response()->json([
@@ -108,7 +116,7 @@ class OrganizationController extends Controller
         $organization->name = $request->name;
         $organization->code = $request->code;
         $organization->iterasi = 0;
-        $organization->is_str = 0;
+        $organization->is_str = $request->is_str ?? 0;
         $organization->save();
 
         return response()->json([

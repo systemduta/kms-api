@@ -13,4 +13,8 @@ class Organization extends Model
     {
         return $this->hasMany(User::class);
     }
+    // public function company()
+    // {
+    //     return $this->hasMany(Company::class);
+    // }
 }
