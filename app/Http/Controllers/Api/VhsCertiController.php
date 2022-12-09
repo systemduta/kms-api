@@ -169,21 +169,10 @@ class VhsCertiController extends Controller
             $doc1       = $filename. '_'.time().'.' .$EXT;
             $path1      = $request->file('doc1')->move(public_path('file/certivhs/doc1'), $doc1);
 
-            try {
                 $data= Vhs_certi::findOrFail($id)->update([
                     'user_id'   => $request->user_id,
                     'doc1'      => $doc1,
                 ]);
-                return response()->json(
-                    [
-                        'data' => "updated successfully doc1"
-                    ]
-                );
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'message'   => $th->getMessage(),
-                ]);
-            }
         }
 
         if ($request->hasFile('doc2')) {
@@ -192,21 +181,11 @@ class VhsCertiController extends Controller
             $EXT        = $request->file('doc2')->getClientOriginalExtension();
             $doc2       = $filename. '_'.time().'.' .$EXT;
             $path2      = $request->file('doc2')->move(public_path('file/certivhs/doc2'), $doc2);
-            try {
+            
                 $data= Vhs_certi::findOrFail($id)->update([
                     'user_id'   => $request->user_id,
                     'doc2'      => $doc2,
                 ]);
-                return response()->json(
-                    [
-                        'data' => "updated successfully doc2"
-                    ]
-                );
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'message'   => $th->getMessage(),
-                ]);
-            }
         }
 
         if ($request->hasFile('doc3')) {
@@ -216,21 +195,10 @@ class VhsCertiController extends Controller
             $doc3       = $filename. '_'.time().'.' .$EXT;
             $path3      = $request->file('doc3')->move(public_path('file/certivhs/doc3'), $doc3);
 
-            try {
                 $data= Vhs_certi::findOrFail($id)->update([
                     'user_id'   => $request->user_id,
                     'doc3'      => $doc3, 
                 ]);
-                return response()->json(
-                    [
-                        'data' => "updated successfully doc3"
-                    ]
-                );
-            } catch (\Throwable $th) {
-                return response()->json([
-                    'message'   => $th->getMessage(),
-                ]);
-            }
         } 
         if ($request->user_id) {
             try {

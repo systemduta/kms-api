@@ -22,11 +22,28 @@ class DashboardController extends Controller
     }
     public function index()
     {
-        $users = DB::table('users')->count();
-        $sop = DB::table('sops')->count();
-        $courses = DB::table('courses')->count();
+        $user = auth()->user();
+        $users = DB::table('users')
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+                return $q->where('company_id', $user->company_id);
+                })
+            ->count();
+        $sop = DB::table('sops')
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+                return $q->where('company_id', $user->company_id);
+                })
+            ->count();
+        $courses = DB::table('courses')
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+            return $q->where('company_id', $user->company_id);
+            })
+            ->count();
         $vhs = DB::table('jadwalvhs')->count();
-        $lastUser = DB::table('users')->skip(0)->take(4)->orderBy('id','DESC')->get();
+        $lastUser = DB::table('users')
+            ->join('companies','companies.id','=','users.company_id')
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+            return $q->where('company_id', $user->company_id);
+            })->skip(0)->take(4)->orderBy('id','DESC')->select('users.*','companies.name as name_company')->get();
         return response()->json(
             [
                 'code'      =>'200',

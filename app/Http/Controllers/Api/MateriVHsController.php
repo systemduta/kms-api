@@ -23,19 +23,11 @@ class MateriVHsController extends Controller
     public function downloadfile($id)
     {
         $materi = DB::table('materi_vhs')->select('file')->where('id',$id)->first();
-        // $path = public_path('file/materivhs/file/'.$sop->file);
-        // $response = response()->download($path);
-        // ob_end_clean();
         return response()->json(['data' => $materi->file]);
     }
     public function index()
     {
         try {
-            // $data=DB::table('materi_vhs')
-            //         ->join('jadwalvhs','jadwalvhs.id','materi_vhs.jadwal_id')
-            //         ->select('materi_vhs.*','jadwalvhs.name as jadwal_vhs_name')
-            //         ->orderBy('materi_vhs.id', 'desc')
-            //         ->get();
             $data=MateriVhs::join('jadwalvhs',function($join){
                 $join->on('materi_vhs.jadwal_id','=','jadwalvhs.id');
             })->select('materi_vhs.*','jadwalvhs.name as jadwal_vhs_name')->orderBy('materi_vhs.id','desc')->get();
@@ -148,17 +140,6 @@ class MateriVHsController extends Controller
      */
     public function show($id)
     {
-        // $data=DB::table('zooms_vhs')
-        //         ->join('jadwalvhs','jadwalvhs.id','zooms_vhs.jadwal_id')
-        //         ->select('zooms_vhs.id as zoom_id','jadwalvhs.id as jadwalvhs_id','zooms_vhs.name as zoom_name','jadwalvhs.name as jadwalvhs_name','zooms_vhs.*','jadwalvhs.*')
-        //         ->where('zooms_vhs.id',$id)
-        //         ->first();
-        // if ($data) {
-        //     return response()->json(['success' => $data], $this->successStatus);
-        // } else {
-        //     return response()->json(['error' => "data not found"], $this->errorStatus);
-        // }
-
         try {
             $data=MateriVhs::join('jadwalvhs',function($join){
                 $join->on('materi_vhs.jadwal_id','=','jadwalvhs.id');
@@ -195,22 +176,7 @@ class MateriVHsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        //TODO not fixed yet
-        // $validator = Validator::make($request->all(), [
-        //     'name' => 'required',
-        //     'desc' => 'required',
-        //     'type' => 'required',
-        //     'jadwal_id' => 'required',
-        //     'image' => 'image|max:2084|nullable',
-        //     'file' => 'file|nullable',
-        //     'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|nullable'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return response()->json(['error'=>$validator->errors()], 401);
-        // }
-                
+    {                
         /* PREPARE image UPLOAD */
         if ($request->hasFile('image')) {
             $imageEXT    = $request->file('image')->getClientOriginalName();
@@ -218,6 +184,10 @@ class MateriVHsController extends Controller
             $EXT        = $request->file('image')->getClientOriginalExtension();
             $fileimage = $filename. '_'.time().'.' .$EXT;
             $path       = $request->file('image')->move(public_path('file/materivhs/image'), $fileimage);
+
+            $updateimage= MateriVhs::findOrfail($id)->update([
+                'image' => $fileimage,
+            ]);
         }else {
             $fileimage = 'error';
         }        
@@ -230,6 +200,10 @@ class MateriVHsController extends Controller
             $EXT        = $request->file('file')->getClientOriginalExtension();
             $fileUp     = $filename. '_'.time().'.' .$EXT;
             $path       = $request->file('file')->move(public_path('file/materivhs/file'), $fileUp);
+
+            $updatefile= MateriVhs::findOrfail($id)->update([
+                'file' => $fileUp,
+            ]);
         }else {
             $fileUp = 'error';
         }        
@@ -242,6 +216,10 @@ class MateriVHsController extends Controller
             $EXT            = $request->file('video')->getClientOriginalExtension();
             $fileVideo      = $filename. '_'.time().'.' .$EXT;
             $path           = $request->file('video')->move(public_path('file/materivhs/video'), $fileVideo);
+
+            $updatevideo= MateriVhs::findOrfail($id)->update([
+                'video' => $fileVideo,
+            ]);
         }else {
             $fileVideo = 'error';
         }        
@@ -253,9 +231,6 @@ class MateriVHsController extends Controller
                 'desc' => $request->desc,
                 'type' => $request->type,
                 'jadwal_id' => $request->jadwal_id,
-                'image' => $fileimage,
-                'file' => $fileUp,
-                'video' => $fileVideo,
             ]);
             return response()->json(
                 [
