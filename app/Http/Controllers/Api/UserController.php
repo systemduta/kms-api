@@ -201,6 +201,7 @@ class UserController extends Controller
         $user->organization_id = $organization_id;
         $user->golongan_id = $golongan_id;
         $user->status = $request->status;
+        $user->resign_date = $request->resign_date;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
 
