@@ -138,7 +138,6 @@ class CourseController extends Controller
                 }
             }
             /* END VIDEO UPLOAD */
-                //URUNG tes fcm
             $organization_id = $request->organization_id ?? null;
             $tokenUser = DB::table('users')
                 // ->when($auth->role!=1, function ($q) use ($auth) {
