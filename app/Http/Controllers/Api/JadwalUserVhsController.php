@@ -116,15 +116,35 @@ class JadwalUserVhsController extends Controller
                     ]);
 
                     DB::commit();
+
+                    $tokenUser = DB::table('users')
+                                ->where('id',$request->user_id)
+                                ->where('token','!=',"")
+                                ->pluck('token')->toArray();
+                    if($tokenUser) {
+                        $result = fcm()->to($tokenUser)
+                        ->timeToLive(0)
+                        ->priority('high')
+                        ->notification([
+                            'title' => 'Hai, ada jadwal 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? 'Silahkan buka menu 1VHS',
+                        ])
+                        ->data([
+                            'title' => 'Hai, ada jadwal 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? null,
+                        ])
+                        ->send();
+                    }
+                    
+                    return response()->json([
+                        'data'      => $JadwalGetId,
+                        'message'   => 'Data Berhasil disimpan!'
+                    ],200);
                 } catch (\Exception $exception) {
                     DB::rollBack();
                     throw new HttpException(500, $exception->getMessage(), $exception);
                 }
 
-                return response()->json([
-                    'data'      => $JadwalGetId,
-                    'message'   => 'Data Berhasil disimpan!'
-                ],200);
             }
     }
 

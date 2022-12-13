@@ -143,9 +143,9 @@ class CourseController extends Controller
                 // ->when($auth->role!=1, function ($q) use ($auth) {
                 //     return $q->where('company_id', $auth->company_id);
                 // })
-                // ->when($request->type == 1 && $organization_id, function ($query) use ($organization_id) {
-                //     return $query->where('organization_id', $organization_id);
-                // })
+                ->when( $organization_id, function ($query) use ($organization_id) {
+                    return $query->where('organization_id', $organization_id);
+                })
                 ->where('token','!=',"")
                 ->pluck('token')->toArray();
             if($tokenUser) {

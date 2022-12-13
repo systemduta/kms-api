@@ -96,6 +96,24 @@ class VhsCertiController extends Controller
                 'doc2'      => $doc2,
                 'doc3'      => $doc3,
             ]);
+            $tokenUser = DB::table('users')
+                                ->where('id',$request->user_id)
+                                ->where('token','!=',"")
+                                ->pluck('token')->toArray();
+                    if($tokenUser) {
+                        $result = fcm()->to($tokenUser)
+                        ->timeToLive(0)
+                        ->priority('high')
+                        ->notification([
+                            'title' => 'Hai, ada Sertifikat 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? 'Silahkan buka menu sertifikat',
+                        ])
+                        ->data([
+                            'title' => 'Hai, ada Sertifikat 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? 'Silahkan buka menu sertifikat',
+                        ])
+                        ->send();
+                    }
             return response()->json(
                 [
                     'data' => "saved successfully ".$data
@@ -205,6 +223,24 @@ class VhsCertiController extends Controller
                 $data= Vhs_certi::findOrFail($id)->update([                    
                     'user_id'   => $request->user_id,
                 ]);
+                $tokenUser = DB::table('users')
+                                ->where('id',$request->user_id)
+                                ->where('token','!=',"")
+                                ->pluck('token')->toArray();
+                    if($tokenUser) {
+                        $result = fcm()->to($tokenUser)
+                        ->timeToLive(0)
+                        ->priority('high')
+                        ->notification([
+                            'title' => 'Hai, ada Sertifikat 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? 'Silahkan buka menu sertifikat',
+                        ])
+                        ->data([
+                            'title' => 'Hai, ada Sertifikat 1VHS baru nih buat kamu!',
+                            'body' => $request->title ?? 'Silahkan buka menu sertifikat',
+                        ])
+                        ->send();
+                    }
                 return response()->json(
                     [
                         'data' => "updated successfully ".$data
