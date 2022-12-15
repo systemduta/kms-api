@@ -15,6 +15,29 @@ class OrganizationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function deleteOrg($id){
+        // dd($id);
+        try {
+            $data = DB::table('organizations')
+                    ->join('users','users.organization_id','=','organizations.id')
+                    ->where('organizations.id',$id)
+                    ->count();
+            if ($data > 0) {
+                return response()->json(['error' => 'Maaf ada user yang terdaftar. Silahkan hapus atau pindah user terlebih dahulu']);
+            } 
+            else{
+                try {                    
+                    Organization::destroy($id);
+                    return response()->json(['sukses' => 'berhasil menghapus data']);
+                } catch (\Throwable $th) {
+                    return response()->json(['error' => $th->getMessage()]);
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+    }
     
 
     public function index()

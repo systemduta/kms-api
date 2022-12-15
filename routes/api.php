@@ -158,6 +158,9 @@ Route::group([
 
             //certi_vhs
             Route::resource('vhscerti','VhsCertiController');
+
+            //deletOrg
+            Route::get('deleteorg/{id}','OrganizationController@deleteOrg');
         });
     });
 
