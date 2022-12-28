@@ -43,3 +43,5 @@ composer require laravel/passport
 php artisan migrate
 php artisan passport:migrate
 ```
+
+8. Semua di atur di routes/api.php
