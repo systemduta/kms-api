@@ -73,6 +73,10 @@ Route::group([
             Route::resource('sop','SOPController');
             Route::get('get_sop','SOPController@sop');
             Route::get('sop_status/{id}','SOPController@status');
+            // routing hasil magang
+            Route::resource('test2', 'SOPTestController');
+            // Route::get('test2', 'SOPTestController@index');
+
 
             Route::resource('lampiran','LampiranController');
             Route::get('lamp_status/{id}','LampiranController@status');
