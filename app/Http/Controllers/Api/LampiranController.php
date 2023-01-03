@@ -13,17 +13,28 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class LampiranController extends Controller
 {
-    public $successStatus = 200;
+    public $successStatus = 200; //variable yang akan di panggil saat operasi sukses dilakukan
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Fungsi lampdown ini digunakan untuk mengambil nama file lampiran dari tabel lampirans di database berdasarkan ID yang diberikan dan melakukan download di bagian frontend.
+     * Pertama-tama, fungsi ini akan mengambil nama file dari tabel lampirans dengan menggunakan query SELECT dan menambahkan syarat untuk hanya mengambil data yang memiliki ID yang sama dengan yang diberikan. Kemudian, nama file tersebut akan dikembalikan sebagai respon dalam bentuk JSON.
      */
     public function lampdown($id)
     {
         $sop = DB::table('lampirans')->select('file')->where('id',$id)->first();
         return response()->json(['data' => $sop->file]);
     }
+
+    /**
+     * Fungsi index ini digunakan untuk menampilkan data lampiran yang tersimpan di dalam tabel lampirans.
+     * Pertama-tama, variabel $auth akan diisi dengan objek user yang sedang login. Kemudian, fungsi ini akan mengambil seluruh data lampiran dari tabel lampirans dengan menggunakan fungsi with untuk mengambil data relasi dari tabel lain yang terkait (seperti company, organization, dan sop).
+     * Jika role dari user yang sedang login bukan 1 (artinya bukan administrator), maka akan ditambahkan syarat untuk hanya menampilkan data lampiran yang memiliki company_id yang sama dengan user yang sedang login.
+     * Setelah itu, data yang diambil akan diurutkan berdasarkan ID dari yang terbaru ke yang terlama, dan dikembalikan sebagai respon dalam bentuk JSON.
+     */
     public function index()
     {
         $auth       = auth()->user();
@@ -46,6 +57,11 @@ class LampiranController extends Controller
         //
     }
 
+    /**
+     * Fungsi status ini digunakan untuk mengubah status dari sebuah data lampiran yang ada di tabel lampirans.
+     * Pertama-tama, fungsi ini akan mengambil data lampiran yang memiliki ID yang sama dengan yang diberikan dengan menggunakan query SELECT. Kemudian, variabel $st_sekarang akan diisi dengan status saat ini dari data lampiran tersebut.
+     * Jika $st_sekarang bernilai 1, maka status akan diubah menjadi 2. Sebaliknya, jika $st_sekarang bernilai 2, maka status akan diubah menjadi 1. Setelah perubahan status selesai dilakukan, maka akan dikembalikan respon berupa pesan "Data Update Successfully" dengan status yang sesuai.
+     */
     public function status($id)
     {
         $data = Lampiran::where('id',$id)->first();
@@ -71,6 +87,12 @@ class LampiranController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Fungsi store ini digunakan untuk menyimpan data lampiran baru ke dalam tabel lampirans.
+     * Pertama-tama, fungsi ini akan memvalidasi input yang diberikan dengan menggunakan Validator. Jika terdapat kesalahan dalam input, maka akan dikembalikan pesan error yang terjadi.
+     * Kemudian, file yang diberikan akan di-upload ke dalam storage dengan nama file yang diacak. Selanjutnya, data lampiran baru akan disimpan ke dalam tabel lampirans dengan menggunakan query INSERT dan mengambil ID yang baru saja disimpan dengan menggunakan fungsi insertGetId.
+     * Jika proses penyimpanan data berhasil, maka akan dikembalikan respon berupa ID data lampiran yang baru disimpan dan pesan "Data Berhasil disimpan!". Sebaliknya, jika terjadi kesalahan, maka akan dikembalikan pesan error yang terjadi.
      */
     public function store(Request $request)
     {
@@ -123,6 +145,10 @@ class LampiranController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Fungsi show ini digunakan untuk menampilkan data lampiran yang memiliki ID yang sama dengan yang diberikan.
+     * Fungsi ini akan mengambil data lampiran dari tabel lampirans dengan menggunakan query SELECT dan menambahkan syarat untuk hanya menampilkan data yang memiliki ID yang sama dengan yang diberikan. Kemudian, data yang diambil akan dikembalikan sebagai respon dalam bentuk JSON.
+     */
     public function show($id)
     {
         $data = DB::table('lampirans')->where('id',$id)->first();
@@ -147,6 +173,11 @@ class LampiranController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**Fungsi update ini digunakan untuk mengupdate data lampiran yang memiliki ID yang sama dengan yang diberikan.
+
+    Fungsi ini menerima parameter Request yang berisi data yang akan diupdate dan ID dari data lampiran yang akan diupdate. Kemudian, fungsi ini akan melakukan validasi terhadap data yang diterima dengan menggunakan class Validator. Jika validasi gagal, fungsi akan mengembalikan respon dengan menampilkan error yang terjadi.
+
+    Jika validasi berhasil, fungsi akan melakukan upload file yang diterima dari parameter Request ke dalam storage. Kemudian, fungsi akan mencari data lampiran yang akan diupdate dengan menggunakan query SELECT dan mengupdate data tersebut dengan data yang diterima dari parameter Request. Setelah itu, fungsi akan menyimpan perubahan data tersebut ke dalam database dan mengembalikan respon berupa data yang telah diupdate dan pesan bahwa proses update berhasil. */
     public function update(Request $request, $id)
     {
         $title = $request->name;
@@ -199,6 +230,11 @@ class LampiranController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah method yang digunakan untuk menghapus data lampiran dengan menggunakan id yang diberikan. Method ini akan menghapus data yang ditentukan dari database dan mengembalikan respon dengan pesan "Data Berhasil di Hapus" sebagai konfirmasi bahwa data telah berhasil dihapus.
+     * Method ini menggunakan class Lampiran untuk mengakses method destroy(). Method destroy() adalah method yang tersedia pada class model Lampiran yang dapat digunakan untuk menghapus data dari database.
+     * Method ini juga menggunakan respon dari helper response() dengan method json() untuk mengembalikan respon dalam format JSON ke client.
      */
     public function destroy($id)
     {

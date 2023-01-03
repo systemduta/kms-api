@@ -1,0 +1,6 @@
+DISINI AKAN DI INFORMASIKAN TERKAIT BAGIMANA CARA MERUBAH USER BIASA MENJADI ADMIN:
+
+1. Pastikan telah membuka database di niagahoster,
+2. Buka table user serta catat kode organization_id nya
+3. Buka Table organizations dan cari organization_id dari user tadi 
+4. Terakhir rubah is_str di tabel organizations sesuai langkah 3 menjadi bernilai "1"

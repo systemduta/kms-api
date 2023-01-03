@@ -16,6 +16,9 @@ class JadwalUserVhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Pada function index, terdapat sebuah perintah try-catch yang berfungsi untuk menangkap exception yang terjadi pada bagian dalam try. Bagian dalam try terdiri dari sebuah query yang menggunakan fungsi DB::table() untuk mengambil data dari beberapa tabel yang terkait. Kemudian, fungsi join() digunakan untuk menggabungkan data dari beberapa tabel yang terkait dengan tabel jadwal_user_vhs melalui relasi foreign key. Selanjutnya, fungsi select() digunakan untuk memilih kolom-kolom yang ingin ditampilkan pada hasil query, dan fungsi get() digunakan untuk mengeksekusi query tersebut. Setelah itu, hasil query tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json(). Apabila terdapat exception yang terjadi pada bagian dalam try, maka exception tersebut akan ditangkap oleh catch dan hasilnya akan dikembalikan dalam bentuk JSON dengan status HTTP 500 (Internal Server Error).
+     */
     public function index()
     {
         try {
@@ -34,6 +37,9 @@ class JadwalUserVhsController extends Controller
         }   
     }
 
+    /**
+     * Pada function getCompany, terdapat sebuah perintah try-catch yang berfungsi untuk menangkap exception yang terjadi pada bagian dalam try. Bagian dalam try terdiri dari sebuah query yang menggunakan fungsi DB::table() untuk mengambil data dari tabel companies. Kemudian, fungsi whereNotIn() digunakan untuk memilih data yang tidak memiliki nama sesuai dengan daftar nama yang disebutkan di dalam [ ]. Selanjutnya, fungsi select() digunakan untuk memilih kolom-kolom yang ingin ditampilkan pada hasil query, dan fungsi get() digunakan untuk mengeksekusi query tersebut. Setelah itu, hasil query tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json(). Apabila terdapat exception yang terjadi pada bagian dalam try, maka exception tersebut akan ditangkap oleh catch dan hasilnya akan dikembalikan dalam bentuk JSON dengan status HTTP 500 (Internal Server Error).
+     */
     public function getCompany() {
         try {
             $data = DB::table('companies')
@@ -84,6 +90,10 @@ class JadwalUserVhsController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * ada function store, terdapat sebuah validasi yang dilakukan terhadap input yang dikirimkan melalui parameter $request dengan menggunakan fungsi Validator::make(). Apabila ada input yang tidak memenuhi validasi yang ditentukan, maka akan dikembalikan pesan error dalam bentuk JSON dengan status HTTP 400 (Bad Request).
+     * Setelah itu, terdapat perintah yang mengecek apakah data yang akan disimpan sudah ada di dalam database atau belum dengan menggunakan fungsi count(). Jika data tersebut sudah ada, maka akan dikembalikan pesan error dalam bentuk JSON dengan status HTTP 400 (Bad Request). Jika data tersebut belum ada, maka akan dilakukan proses penyimpanan data ke dalam database dengan menggunakan fungsi DB::beginTransaction() dan DB::commit(). Fungsi DB::beginTransaction() digunakan untuk memulai sebuah transaksi, sedangkan fungsi DB::commit() digunakan untuk menyimpan data ke dalam database apabila tidak terjadi exception pada bagian dalam try. Apabila terdapat exception yang terjadi, maka akan dilakukan proses rollback dengan menggunakan fungsi DB::rollBack(). Setelah itu, terdapat sebuah perintah yang mengirimkan notifikasi melalui FCM (Firebase Cloud Messaging) kepada user yang bersangkutan, dan hasil penyimpanan data dikembalikan dalam bentuk JSON dengan status HTTP 200 (OK).
      */
     public function store(Request $request)
     {
@@ -154,6 +164,9 @@ class JadwalUserVhsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Pada function show, terdapat sebuah perintah try-catch yang berfungsi untuk menangkap exception yang terjadi pada bagian dalam try. Bagian dalam try terdiri dari sebuah query yang menggunakan fungsi DB::table() untuk mengambil data dari beberapa tabel yang terkait. Kemudian, fungsi join() digunakan untuk menggabungkan data dari beberapa tabel yang terkait dengan tabel jadwal_user_vhs melalui relasi foreign key. Selanjutnya, fungsi select() digunakan untuk memilih kolom-kolom yang ingin ditampilkan pada hasil query, dan fungsi where() digunakan untuk memfilter data berdasarkan kondisi yang ditentukan. Kemudian, fungsi first() digunakan untuk mengambil satu baris data yang sesuai dengan kondisi tersebut. Setelah itu, hasil query tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json(). Apabila terdapat exception yang terjadi pada bagian dalam try, maka exception tersebut akan ditangkap oleh catch dan hasilnya akan dikembalikan dalam bentuk JSON dengan status HTTP 500 (Internal Server Error).
+     */
     public function show($id)
     {
         try {
@@ -191,6 +204,10 @@ class JadwalUserVhsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Pada function update, terdapat sebuah validasi yang dilakukan terhadap input yang dikirimkan melalui parameter $request dengan menggunakan fungsi Validator::make(). Apabila ada input yang tidak memenuhi validasi yang ditentukan, maka akan dikembalikan pesan error dalam bentuk JSON dengan status HTTP 400 (Bad Request).
+     * Setelah itu, terdapat sebuah perintah yang mencari data yang akan diupdate berdasarkan id yang dikirimkan melalui parameter $id dengan menggunakan fungsi JadwalUserVhs::findOrfail(). Kemudian, data tersebut diupdate dengan menggunakan fungsi update() dan mengubah nilai dari beberapa kolom sesuai dengan input yang diterima melalui parameter $request. Setelah itu, hasil update tersebut dikembalikan dalam bentuk JSON dengan status HTTP 200 (OK). Apabila terdapat exception yang terjadi pada bagian dalam try, maka exception tersebut akan ditangkap oleh catch dan akan dilakukan proses rollback dengan menggunakan fungsi DB::rollBack().
+     */
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(),[
@@ -224,6 +241,9 @@ class JadwalUserVhsController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Pada function destroy, terdapat sebuah perintah yang mencari data yang akan dihapus berdasarkan id yang dikirimkan melalui parameter $id dengan menggunakan fungsi JadwalUserVhs::find(). Kemudian, apabila data tersebut ditemukan, maka data tersebut akan dihapus dari database dengan menggunakan fungsi JadwalUserVhs::destroy(). Setelah itu, akan dikembalikan pesan sukses dalam bentuk JSON dengan status HTTP 200 (OK). Jika data tersebut tidak ditemukan, maka akan dikembalikan pesan error dalam bentuk JSON dengan status HTTP 404 (Not Found).
      */
     public function destroy($id)
     {

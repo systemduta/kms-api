@@ -15,17 +15,27 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CrossfunctionController extends Controller
 {
-    public $successStatus = 200;
+    public $successStatus = 200; //variabel ini akan dipanggil ketika proses sukses dieksekusi
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama cfdown() yang menerima parameter $id. Fungsi ini digunakan untuk mengambil data dari sebuah tabel crossfunctions yang memiliki id yang sama dengan parameter $id.
+     * Pertama, terdapat sebuah query yang mengambil kolom file dari tabel crossfunctions yang memiliki id yang sama dengan parameter $id dan disimpan pada variabel $sop. Kemudian, fungsi akan mengembalikan sebuah objek JSON yang berisi data file yang telah diambil dari tabel crossfunctions.
      */
     public function cfdown($id)
     {
         $sop = DB::table('crossfunctions')->select('file')->where('id',$id)->first();
         return response()->json(['data' => $sop->file]);
     }
+
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama index() yang tidak menerima parameter apapun. Fungsi ini digunakan untuk mengambil semua data dari tabel crossfunctions dengan relasi dengan tabel company, tabel organization, dan tabel sop.
+     * Pertama, terdapat sebuah variabel yang di-assign dengan objek User yang sedang login saat ini dengan menggunakan method auth()->user(). Kemudian, terdapat sebuah query yang mengambil semua data dari tabel crossfunctions dengan relasi dengan tabel company, tabel organization, dan tabel sop dan disimpan pada variabel $lampiran. Query tersebut juga mengelompokkan data berdasarkan company_id yang sama dengan company_id dari objek User yang sedang login saat ini jika role dari objek tersebut tidak sama dengan 1. Kemudian, data tersebut diurutkan berdasarkan id dengan urutan descending.
+     * Setelah proses pengambilan data selesai, fungsi akan mengembalikan sebuah objek JSON yang berisi data yang telah diambil dari tabel crossfunctions.
+     */
     public function index()
     {
         $auth       = auth()->user();
@@ -48,6 +58,11 @@ class CrossfunctionController extends Controller
         //
     }
 
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama status() yang menerima parameter $id. Fungsi ini digunakan untuk mengubah status dari sebuah data pada tabel crossfunctions yang memiliki id yang sama dengan parameter $id.
+     * Pertama, terdapat sebuah query yang mengambil sebuah data dari tabel crossfunctions yang memiliki id yang sama dengan parameter $id dan disimpan pada variabel $data. Kemudian, terdapat sebuah variabel yang di-assign dengan nilai status dari data tersebut.
+     * Jika status saat ini bernilai 1, maka status akan diubah menjadi 2. Sebaliknya, jika status saat ini bernilai 2, maka status akan diubah menjadi 1. Setelah proses perubahan status selesai, fungsi akan mengembalikan sebuah objek JSON yang berisi pesan 'Data Update Successfully'.
+     */
     public function status($id)
     {
         $data = Crossfunction::where('id',$id)->first();
@@ -73,6 +88,12 @@ class CrossfunctionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama store() yang menerima sebuah objek Request. Fungsi ini digunakan untuk menyimpan data baru pada tabel crossfunctions.
+     * Pertama, terdapat sebuah proses validasi input yang dilakukan dengan menggunakan class Validator. Jika terdapat input yang tidak sesuai dengan validasi yang ditentukan, maka fungsi akan mengembalikan sebuah objek JSON yang berisi pesan error.
+     * Kemudian, terdapat sebuah variabel yang di-assign dengan objek User yang sedang login saat ini dengan menggunakan method auth()->user(). Selanjutnya, terdapat proses upload file yang disimpan pada public folder dengan nama file yang diberikan secara random.
+     * Setelah proses upload file selesai, terdapat sebuah proses penyimpanan data pada tabel crossfunctions dengan menggunakan method insertGetId(). Setelah proses penyimpanan data selesai, fungsi akan mengembalikan sebuah objek JSON yang berisi data yang telah disimpan dan pesan 'Data Berhasil disimpan!'.
      */
     public function store(Request $request)
     {
@@ -125,6 +146,10 @@ class CrossfunctionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama show() yang menerima parameter $id. Fungsi ini digunakan untuk menampilkan data dari tabel crossfunctions yang memiliki id yang sama dengan parameter $id.
+     * Pertama, terdapat sebuah query yang mengambil sebuah data dari tabel crossfunctions yang memiliki id yang sama dengan parameter $id dan disimpan pada variabel $data. Kemudian, fungsi akan mengembalikan sebuah objek JSON yang berisi data yang telah diambil dari tabel crossfunctions.
+     */
     public function show($id)
     {
         $data = DB::table('crossfunctions')->where('id',$id)->first();
@@ -148,6 +173,11 @@ class CrossfunctionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama update() yang menerima sebuah objek Request dan parameter $id. Fungsi ini digunakan untuk memperbarui data pada tabel crossfunctions yang memiliki id yang sama dengan parameter $id.
+     * Pertama, terdapat sebuah variabel yang di-assign dengan nilai dari input name dan sop_id. Kemudian, terdapat proses upload file yang disimpan pada public folder dengan nama file yang diberikan secara random.
+     * Setelah proses upload file selesai, terdapat sebuah proses pembaruan data pada tabel crossfunctions dengan menggunakan method find() dan save(). Setelah proses pembaruan data selesai, fungsi akan mengembalikan sebuah objek JSON yang berisi data yang telah diperbarui dan pesan 'update successfully'.
      */
     public function update(Request $request, $id)
     {
@@ -184,6 +214,10 @@ class CrossfunctionController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Pada kode di atas, terdapat sebuah fungsi yang bernama destroy() yang menerima parameter $id. Fungsi ini digunakan untuk menghapus data dari tabel crossfunctions yang memiliki id yang sama dengan parameter $id.
+     * Untuk menghapus data tersebut, terdapat sebuah proses penggunaan method destroy() dari class Crossfunction. Setelah proses penghapusan data selesai, fungsi akan mengembalikan sebuah objek JSON yang berisi pesan 'Data Berhasil di Hapus'.
      */
     public function destroy($id)
     {

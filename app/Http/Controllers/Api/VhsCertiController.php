@@ -15,6 +15,9 @@ class VhsCertiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah method bernama index yang mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel vhs_certis dan users di database, menyatukannya, dan mengembalikan data tersebut. Kemudian, data tersebut akan dikembalikan dalam bentuk JSON dengan key Message dan Data. Jika terjadi exception (error), maka akan dikembalikan response dalam bentuk JSON dengan key message.
+     */
     public function index()
     {
         try {
@@ -48,6 +51,9 @@ class VhsCertiController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method yang akan memvalidasi input yang dikirim dari client dengan menggunakan Validator class. Jika input tidak valid, maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 401 (Unauthorized). Kemudian, method ini akan mengecek apakah client mengirimkan file dengan nama doc1, doc2, dan doc3. Jika file tersebut ada, maka file tersebut akan disimpan ke dalam folder file/certivhs/doc1, file/certivhs/doc2, atau file/certivhs/doc3, dan nama file tersebut akan disimpan ke dalam variabel $doc1, $doc2, atau $doc3. Jika file tidak ditemukan, maka akan disimpan string "not found" ke dalam variabel tersebut. Setelah itu, method ini akan menyimpan data ke dalam tabel vhs_certis di database. Jika proses penyimpanan data berhasil, maka akan dikembalikan response dalam bentuk JSON dengan key data.
      */
     public function store(Request $request)
     {
@@ -132,6 +138,9 @@ class VhsCertiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * sebuah function bernama show yang menerima parameter $id. Function ini akan menjalankan sebuah query ke database untuk mengambil data dari tabel vhs_certis dan users yang dijoin berdasarkan kolom id dari tabel users. Kemudian, data yang dihasilkan akan dipilih berdasarkan kolom id dari tabel vhs_certis yang sesuai dengan parameter $id yang diterima function. Hasilnya akan disimpan ke dalam variabel $data. Kemudian, function ini akan mengembalikan sebuah respon berupa data yang telah ditampung di dalam variabel $data beserta pesan "success".Jika terjadi exception atau error saat menjalankan query ke database, maka function ini akan mengembalikan respon berupa pesan error yang terjadi.
+     */
     public function show($id)
     {
         try {
@@ -169,6 +178,18 @@ class VhsCertiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     /**
+      * sebuah function bernama update yang menerima dua parameter yaitu $request dan $id. Pertama-tama, function ini akan memvalidasi input yang diterima dari $request dengan menggunakan class Validator dari Laravel. Jika validasi input gagal, maka function akan mengembalikan respon berupa pesan error.
+
+      * Jika validasi input berhasil, maka function akan memeriksa apakah $request memiliki file dengan key doc1. Jika ada, maka file tersebut akan diupload ke direktori public/file/certivhs/doc1 dengan nama file yang sudah dienkripsi dengan menambahkan timestamp pada nama aslinya. Kemudian, function akan mengupdate data di dalam tabel vhs_certis dengan mengubah nilai kolom doc1 sesuai dengan nama file yang baru diupload.
+
+      * Function juga akan melakukan hal yang sama untuk file dengan key doc2 dan doc3, dengan mengunggah file ke direktori yang sesuai dan mengupdate nilai kolom doc2 atau doc3 di dalam tabel vhs_certis sesuai dengan nama file yang baru diupload.
+
+      * Jika $request tidak memiliki file dengan key doc1, doc2, atau doc3, maka function akan mengecek apakah $request memiliki input dengan key user_id. Jika ada, maka function akan mengupdate data di dalam tabel vhs_certis dengan mengubah nilai kolom user_id sesuai dengan input yang diterima. Selain itu, function juga akan mengirim notifikasi ke user yang bersangkutan dengan menggunakan FCM (Firebase Cloud Messaging).
+
+      * Jika tidak ada input dengan key user_id, maka function akan mengembalikan respon berupa pesan "Nothing to update".
+      */
     public function update(Request $request, $id)
     {
         // dd($request->all());
@@ -265,6 +286,11 @@ class VhsCertiController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    
+     /**
+      * Code di atas adalah sebuah function bernama destroy yang menerima parameter $id. Function ini akan mencari data di dalam tabel vhs_certis yang memiliki kolom id sesuai dengan parameter $id yang diterima. Jika data tersebut ditemukan, maka function akan menghapus data tersebut dari tabel dengan menjalankan method delete() pada objek yang merepresentasikan data tersebut.
+      * Jika proses penghapusan berhasil, maka function akan mengembalikan respon berupa pesan "Data Berhasil di Hapus". Jika terjadi error saat menjalankan query ke database, maka function akan mengembalikan respon berupa pesan error yang terjadi.
+      */
     public function destroy($id)
     {
         try {

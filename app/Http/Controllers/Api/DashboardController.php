@@ -10,16 +10,18 @@ use Illuminate\Support\Facades\DB;
 class DashboardController extends Controller
 {
     
-    public $successStatus   =   200;
-    public $errorStatus     =   403;
+    public $successStatus   =   200; //variabel yang akan dipanggil saat proses sukses dilakukan
+    public $errorStatus     =   403; //variabel yang akan dipanggil saat proses gagal dilakukan
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function uji() {
-
-    }
+    /**
+     * Method ini memiliki sebuah variabel $user yang diisi dengan objek user yang sedang login saat ini menggunakan fungsi auth(). Kemudian, method ini mengelola data dari tabel "users", "sops", "courses", dan "jadwalvhs" di database dengan menggunakan fungsi DB::table(). Fungsi DB::table() ini merupakan bagian dari Laravel, sebuah framework PHP yang digunakan untuk membangun aplikasi web.
+     * Untuk tabel "users", "sops", dan "courses", method ini akan mengambil jumlah data yang ada di dalamnya. Namun, jika user yang login bukan merupakan admin (dengan role 1), maka data yang diambil hanya data yang memiliki company_id yang sama dengan company_id dari user yang login. Hal ini dapat dilihat dari penggunaan fungsi when() dan closure yang mengandung parameter $q dan $user. Fungsi when() ini akan mengeksekusi closure yang ada di dalamnya jika kondisi yang ditentukan bernilai true.
+     * Selain itu, method ini juga mengambil data dari tabel "users" yang terakhir ditambahkan ke database, dengan jumlah maksimal 4 data. Data ini diambil dengan menggunakan fungsi skip(), take(), dan orderBy(). Kemudian, method ini mengembalikan data yang telah diambil dalam bentuk response json dengan menggunakan fungsi response()->json().
+     */
     public function index()
     {
         $user = auth()->user();

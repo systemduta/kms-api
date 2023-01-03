@@ -15,6 +15,21 @@ class UserController extends Controller
 {
     public $successStatus = 200;
 
+    /**
+     * untuk route:
+     *  Route::post('login', 'UserController@login');
+     * 
+     * fungsi: 
+     *  untuk mengatur login
+     *  nik -> kalau pakai data nik
+     *  usernmae -> kalau pakai username
+     * . dengan syarat parameter isWeb == 1
+     * 
+     * parameter wajib: 
+     *  - nik
+     *  - password
+     *  - isWeb
+     */
     public function login(Request $request){
         if(Auth::attempt([
                 'nik' => $request->nik,            
@@ -23,7 +38,6 @@ class UserController extends Controller
             ]))
             {
             $user = Auth::user();
-            // dd($user);
             $org= DB::table('organizations')->where('id', $user->organization_id)->first();
             if($request->isWeb=="1") {
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
@@ -45,6 +59,15 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 401);
         }
     }
+
+    /**
+     * hubungan Route: 
+     *      Route::post('register', 'UserController@register');
+     * 
+     * fungsi:
+     *      untuk mengatur jika ada user baru.
+     *      digunakan oleh admin melalui web, user tidak bisa mendaftar secara mandiri
+     */
 
     public function register(Request $request)
     {
@@ -99,8 +122,6 @@ class UserController extends Controller
             'role' => 2
         ]);
 
-        // dd($userGetId);
-
         if($request->filled('image')) {
             $imgName='';
             $baseString = explode(';base64,', $request->image);
@@ -121,6 +142,10 @@ class UserController extends Controller
         return response()->json(['data' => $userGetId, 'message' => 'Data berhasil disimpan!'], $this->successStatus);
     }
 
+    /**
+     * untuk mendapatkan data detail user
+     * Auth::user()->id , untuk mendapatkan id user yang login
+     */
     public function details()
     {
         $user = User::with(['company','organization', 'golongan'])
@@ -129,6 +154,9 @@ class UserController extends Controller
         return response()->json(['message' => 'success','data' => $user], $this->successStatus);
     }
 
+    /**
+     * untuk mendapatkan detail user berdasarkan id yang diinput
+     */
     public function detailsUser($id)
     {
         $user = User::with(['company','organization', 'golongan'])
@@ -137,6 +165,14 @@ class UserController extends Controller
         return response()->json(['success' => $user], $this->successStatus);
     }
 
+    /**
+     * hubungan route: 
+     *      Route::get('get_user', 'UserController@index');
+     * fungsi:
+     * method awal yang dipanggil,
+     * ->when($auth->role!=1, function ($q) use ($auth) {  untuk pembatas hal yang ditampilkan jika role user == 1 maka semua data akan ditampilkan tanpa batas perusahaan (saat ini hanya holding), jika role user != 1 maka yang ditampilkan hanya data dari perusahaan yang sama dengan perusahaan user login
+     *  
+     */
     public function index()
     {
         $auth = auth()->user();
@@ -149,6 +185,11 @@ class UserController extends Controller
         return response()->json(['data' => $user]);
     }
 
+    /**
+     * untuk update data user
+     * parameter wajib: 
+     *      - passoword
+     */
     public function update(request $request, $id)
     {
         $request->validate([
@@ -211,6 +252,9 @@ class UserController extends Controller
         $this->successStatus);
     }
 
+    /**
+     * untuk menghapus data user berdasarkan id
+     */
     public function delete($id)
     {
         $user = User::find($id);
@@ -218,6 +262,9 @@ class UserController extends Controller
         return response()->json(['message' => 'Delete Successfully']);
     }
 
+    /**
+     * untuk user logout 
+     */
     public function logout(Request $request)
     {
         auth()->user()->token()->revoke();

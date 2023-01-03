@@ -18,6 +18,13 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    /**
+     * hubungan route: 
+     *      Route::get('get_company', 'CompanyController@ind
+     * fungsi : 
+     *      untuk memperoleh data perusahaan yang ada saat ini. fungsi whereNotIn digunakan untuk pengecualian nama perusahaan agar tidak tampil di dalam response nantinya.
+     */
     public function index()
     { 
         // $user = auth()->user();

@@ -21,34 +21,51 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
+|
+|
 */
+
+/**
+ * PENJELASAN FUNGSI MASING MASING ROUTE ADA DI DALAM CONTROLLER 
+ * SILAHKAN BUKA DI app/Http/COntrollers/Api/namacontroller
+ * 
+ * contoh: 
+ *  Route::post('login', 'UserController@login');  -> berarti nama controller nya adalah UserController dengan method login
+ * 
+ * Cara membuat user menjadi admin => buka file CARA UPDATE ADMIN.txt
+ */
 
 Route::group([
     'namespace' => 'Api',
 ],function(){
+    //mengatur login user web
     Route::post('login', 'UserController@login');
+    //mengatur login user dari mobile
     Route::post('login_mobile', 'MobileController@login_mobile');
 
+    //prefix digunakan untuk menambah "/web" di url api (untuk memisahkan antara web dan mobile)
     Route::group([
         'prefix' => 'web'
     ],function(){
+        //untuk menambahkan user
         Route::post('register', 'UserController@register');
+        //untuk memperoleh data perusahaan saat ini
         Route::get('get_company', 'CompanyController@index');
+        //unutk memperoleh data divisi/organization saat ini
         Route::get('get_organization', 'OrganizationController@index');
-        // Route::resource('books','BookController');
-        Route::group(['middleware' => 'auth:api'], function(){
-            //setadmin nlm bisa
-            Route::resource('setadmin','SetAdminController');
+        // Route::resource('books','BookController');  ini blm digunakan
 
-            Route::get('get_user', 'UserController@index');
-            Route::get('detail_admin', 'UserController@details');
+        /**middleware digunakan untuk pembatas. yang berarti hanya admin yang sudah login yang dapat masuk ke route ini 
+         **/
+        Route::group(['middleware' => 'auth:api'], function(){     
+            // URUNG setadmin blm bisa
+            // Route::resource('setadmin','SetAdminController');
+            
+            Route::get('get_user', 'UserController@index');            
+            Route::get('detail_admin', 'UserController@details');          
             Route::get('detail_user/{id}', 'UserController@detailsUser');
             Route::put('update_user/{id}', 'UserController@update');
-
-
             Route::delete('delete_user/{id}', 'UserController@delete');
-
-
             Route::post('logout', 'UserController@logout');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
             Route::resource('organization','OrganizationController');
@@ -119,7 +136,7 @@ Route::group([
             Route::resource('vhs','VhsController');
             Route::resource('splash_screen','SplashScreenController');
 
-            //uji
+            
             // Route::resource('jadwal','JadwalVhsController');
             Route::get('get_jadwal',[JadwalVhsController::class, 'sop_all']);
             Route::post('store_jadwal', [JadwalVhsController::class, 'store']);

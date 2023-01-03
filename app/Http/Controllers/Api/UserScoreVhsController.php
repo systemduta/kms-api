@@ -17,16 +17,12 @@ class UserScoreVhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah function yang bernama index yang tidak mengambil parameter apapun. Function ini akan mencoba mengambil data dari database dengan membuat sebuah query yang menggabungkan (join) beberapa tabel di database. Query tersebut akan mengambil data dari tabel users, user_score_vhs, companies, materi_vhs, question_vhs, dan answer_vhs dan menyimpan hasilnya dalam variabel $data. Kemudian function ini akan mengembalikan sebuah response dalam bentuk JSON yang berisi key success yang isinya adalah data yang didapat dari query tersebut dan key message yang isinya adalah string 'get successfully'. Jika terjadi exception (error) saat mengambil data dari database, function ini akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error yang terjadi.
+     */
     public function index()
     {        
         try {
-            // $data=UserScoreVhs::join('users','user_score_vhs.user_id','=','users.id')
-            //     ->join('companies','companies.id','=','users.company_id')
-            //     ->join('materi_vhs','materi_vhs.id','=','user_score_vhs.materi_id')
-            //     ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-            //     ->join('answer_vhs','answer_vhs.user_id','=','users.id')
-            //     ->select('user_score_vhs.id','users.name as nama_user','users.username as username','companies.name as nama_company','materi_vhs.name as nama_materi','question_vhs.question as question','user_score_vhs.score','answer_vhs.answer','materi_vhs.type')
-            //     ->get();
             $data = DB::table('users')
                     ->join('user_score_vhs','user_score_vhs.user_id','users.id')
                     ->join('companies','companies.id','users.company_id')
@@ -50,6 +46,9 @@ class UserScoreVhsController extends Controller
         }   
     }
 
+    /**
+     * Ini adalah sebuah function yang bernama getUserPerCompany yang mengambil satu parameter bernama $id. Function ini akan mencoba mengambil data dari database dengan membuat sebuah query yang menggabungkan (join) beberapa tabel di database. Query tersebut akan mengambil data dari tabel users, companies, user_score_vhs, materi_vhs, question_vhs, dan answer_vhs dan menyimpan hasilnya dalam variabel $data. Query tersebut juga akan menggunakan parameter $id sebagai filter untuk mengambil hanya data yang sesuai dengan company_id di tabel users yang sama dengan $id. Selain itu, function ini juga akan mengambil data dari tabel companies yang id sama dengan parametr $id dan menyimpannya dalam variabel $company. Kemudian function ini akan mengembalikan sebuah response dalam bentuk JSON yang berisi key company yang isinya adalah data yang didapat dari query terhadap tabel companies, key success yang isinya adalah data yang didapat dari query terhadap tabel-tabel lainnya, dan key message yang isinya adalah string 'get successfully'. Jika terjadi exception (error) saat mengambil data dari database, function ini akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error yang terjadi.
+     */
     public function getUserPerCompany($id) {
         try {
 
@@ -87,6 +86,11 @@ class UserScoreVhsController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+
+    /**
+     * Ini adalah sebuah function yang menerima request HTTP dengan method POST. Pertama, function ini akan memvalidasi request yang diterimanya dengan menggunakan class Validator dari library Laravel. Validasi tersebut akan memastikan bahwa parameter materi_id, user_id, dan score harus diisi. Jika validasi gagal (ada field yang tidak sesuai dengan validasi yang ditetapkan), function akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error dari validasi tersebut.
+     * Setelah validasi selesai, function akan mengecek apakah sudah ada data dengan user_id dan materi_id yang sama di tabel user_score_vhs. Jika tidak ada, function akan melanjutkan dengan menambahkan data baru ke tabel user_score_vhs. Function akan menggunakan metode insertGetId dari class DB untuk menambahkan data ke tabel tersebut dan mengembalikan ID dari data yang baru saja ditambahkan. Kemudian function akan mengembalikan response dalam bentuk JSON yang berisi key success yang isinya adalah ID dari data yang baru saja ditambahkan dan key message yang isinya adalah string 'get successfully'. Jika terjadi exception (error) saat menambahkan data ke tabel, function ini akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error yang terjadi. Jika sudah ada data dengan user_id dan materi_id yang sama di tabel user_score_vhs, function akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah string 'user sudah dinilai'.
      */
     public function store(Request $request)
     {
@@ -128,6 +132,9 @@ class UserScoreVhsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah function yang bernama show yang mengambil satu parameter bernama $id. Function ini akan mencoba mengambil data dari database dengan membuat sebuah query yang menggabungkan (join) beberapa tabel di database. Query tersebut akan mengambil data dari tabel user_score_vhs, users, companies, materi_vhs, question_vhs, dan answer_vhs dan menyimpan hasilnya dalam variabel $data. Query tersebut juga akan menggunakan parameter $id sebagai filter untuk mengambil hanya data yang sesuai dengan id di tabel user_score_vhs yang sama dengan $id. Kemudian function ini akan mengembalikan sebuah response dalam bentuk JSON yang berisi key success yang isinya adalah data yang didapat dari query tersebut dan key message yang isinya adalah string 'get successfully'. Jika terjadi exception (error) saat mengambil data dari database, function ini akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error yang terjadi.
+     */
     public function show($id)
     {
         try {
@@ -166,6 +173,10 @@ class UserScoreVhsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah function yang menerima request HTTP dengan method PUT. Pertama, function ini akan memvalidasi request yang diterimanya dengan menggunakan class Validator dari library Laravel. Validasi tersebut akan memastikan bahwa parameter materi_id, user_id, dan score harus diisi. Jika validasi gagal (ada field yang tidak sesuai dengan validasi yang ditetapkan), function akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error dari validasi tersebut
+     * Setelah validasi selesai, function akan mencoba mengubah data di tabel user_score_vhs yang memiliki id yang sama dengan parameter $id. Function akan menggunakan metode findOrfail dari class UserScoreVhs untuk mengambil data tersebut dan kemudian menggunakan metode update untuk mengubah data tersebut sesuai dengan request yang diterima. Kemudian function akan mengembalikan sebuah response dalam bentuk JSON yang berisi key success yang isinya adalah hasil dari proses update dan key message yang isinya adalah string 'get successfully'. Jika terjadi exception (error) saat mengupdate data di tabel, function ini akan mengembalikan response dalam bentuk JSON yang berisi key error yang isinya adalah pesan error yang terjadi.
+     */
     public function update(Request $request, $id)
     {
         // dd($request->all());
@@ -200,6 +211,10 @@ class UserScoreVhsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+     /**
+      * Ini adalah sebuah function yang menerima request HTTP dengan method DELETE. Function ini akan mencoba menghapus data di tabel user_score_vhs yang memiliki id yang sama dengan parameter $id. Function akan menggunakan metode destroy dari class UserScoreVhs untuk menghapus data tersebut. Kemudian function akan mengembalikan sebuah response dalam bentuk JSON yang berisi key message yang isinya adalah string 'Data Berhasil di Hapus'. Jika terjadi exception (error) saat menghapus data di tabel, function ini akan mengembalikan sebuah response dalam bentuk HttpException dengan kode status 500 (server error) dan pesan error yang terjadi.
+      */
     public function destroy($id)
     {
         try {

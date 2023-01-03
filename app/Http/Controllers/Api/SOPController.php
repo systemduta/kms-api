@@ -19,11 +19,15 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class SOPController extends Controller
 {
-    public $successStatus = 200;
+    public $successStatus = 200; //sebuah variable yang akan dipanggil saat suatu proses sukses dilakukan
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah contoh fungsi getall yang tidak menerima parameter di PHP. Fungsi ini terlihat seperti mengambil dan mengembalikan semua data dari tabel atau model Company di database.
+     * Fungsi ini pertama kali mengambil objek user yang sedang login dengan menggunakan auth()->user(). Kemudian, fungsi tersebut mengembalikan respons JSON dengan data dari tabel atau model Company yang diurutkan berdasarkan kolom id secara descending (dari yang terbaru). Jika objek user yang sedang login merupakan user dengan role yang bukan 1 (bukan admin), maka query akan dibatasi hanya menampilkan data dari perusahaan yang memiliki id sama dengan $user->company_id. Jika tidak, maka query akan menampilkan semua data.
      */
     public function getall()
     {
@@ -35,6 +39,10 @@ class SOPController extends Controller
         );
     }
 
+    /**
+     * Ini adalah contoh fungsi getOrg yang menerima parameter $id di PHP. Fungsi ini terlihat seperti mengambil dan mengembalikan data perusahaan dan divisi yang terkait dengan $id dari tabel companies dan organizations di database.
+     * Fungsi ini mengambil data perusahaan dengan mencari satu baris dari tabel companies yang memiliki id yang sama dengan $id, kemudian mengurutkannya berdasarkan kolom id secara ascending (dari yang terkecil). Kemudian, fungsi tersebut mengambil data divisi dengan melakukan join tabel companies dan organizations dengan kondisi companies.id sama dengan organizations.company_id, kemudian menyaringnya dengan kondisi companies.id sama dengan $id. Kemudian, fungsi tersebut mengembalikan respons JSON dengan data perusahaan dan data divisi yang dihasilkan dari query sebelumnya.
+     */
     public function getOrg($id)
     {
         $detailCompany =  Company::where('id',$id)->orderBy('id','ASC')->get();
@@ -50,6 +58,12 @@ class SOPController extends Controller
         );
     }
 
+    /**
+     * Ini adalah sebuah method bernama index yang menerima parameter Request $request. Method ini digunakan untuk menampilkan data dari tabel Sop.
+     * Pada baris pertama, variabel $auth diinisialisasikan dengan objek user yang sedang login saat ini. Kemudian, variabel $data diinisialisasikan dengan data dari tabel Sop yang memiliki relasi dengan tabel company dan organization menggunakan fungsi with.
+     * Pada baris ketiga, terdapat sebuah when statement yang memiliki sebuah closure sebagai parameter. Jika role dari user yang sedang login tidak sama dengan 1, maka closure tersebut akan dijalankan dan menambahkan kondisi where pada query untuk mencari data yang memiliki company_id sama dengan company_id dari user yang sedang login.
+     * Pada baris keempat, terdapat kondisi where yang mencari data yang memiliki organization_id sama dengan organization_id yang dikirim dalam request. Kemudian, data tersebut diurutkan berdasarkan kolom id dengan urutan DESC (descending) dan di-return sebagai response dalam bentuk JSON.
+     */
     public function index(Request $request)
     {
         $auth = auth()->user();
@@ -63,11 +77,20 @@ class SOPController extends Controller
         return response()->json(['data' => $data]);
     }
 
+    /**
+     * Ini adalah sebuah method bernama sop yang tidak menerima parameter apapun. Method ini digunakan untuk menampilkan seluruh data dari tabel Sop.
+     * Pada baris ketiga, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi data dari tabel Sop yang diambil menggunakan fungsi get. Fungsi get akan mengambil semua data dari tabel Sop dan mengembalikannya dalam bentuk array.
+     */
     public function sop()
     {
         return response()->json(['data' => Sop::get()]);
     }
 
+    /**
+     * Ini adalah sebuah method bernama sopdown yang menerima parameter $id dan digunakan untuk mengirim tempat dimana file sop berada sehingga dapat digunakan untuk download data dibagian frontend nanti. Method ini digunakan untuk mengambil file yang terkait dengan data Sop dengan id tertentu dari tabel sops.
+     * Pada baris pertama, terdapat sebuah variabel $sop yang diinisialisasikan dengan hasil dari query yang mengambil kolom file dari tabel sops dengan kondisi id yang sesuai dengan parameter $id menggunakan fungsi select dan where. Fungsi first akan mengambil satu baris data pertama yang dikembalikan oleh query tersebut.
+     * Pada baris ketiga, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi file yang terkait dengan data Sop yang bersangkutan. File tersebut diambil dari kolom file yang tersimpan dalam objek $sop.
+     */
     public function sopdown($id)
     {
         $sop = DB::table('sops')->select('file')->where('id',$id)->first();
@@ -89,6 +112,14 @@ class SOPController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama store yang menerima parameter Request $request. Method ini digunakan untuk menyimpan data baru ke dalam tabel sops.
+     * Pada baris ketiga, terdapat sebuah validasi untuk memastikan bahwa semua field yang dibutuhkan telah diisi dengan benar. Jika terdapat field yang belum diisi atau tidak sesuai dengan validasi yang ditentukan, maka akan dikembalikan sebuah error dengan status HTTP 401 (Unauthorized).
+     * Pada baris kelima, terdapat sebuah variabel $auth yang diinisialisasikan dengan objek user yang sedang login saat ini.
+     * Baris keenam hingga kelima belas merupakan proses upload file yang dikirim dalam request. File tersebut dikonversi menjadi base64 string, kemudian di-decode dan disimpan ke dalam folder public/files dengan nama yang telah ditentukan.
+     * Baris tujuh belas hingga kelima puluh merupakan proses penyimpanan data ke dalam tabel sops. Pertama, data akan disimpan ke dalam tabel menggunakan fungsi insertGetId yang akan mengembalikan id dari data yang baru saja disimpan. Kemudian, jika terdapat data gambar yang dikirim dalam request, maka data tersebut akan di-update dengan menggunakan fungsi update.
+     * Pada baris terakhir, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi id dari data yang baru saja disimpan dan pesan sukses.
      */
     public function store(Request $request)
     {
@@ -167,6 +198,11 @@ class SOPController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah method bernama show yang menerima parameter $id. Method ini digunakan untuk menampilkan data dari tabel sops dengan id tertentu.
+     * Pada baris pertama, terdapat sebuah variabel $data yang diinisialisasikan dengan hasil dari query yang mengambil data dari tabel sops dengan kondisi id yang sesuai dengan parameter $id menggunakan fungsi where. Fungsi first akan mengambil satu baris data pertama yang dikembalikan oleh query tersebut.
+     * Pada baris ketiga, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi data yang bersangkutan.
+     */
     public function show($id)
     {
         $data = DB::table('sops')->where('id', $id)->first();
@@ -178,6 +214,13 @@ class SOPController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama status yang menerima parameter $id. Method ini digunakan untuk mengupdate status data dari tabel sops dengan id tertentu.
+     * Pada baris pertama, terdapat sebuah variabel $data yang diinisialisasikan dengan hasil dari query yang mengambil data dari tabel sops dengan kondisi id yang sesuai dengan parameter $id menggunakan fungsi where.
+     * Pada baris ketiga, terdapat sebuah variabel $st_sekarang yang diinisialisasikan dengan nilai status dari data yang bersangkutan.
+     * Pada baris kelima hingga ketujuh, terdapat sebuah if statement yang memeriksa apakah nilai status saat ini adalah 1. Jika benar, maka status akan diupdate menjadi 2. Sebaliknya, jika status saat ini bukan 1, maka status akan diupdate menjadi 1. Update tersebut dilakukan dengan menggunakan fungsi save.
+     * Pada baris terakhir, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi pesan sukses.
      */
     public function status($id)
     {
@@ -205,6 +248,14 @@ class SOPController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama update yang menerima parameter Request $request dan $id. Method ini digunakan untuk mengupdate data dari tabel sops dengan id tertentu.
+     * Pada baris ketiga hingga kesebelas, terdapat sejumlah variabel yang diinisialisasikan dengan nilai yang dikirim dalam request.
+     * Baris ketiga belas hingga kelima belas merupakan proses upload file yang dikirim dalam request. File tersebut dikonversi menjadi base64 string, kemudian di-decode dan disimpan ke dalam folder public/files dengan nama yang telah ditentukan. Kemudian, data file akan diupdate ke dalam tabel sops menggunakan fungsi update.
+     * Baris kelima belas hingga kelima tujuh merupakan proses upload gambar yang dikirim dalam request. Gambar tersebut dikonversi menjadi sebuah objek gambar, kemudian disimpan ke dalam folder public/files dengan nama yang telah ditentukan. Kemudian, data gambar akan diupdate ke dalam tabel sops menggunakan fungsi update.
+     * Baris kelima tujuh hingga kelima sembilan merupakan proses update data lainnya ke dalam tabel sops menggunakan fungsi update.
+     * Pada baris terakhir, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi data yang telah diupdate dan pesan sukses.
      */
     public function update(Request $request, $id)
     {
@@ -279,6 +330,11 @@ class SOPController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama destroy yang menerima parameter $id. Method ini digunakan untuk menghapus data dari tabel sops dengan id tertentu.
+     * Pada baris pertama, terdapat sebuah fungsi destroy yang akan menghapus data dari tabel sops dengan id yang sesuai dengan parameter $id.
+     * Pada baris terakhir, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi pesan sukses.
      */
     public function destroy($id)
     {

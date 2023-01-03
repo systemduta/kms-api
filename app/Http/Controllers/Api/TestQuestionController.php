@@ -49,6 +49,9 @@ class TestQuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah function yang bernama show yang mengambil satu parameter bernama $id. Function ini akan mencoba mengambil data dari tabel test_questions dengan id yang sama dengan $id dan mengurutkannya berdasarkan id. Kemudian function akan menggunakan looping foreach untuk mengambil data dari tabel test_answers untuk setiap record yang diperoleh dari tabel test_questions. Setiap record yang diperoleh dari tabel test_answers akan disimpan dalam key answers di dalam record dari tabel test_questions. Kemudian function akan mengembalikan sebuah response dalam bentuk JSON yang berisi key success yang isinya adalah data yang diperoleh dari tabel test_questions dan test_answers yang telah disimpan dalam key answers.
+     */
     public function show($id)
     {
         $data = TestQuestion::where('id', $id)->orderBy('id')->get();
@@ -78,6 +81,9 @@ class TestQuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah function update data di dua tabel yaitu tabel test_questions dan test_answers. Pertama, block kode tersebut akan mengupdate data di tabel test_questions dengan menggunakan metode update dari class DB. Metode tersebut akan mencari record yang memiliki id yang sama dengan parameter $id dan mengupdate field is_pre_test dan description sesuai dengan request yang diterima. Kemudian block kode tersebut akan menggunakan looping foreach untuk mengupdate data di tabel test_answers. Setiap record yang ada di dalam array answers dari request yang diterima akan diupdate di tabel test_answers dengan menggunakan metode update dari class DB. Setiap record yang diupdate akan dicari berdasarkan id di tabel test_answers dan kemudian diupdate sesuai dengan data yang ada di dalam record tersebut. Jika proses update berhasil, block kode tersebut akan mengembalikan sebuah response dalam bentuk JSON yang berisi key message yang isinya adalah string 'Data berhasil di Update'. Jika terjadi exception (error) saat proses update, block kode tersebut akan mengembalikan sebuah response dalam bentuk JSON yang berisi key message yang isinya adalah pesan error yang terjadi.
      */
     public function update(Request $request, $id)
     {
@@ -133,6 +139,9 @@ class TestQuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah function yang menerima request HTTP dengan method DELETE. Function ini akan mencoba menghapus data di dua tabel yaitu tabel test_questions dan test_answers. Pertama, function akan mengambil data dari tabel test_questions dengan id yang sama dengan $id dan mengambil field id dari record tersebut. Kemudian function akan menghapus semua record di tabel test_answers yang memiliki test_question_id yang sama dengan id yang telah diperoleh sebelumnya. Selanjutnya function akan menghapus record di tabel test_questions yang memiliki id yang sama dengan $id. Kemudian function akan mengembalikan sebuah response dalam bentuk JSON yang berisi key message yang isinya adalah string 'delete successfully'.
+     */
     public function destroy($id)
     {
         $tq = DB::table('test_questions')->where('id',$id)->select('id')->get();
@@ -141,6 +150,5 @@ class TestQuestionController extends Controller
         return response()->json([
             'message' => 'delete successfully'
         ], $this->successStatus);
-
     }
 }

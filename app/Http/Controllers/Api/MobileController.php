@@ -49,15 +49,13 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class MobileController extends Controller
 
 {
-
-
-
-    public $successStatus = 200;
-
-
-
+    public $successStatus = 200; // variabel ini akan dipanggil saat operasi sukses dilakukan
+    /**
+     * Code di bawah merupakan contoh dari sebuah method yang didefinisikan dalam sebuah class pada bahasa pemrograman PHP. Method ini bernama "firebase_token" dan menerima sebuah parameter bernama $request yang merupakan instance dari class Request.
+     * Method ini pertama-tama menggunakan Validator::make() untuk memvalidasi input yang diterima melalui parameter $request. Validator::make() akan memeriksa apakah input yang diterima memiliki tipe data string atau nullable. Jika terdapat input yang tidak memenuhi kriteria tersebut, maka akan dikembalikan response dengan pesan error.
+     * Setelah itu, method ini mengambil objek user yang sedang login saat ini dengan menggunakan fungsi auth(). Kemudian, method ini mengupdate token pada tabel "users" dengan menggunakan DB::table() dan fungsi where(). Setelah itu, method ini mengembalikan response dengan pesan berhasil update token firebase.
+     */
     public function firebase_token(Request $request)
-
     {
         $validator = Validator::make($request->all(), [
             "token" => "string|nullable"
@@ -83,54 +81,41 @@ class MobileController extends Controller
         ], $this->successStatus);
     }
 
+    /**
+     * route : 
+     *      Route::post('login_mobile', 'MobileController@login_mobile');
+     * 
+     * fungsi :
+     *  untuk login dari user mobile . dengan syarat parameter isWeb != 1
+     * 
+     * parameter wajib: 
+     *  - nik
+     *  - password
+     *  - isWeb
+     */
     public function login_mobile(Request $request){
         if(Auth::attempt([
-
                 'nik' => $request->nik,
                 // 'username' => $request->username,
-
                 'password' => $request->password
-
             ])){
-
             $user = Auth::user();
-
             $org=DB::table('organizations')->where('id', $user->organization_id)->first();
-
             if($request->isWeb=="1") {
-
                 if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
-
             }
-
             $success['company_id'] = $user->company_id;
-
             $success['organization_id'] = $user->organization_id;
-
             $success['file'] = $user->file;
-
             $success['accessToken'] = $user->createToken('nApp')->accessToken;
 
-
-
             DB::table('users')->where('id', $user->id)->update([
-
                 'token' => $request->token
-
             ]);
-
-
-
             return response()->json($success, $this->successStatus);
-
-        }
-
-        else {
-
+        }else {
             return response()->json(['message' => 'Unauthorized'], 401);
-
         }
-
     }
 
 

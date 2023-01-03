@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class TestAnswerController extends Controller
 {
-    public $successStatus = 200;
+    public $successStatus = 200;  //untuk mengirim code 200 jika suatau proses sukses dilakukan
     /**
      * Display a listing of the resource.
      *
@@ -50,10 +50,13 @@ class TestAnswerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah contoh fungsi show yang menerima parameter $id di PHP. Fungsi ini terlihat seperti mengambil dan mengembalikan satu baris data dari tabel test_answers di database yang memiliki id yang sama dengan $id.
+     * Fungsi ini mengambil satu baris dari tabel test_answers yang memiliki id yang sama dengan $id dengan menggunakan DB::table('test_answers')->where('id',$id)->first(). Kemudian, fungsi tersebut mengembalikan respons JSON dengan data yang dihasilkan dari query sebelumnya dan nilai dari variabel $this->successStatus.
+     */
     public function show($id)
     {
         $answer = DB::table('test_answers')->where('id',$id)->first();
-        // dd($answer);
         return response()->json(['success' => $answer], $this->successStatus);
     }
 
@@ -75,6 +78,10 @@ class TestAnswerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah contoh fungsi update yang menerima parameter Request $request dan $id di PHP. Fungsi ini terlihat seperti memperbarui data pada tabel test_answers di database yang memiliki id yang sama dengan $id.
+     * Fungsi ini memperbarui data pada tabel test_answers dengan menggunakan method update() pada model TestAnswer. Method ini akan memperbarui kolom name dan is_true dengan nilai yang diterima dari $request. Kemudian, fungsi tersebut mengembalikan respons JSON dengan pesan sukses.
+     */
     public function update(Request $request, $id)
     {
         TestAnswer::where('id',$id)->update([
@@ -91,6 +98,10 @@ class TestAnswerController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah contoh fungsi destroy yang menerima parameter Request $request dan $id di PHP. Fungsi ini terlihat seperti menghapus satu baris data dari tabel test_answers di database yang memiliki id yang sama dengan $id.
+     * Fungsi ini menghapus satu baris dari tabel test_answers yang memiliki id yang sama dengan $id dengan menggunakan DB::table('test_answers')->where('id',$id)->delete(). Kemudian, fungsi tersebut mengembalikan respons JSON dengan pesan sukses. Bagian yang dikomentari adalah contoh penanganan exception yang dapat dilakukan saat proses penghapusan data. Jika terjadi exception, fungsi tersebut akan mengembalikan respons JSON dengan pesan error yang terjadi.
      */
     public function destroy(Request $request, $id)
     {

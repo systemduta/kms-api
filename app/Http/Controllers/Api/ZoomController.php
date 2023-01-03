@@ -13,13 +13,17 @@ use Illuminate\Support\Facades\Validator;
 class ZoomController extends Controller
 {
     
-    public $successStatus = 200;
-    public $errorStatus =403;
+    public $successStatus = 200; //jika data sukses di kirim maka akan ada response code 200
+    public $errorStatus =403;    //jika data gagal dikirim maka akan ada response code 403
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    
+     /**
+      * Ini adalah sebuah method bernama index yang mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel zooms_vhs dan jadwalvhs di database, menyatukannya, dan mengurutkannya berdasarkan id dari tabel zooms_vhs dari yang terbesar ke yang terkecil. Kemudian, data tersebut akan dikembalikan dalam bentuk JSON dengan key data. Jika terjadi exception (error), maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 500 (Internal Server Error).
+      */
     public function index()
     {
         try {
@@ -37,10 +41,14 @@ class ZoomController extends Controller
         }   
     }
 
+    /**
+     * Ini adalah sebuah method bernama getvhs yang mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel jadwalvhs di database, dan hanya akan mengembalikan data yang memiliki id sesuai dengan id company dari user yang sedang login, jika user tersebut memiliki role bukan 1 (admin) dan memiliki company_id. Kemudian, data tersebut akan dikembalikan dalam bentuk JSON dengan key data. Jika terjadi exception (error), maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 500 (Internal Server Error).
+     */
+
     public function getvhs()
     {
         try {
-            $user = auth()->user();
+            $user = auth()->user();  //memperoleh data user login
             $data=DB::table('jadwalvhs')
                 ->select('id','name','batch','start')
                 ->when(($user && $user->role!=1), function ($q) use ($user) {
@@ -71,6 +79,9 @@ class ZoomController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama store yang menerima sebuah request (data yang dikirim dari client) dan mengembalikan sebuah response dalam bentuk JSON. Method ini akan memvalidasi input yang dikirim dari client dengan menggunakan Validator class. Jika input tidak valid, maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 400 (Bad Request). Jika input valid, maka akan dilakukan proses penyimpanan data ke tabel zooms_vhs di database. Jika proses penyimpanan data berhasil, maka akan dikembalikan response dalam bentuk JSON dengan key data dan message serta status kode HTTP yang sesuai dengan $this->successStatus. Jika terjadi exception (error) selama proses penyimpanan data, maka akan dilakukan rollback (pembatalan) terhadap seluruh proses yang telah dilakukan sebelumnya dan akan dikembalikan response dalam bentuk HttpException dengan status kode HTTP 500 (Internal Server Error).
      */
     public function store(Request $request)
     {
@@ -117,6 +128,9 @@ class ZoomController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah sebuah method bernama show yang menerima sebuah parameter id dan mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel zooms_vhs dan jadwalvhs di database, menyatukannya, dan mengembalikan data yang memiliki id sesuai dengan parameter id. Jika data tersebut ditemukan, maka akan dikembalikan response dalam bentuk JSON dengan key success dan status kode HTTP yang sesuai dengan $this->successStatus. Jika data tidak ditemukan, maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP yang sesuai dengan $this->errorStatus.
+     */
     public function show($id)
     {
         // $data = DB::table('jadwalvhs')->where('id',$id)->first();
@@ -149,6 +163,9 @@ class ZoomController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama update yang menerima sebuah request (data yang dikirim dari client) dan sebuah parameter id, dan mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengupdate data pada tabel zooms_vhs di database yang memiliki id sesuai dengan parameter id. Jika proses update berhasil, maka akan dikembalikan response dalam bentuk JSON dengan key success dan message serta status kode HTTP yang sesuai dengan $this->successStatus. Jika terjadi exception (error) selama proses update, maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 500 (Internal Server Error).
      */
     public function update(Request $request, $id)
     {
@@ -184,6 +201,9 @@ class ZoomController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah sebuah method bernama destroy yang menerima sebuah parameter id dan mengembalikan sebuah response dalam bentuk JSON. Method ini akan menghapus data dari tabel zooms_vhs di database yang memiliki id sesuai dengan parameter id. Jika proses penghapusan data berhasil, maka akan dikembalikan response dalam bentuk JSON dengan key message. Jika terjadi exception (error) selama proses penghapusan data, maka akan dilakukan rollback (pembatalan) terhadap seluruh proses yang telah dilakukan sebelumnya dan akan dikembalikan response dalam bentuk HttpException dengan status kode HTTP 500 (Internal Server Error).
      */
     public function destroy($id)
     {

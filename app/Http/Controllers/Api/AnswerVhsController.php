@@ -8,6 +8,11 @@ use App\Models\QuestionVhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Controller ini digunakan untuk mengatur bagaimana jawaban user masuk ke database
+ */
+
+
 class AnswerVhsController extends Controller
 {
     /**
@@ -15,6 +20,11 @@ class AnswerVhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     /**
+      * index()
+      * digunakan untuk mengambil data dari tabel "answer_vhs" dan digabungkan dengan beberapa tabel lain yaitu "materi_vhs","question_vhs","users". Jika ada data terkait user yang kosong disalah satu table tersebut maka data tidak akan tampil 
+      */
     public function index()
     {
         try {
@@ -32,6 +42,11 @@ class AnswerVhsController extends Controller
         }   
     }
 
+    /**
+     * getAnswer($id)
+     * Kegunaannya hampir sama dengan index() tetapi data yang diambil hanya data yang sama dengan $id berdasarkan dari kolom question_id di table answer. => jika $id != question_id maka data tidak dapat diambil
+     */
+
     public function getAnswer($id){
         try {
             $data=DB::table('answer_vhs')
@@ -48,7 +63,7 @@ class AnswerVhsController extends Controller
                     'users.name',
                     'answer_vhs.answer',
                     'answer_vhs.created_at as date_update',)
-                ->where('answer_vhs.question_id',$id)
+                ->where('answer_vhs.question_id',$id)   // difilter disini
                 ->get();
 
             $data3 = QuestionVhs::where('question_vhs.id',$id)->first();
@@ -60,6 +75,11 @@ class AnswerVhsController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }   
     }
+
+    /**
+     * getSingleAnswer($id)
+     * untuk mengambil satu data dari data jawaban user berdasarkan id yag dikirim
+     */
 
     public function getSingleAnswer($id){
         try {

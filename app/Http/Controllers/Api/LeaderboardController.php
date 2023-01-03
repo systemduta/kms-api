@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller
 {
-    public $successStatus = 200;
+    public $successStatus = 200; //variable yang akan dipanggil saat eksekusi program berhasil
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Fungsi index ini digunakan untuk menampilkan data skor dari seluruh user yang telah menyelesaikan tes.
+     * Pertama-tama, variabel $auth akan diisi dengan objek user yang sedang login. Kemudian, fungsi ini akan mengambil data dari tabel user_scores dan users dengan menggunakan query JOIN.
+     * Jika role dari user yang sedang login bukan 1 (artinya bukan administrator), maka akan ditambahkan syarat untuk hanya menampilkan data user yang memiliki company_id yang sama dengan user yang sedang login.
+     * Setelah itu, data yang diambil akan di-group berdasarkan ID user, username, dan nama, dan diurutkan berdasarkan skor (point) terbesar. Kemudian, data yang sudah di-group dan diurutkan tersebut akan dikembalikan sebagai respon dalam bentuk JSON.
      */
     public function index(Request $request)
     {
@@ -100,6 +106,13 @@ class LeaderboardController extends Controller
         //
     }
 
+    /**
+     * Fungsi exam_result ini digunakan untuk menampilkan hasil tes dari seluruh user.
+     * Pertama-tama, variabel $user akan diisi dengan objek user yang sedang login. Kemudian, fungsi ini akan mengambil data dari tabel user_scores, users, dan courses dengan menggunakan query JOIN.
+     * Jika role dari user yang sedang login bukan 1 (artinya bukan administrator), maka akan ditambahkan syarat untuk hanya menampilkan data user yang memiliki company_id yang sama dengan user yang sedang login.
+     * Jika company_id dari user yang sedang login adalah 1 (artinya merupakan user dari administrasi) dan organization_id adalah 11, maka akan ditambahkan syarat untuk hanya menampilkan data yang memiliki tipe kursus yang tidak sama dengan 3. Sebaliknya, jika organization_id adalah 20, maka akan ditambahkan syarat untuk hanya menampilkan data yang memiliki tipe kursus yang sama dengan 3.
+     * Setelah itu, data yang diambil akan diurutkan berdasarkan ID user_score dari yang terbaru ke yang terlama, dan dikembalikan sebagai respon dalam bentuk JSON.
+     */
     public function exam_result(Request $request){
         $user = auth()->user();
         $result = \Illuminate\Support\Facades\DB::table('user_scores as us')

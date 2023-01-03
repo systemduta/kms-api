@@ -14,6 +14,9 @@ class GolonganController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Pada function index, terdapat sebuah query yang menggunakan fungsi whereNotIn() untuk memfilter data dari model Golongan yang tidak memiliki nama sesuai dengan daftar nama yang disebutkan di dalam [ ]. Selanjutnya, fungsi orderBy() digunakan untuk mengurutkan data berdasarkan kolom 'code' dengan urutan ascending ('ASC'). Kemudian, fungsi get() digunakan untuk mengeksekusi query tersebut. Setelah itu, hasil query tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json().
+     */
     public function index()
     {
         return response()->json(

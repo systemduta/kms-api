@@ -18,6 +18,10 @@ class VhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Ini adalah contoh fungsi index yang tidak menerima parameter. Fungsi ini terlihat seperti mengambil dan mengembalikan data dari tabel atau model Vhs di database.
+     * Fungsi ini mengambil semua baris dari tabel atau model Vhs yang diurutkan berdasarkan kolom created_at secara descending (dari yang terbaru). Kemudian, fungsi tersebut mengembalikan respons JSON dengan data yang dihasilkan dari query sebelumnya.
+     */
     public function index()
     {
         $data = Vhs::orderBy('created_at', 'desc')->get();
@@ -39,6 +43,12 @@ class VhsController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah contoh fungsi store yang menerima parameter Request $request di PHP. Fungsi ini terlihat seperti menyimpan data baru ke tabel atau model Vhs di database, serta meng-upload file video dan thumbnail ke server.
+     * Pertama, fungsi ini menggunakan class Validator untuk memvalidasi input yang diterima melalui $request. Validasi ini memastikan bahwa kolom title dan description harus diisi, sedangkan file thumbnail dan video hanya boleh berupa file gambar atau file video, masing-masing dengan ukuran maksimum 2MB dan tidak harus diisi. Jika validasi gagal, fungsi tersebut akan mengembalikan respons JSON dengan error yang terjadi.
+     * Setelah itu, fungsi tersebut mempersiapkan untuk meng-upload file video dengan menyiapkan variabel-variabel yang diperlukan. Kemudian, fungsi tersebut meng-upload file thumbnail ke server dengan menggunakan Storage::disk('public')->put().
+     * Setelah itu, fungsi tersebut membuat objek baru dari model Vhs, mengisi setiap kolom dengan data dari $request, serta menyimpan data tersebut ke database. Kemudian, jika file video juga telah disertakan dalam $request, fungsi tersebut akan mencoba meng-upload file video ke server dengan menggunakan Storage::disk('public')->put(). Jika proses upload berhasil, fungsi tersebut akan mengembalikan respons JSON dengan data yang baru disimpan dan pesan sukses. Jika terjadi error selama proses upload, fungsi tersebut akan mengembalikan respons JSON dengan pesan error yang terjadi.
      */
     public function store(Request $request)
     {
@@ -130,6 +140,11 @@ class VhsController extends Controller
      * Remove the specified resource from storage.
      *
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * Ini adalah contoh fungsi destroy yang menerima parameter $id di PHP. Fungsi ini terlihat seperti menghapus data dari tabel atau model Vhs di database, serta menghapus file video dan thumbnail yang terkait dari server.
+     * Pertama, fungsi ini mencari data di tabel atau model Vhs dengan id yang sama dengan $id dan menyimpannya ke dalam variabel $vhs. Kemudian, fungsi tersebut menyiapkan path atau lokasi file video dan thumbnail yang terkait dengan $vhs.
+     * Setelah itu, fungsi tersebut menggunakan class File untuk menghapus file video dan thumbnail dari server dengan menggunakan File::delete(). Kemudian, fungsi tersebut menghapus data $vhs dari database dengan menggunakan method delete() pada model Vhs. Terakhir, fungsi tersebut mengembalikan respons JSON dengan pesan sukses.
      */
     public function destroy($id)
     {
