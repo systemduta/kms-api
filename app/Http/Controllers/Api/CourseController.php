@@ -260,21 +260,29 @@ class CourseController extends Controller
       */
     public function update(Request $request, $id)
     {
+        // dd($request->all());
         $title = $request->title;
         $description = $request->description;
         $image = '';
         $video = $request->video;
         $link = $request->link;
 
-        /* START FILE UPLOAD */
-        $file64 = $request->file;
-        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
-        $file = str_replace($replace, '', $file64);
-        $file = str_replace(' ', '+', $file);
-        $filename = 'file_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
-        /* END FILE UPLOAD */
+        if ($request->has('file')) {
+            /* START FILE UPLOAD */
+            $file64 = $request->file;
+            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+            $replace = substr($file64, 0, strpos($file64, ',')+1);
+            $file = str_replace($replace, '', $file64);
+            $file = str_replace(' ', '+', $file);
+            $filename = 'file_'.Str::random(10).'.'.$ext;
+            Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+            /* END FILE UPLOAD */
+
+            $course = Course::find($id);
+            $course->file = 'files/'.$filename;
+            $course->save();
+        }
+       
 
         if($request->filled('image')) {
             $imgName='';
@@ -290,14 +298,18 @@ class CourseController extends Controller
             } else {
                 imagejpeg($image,public_path().'/files/'.$imgName,20);
             }
+            $course = Course::find($id);
+            $course->image = $imgName;
+            $course->save();
         }
 
         $course = Course::find($id);
+        $course->company_id = $request->company_id;
+        $course->organization_id = $request->organization_id;
+        $course->golongan_id = $request->golongan_id;
         $course->title = $title;
         $course->description = $description;
-        $course->image = $imgName;
         $course->video = $video;
-        $course->file = 'files/'.$filename;
         $course->link = $link;
         $course->save();
 

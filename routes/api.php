@@ -69,6 +69,7 @@ Route::group([
             Route::post('logout', 'UserController@logout');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
             Route::resource('organization','OrganizationController');
+            Route::get('organizationcompany','OrganizationController@organization_company');
 
             //companies
             Route::resource('companies','CompanyController');

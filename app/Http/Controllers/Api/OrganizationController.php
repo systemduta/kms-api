@@ -62,6 +62,18 @@ class OrganizationController extends Controller
             ->get();
         return response()->json(['data' => $organization]);
     }
+    public function organization_company()
+    {
+        $user = auth()->user();
+        $organization = DB::table('organizations')
+            ->join('companies','organizations.company_id','=','companies.id')
+            ->when(($user && $user->role!=1), function ($q) use ($user) {
+                return $q->where('company_id', $user->company_id);
+                })
+            ->select('organizations.*','companies.name as name_company')
+            ->get();
+        return response()->json(['data' => $organization]);
+    }
 
 //    public function get_organization_by_company(Request $request)
 //    {
