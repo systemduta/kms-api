@@ -12,7 +12,7 @@ git clone https://github.com/systemduta/kms-api.git
 cd kms-api
 ```
 
-3. Setelah itu alihkan ke branch "dev" engan paste dan run command dibawah di git bash
+3. Setelah itu alihkan ke branch "dev" dengan paste dan run command dibawah di git bash
 
 ```bash
 git checkout dev
