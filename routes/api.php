@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\JadwalVhsController;
 use App\Http\Controllers\Api\LampiranController;
 use App\Http\Controllers\Api\MateriVHsController;
 use App\Http\Controllers\Api\MobileController;
+use App\Http\Controllers\Api\ProfileAdminController;
 use App\Http\Controllers\Api\SetAdminController;
 use App\Http\Controllers\Api\SOPController;
 use App\Http\Controllers\Api\ZoomController;
@@ -179,6 +180,10 @@ Route::group([
 
             //deletOrg
             Route::get('deleteorg/{id}','OrganizationController@deleteOrg');
+
+            //profile
+            Route::resource('profile','ProfileAdminController');
+            Route::put('updateprofile','ProfileAdminController@updateself');
         });
     });
 
