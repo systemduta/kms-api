@@ -126,7 +126,7 @@ class CourseController extends Controller
         try {
             DB::beginTransaction();
             $courseGetId=DB::table('courses')->insertGetId([
-                'company_id' => $request->company_id,
+                'company_id' => $request->company_id ?? null,
                 'organization_id' => $request->organization_id ?? null,
                 'golongan_id' => $request->golongan_id ?? null,
                 'title' => $request->title,
