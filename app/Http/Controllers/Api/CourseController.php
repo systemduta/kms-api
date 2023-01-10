@@ -83,7 +83,7 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'organization_id' => 'numeric|nullable',
             'golongan_id' => 'numeric|nullable',
@@ -203,7 +203,6 @@ class CourseController extends Controller
                     ]);
                 }
             }
-
             DB::commit();
         } catch (\Exception $exception) {
             DB::rollBack();
