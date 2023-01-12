@@ -150,6 +150,30 @@ class SOPController extends Controller
         /* END FILE UPLOAD */
 
         try {
+            $organization_id = $request->organization_id ?? null;
+            $tokenUser = DB::table('users')
+                // ->when($auth->role!=1, function ($q) use ($auth) {
+                //     return $q->where('company_id', $auth->company_id);
+                // })
+                ->when( $organization_id, function ($query) use ($organization_id) {
+                    return $query->where('organization_id', $organization_id);
+                })
+                ->where('token','!=',"")
+                ->pluck('token')->toArray();
+            if($tokenUser) {
+                $result = fcm()->to($tokenUser)
+                ->timeToLive(0)
+                ->priority('high')
+                ->notification([
+                    'title' => 'Hai, ada SOP baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->data([
+                    'title' => 'Hai, ada SOP baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->send();
+            }
             DB::beginTransaction();
             $sopGetId = DB::table('sops')->insertGetId([
                 // 'company_id'        => $auth->company_id,
