@@ -48,12 +48,12 @@ class ZoomController extends Controller
     public function getvhs()
     {
         try {
-            $user = auth()->user();  //memperoleh data user login
+            // $user = auth()->user();  //memperoleh data user login
             $data=DB::table('jadwalvhs')
                 ->select('id','name','batch','start')
-                ->when(($user && $user->role!=1), function ($q) use ($user) {
-                        return $q->where('id', $user->company_id);
-                    })
+                // ->when(($user && $user->role!=1), function ($q) use ($user) {
+                //         return $q->where('id', $user->company_id);
+                //     })
                 ->get();
             return response()->json(
                 [

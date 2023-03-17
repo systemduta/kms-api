@@ -14,6 +14,7 @@ use Illuminate\Support\Str;
 class UserController extends Controller
 {
     public $successStatus = 200;
+    public $errorStatus = 403;
 
     /**
      * untuk route:
@@ -86,6 +87,9 @@ class UserController extends Controller
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
+
+        // return response()->json(['data' => $request->nik], $this->errorStatus);
+
 
         /* START FILE UPLOAD */
         $file64 = $request->file;

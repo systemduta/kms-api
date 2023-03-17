@@ -33,7 +33,7 @@ class CompanyController extends Controller
         //     ->when(($user && $user->role!=1), function ($q) use ($user) {
         //         return $q->where('id', $user->company_id);
         //     })->get();
-        // return response()->json(['data' => $company]);
+        // return response()->json(['data' => 'masuk'],403);
         return response()->json(
             ['data' => Company::
             whereNotIn('name',[

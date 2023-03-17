@@ -103,11 +103,13 @@ class OrganizationController extends Controller
             'name' => 'required|string',
             'code' => 'required|string',
             'company_id' => 'numeric|nullable',
+            'isAdm' =>'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error'=>$validator->errors()], 401);
         }
+        
         $user = auth()->user();
 
         $organization = new Organization();
@@ -115,6 +117,7 @@ class OrganizationController extends Controller
         $organization->parent_id = null;
         $organization->name = $request->name;
         $organization->code = $request->code;
+        $organization->isAdm = $request->isAdm;
         $organization->iterasi = 0;
         $organization->is_str = $request->is_str ?? 0;
         $organization->save();
@@ -151,9 +154,10 @@ class OrganizationController extends Controller
     public function update(Request $request, Organization $organization)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'string',
-            'code' => 'string',
+            'name' => 'string|required',
+            'code' => 'string|required',
             'company_id' => 'numeric|nullable',
+            'isAdm' =>'required',
         ]);
 
         if ($validator->fails()) {
@@ -166,7 +170,7 @@ class OrganizationController extends Controller
         $organization->name = $request->name;
         $organization->code = $request->code;
         $organization->iterasi = 0;
-        $organization->is_str = $request->is_str ?? 0;
+        $organization->isAdm = $request->isAdm;
         $organization->save();
 
         return response()->json([

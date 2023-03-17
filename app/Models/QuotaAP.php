@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Jadwalvhs extends Model
+class QuotaAP extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'name','batch','type','start','end','isCity','quota',
+    protected $table = 'quotaaps';
+    protected $fillable=[
+        'jadwal_id','company_id','quota'
     ];
 }

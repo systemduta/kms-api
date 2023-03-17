@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJadwalUserVhsTable extends Migration
+class CreateMessagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,18 +13,14 @@ class CreateJadwalUserVhsTable extends Migration
      */
     public function up()
     {
-        Schema::create('jadwal_user_vhs', function (Blueprint $table) {
+        Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('jadwal_id');
-            $table->unsignedBigInteger('company_id');
-            $table->bigInteger('is_take')->nullable();
+            $table->string('subject');
+            $table->text('content');
             $table->timestamps();
-
             
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('jadwal_id')->references('id')->on('jadwalvhs');
-            $table->foreign('company_id')->references('id')->on('companies');
         });
     }
 
@@ -35,6 +31,6 @@ class CreateJadwalUserVhsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('jadwal_user_vhs');
+        Schema::dropIfExists('messages');
     }
 }

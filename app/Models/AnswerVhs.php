@@ -9,7 +9,7 @@ class AnswerVhs extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'materi_id','question_id','user_id','answer'
+        'materi_id','question_id','user_id','answer','file'
     ];
 
     public function materivhs()

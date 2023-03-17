@@ -128,10 +128,7 @@ class MobileController extends Controller
 
 
 
-            return response()->json(['error'=>$validator->errors()], 401);
-
-
-
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
         $user = \auth()->user();
@@ -159,7 +156,6 @@ class MobileController extends Controller
 
 
         ], $this->successStatus);
-
     }
 
 
@@ -188,26 +184,26 @@ class MobileController extends Controller
 
      */
 
-    public function login_mobile(Request $request){
+    public function login_mobile(Request $request)
+    {
 
-        if(Auth::attempt([
+        if (Auth::attempt([
 
-                'nik' => $request->nik,
+            'nik' => $request->nik,
 
-                // 'username' => $request->username,
+            // 'username' => $request->username,
 
-                'password' => $request->password
+            'password' => $request->password
 
-            ])){
+        ])) {
 
             $user = Auth::user();
 
-            $org=DB::table('organizations')->where('id', $user->organization_id)->first();
+            $org = DB::table('organizations')->where('id', $user->organization_id)->first();
 
-            if($request->isWeb=="1") {
+            if ($request->isWeb == "1") {
 
-                if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
-
+                if ($org->is_str != 1) return response()->json(['message' => 'Unauthorized'], 401);
             }
 
             $success['company_id'] = $user->company_id;
@@ -227,13 +223,10 @@ class MobileController extends Controller
             ]);
 
             return response()->json($success, $this->successStatus);
-
-        }else {
+        } else {
 
             return response()->json(['message' => 'Unauthorized'], 401);
-
         }
-
     }
 
 
@@ -278,7 +271,7 @@ class MobileController extends Controller
 
 
 
-        $data = Sop::with(['company','organization','lampiran','crossfunction'])->findOrFail($id);
+        $data = Sop::with(['company', 'organization', 'lampiran', 'crossfunction'])->findOrFail($id);
 
 
 
@@ -286,10 +279,7 @@ class MobileController extends Controller
 
 
 
-        return response()->json(['data'=>$data]);
-
-
-
+        return response()->json(['data' => $data]);
     }
 
 
@@ -382,34 +372,28 @@ class MobileController extends Controller
 
 
 
-        $data = Sop::with(['company','organization','lampiran', 'crossfunction'])
+        $data = Sop::with(['company', 'organization', 'lampiran', 'crossfunction'])
 
 
 
-                ->when($auth->role!=1, function ($q) use ($auth) {
+            ->when($auth->role != 1, function ($q) use ($auth) {
 
 
 
-                    return $q->where('organization_id', $auth->organization_id);
+                return $q->where('organization_id', $auth->organization_id);
+            })
 
 
 
-                })
+            ->orderBy('id', 'DESC')
 
 
 
-                ->orderBy('id', 'DESC')
-
-
-
-                ->get();
+            ->get();
 
 
 
         return response()->json(['data' => $data]);
-
-
-
     }
 
 
@@ -418,119 +402,119 @@ class MobileController extends Controller
 
 
 
-//    public function lampiran()
+    //    public function lampiran()
 
 
 
-//    {
+    //    {
 
 
 
-//         $auth       = auth()->user();
+    //         $auth       = auth()->user();
 
 
 
-//         $lampiran   = Lampiran::with(['company','organization','sop'])
+    //         $lampiran   = Lampiran::with(['company','organization','sop'])
 
 
 
-//                     ->when($auth->role!=1, function ($q) use ($auth) {
+    //                     ->when($auth->role!=1, function ($q) use ($auth) {
 
 
 
-//                         return $q->where('organization_id', $auth->organization_id);
+    //                         return $q->where('organization_id', $auth->organization_id);
 
 
 
-//                     })
+    //                     })
 
 
 
-//                     ->orderBy('id', 'DESC')
+    //                     ->orderBy('id', 'DESC')
 
 
 
-//                     ->get();
+    //                     ->get();
 
 
 
-//         return response()->json(['data' => $lampiran]);
+    //         return response()->json(['data' => $lampiran]);
 
 
 
-//    }
+    //    }
 
 
 
-//    Sementara ndak dipakai
+    //    Sementara ndak dipakai
 
 
 
-//    public function course_list(Request $request)
+    //    public function course_list(Request $request)
 
 
 
-//    {
+    //    {
 
 
 
-//        $dt = DB::table('courses as c');
+    //        $dt = DB::table('courses as c');
 
 
 
-//        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+    //        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
 
 
 
-//        $dt = $dt->where('c.organization_id', auth()->user()->organization_id);
+    //        $dt = $dt->where('c.organization_id', auth()->user()->organization_id);
 
 
 
-//        $dt = $dt->where('c.type', $request->type);
+    //        $dt = $dt->where('c.type', $request->type);
 
 
 
-//        $dt = $dt->where('us.id','!=', null);
+    //        $dt = $dt->where('us.id','!=', null);
 
 
 
-//        $dt = $dt->selectRaw('
+    //        $dt = $dt->selectRaw('
 
 
 
-//            c.id,
+    //            c.id,
 
 
 
-//            c.title,
+    //            c.title,
 
 
 
-//            c.description,
+    //            c.description,
 
 
 
-//            c.image,
+    //            c.image,
 
 
 
-//            if(us.id is not null, 1, 0) as is_going
+    //            if(us.id is not null, 1, 0) as is_going
 
 
 
-//        ')->get();
+    //        ')->get();
 
 
 
-//        $data=array();
+    //        $data=array();
 
 
 
-//        return response()->json(['data' => $dt]);
+    //        return response()->json(['data' => $dt]);
 
 
 
-//    }
+    //    }
 
 
 
@@ -546,15 +530,16 @@ class MobileController extends Controller
 
 
 
-        $data = Sop::where('id',$id)->first();
+        $data = Sop::where('id', $id)->first();
 
 
 
-        return response()->download(public_path(
+        return response()->download(
+            public_path(
 
 
 
-                'files/'.$data->file,
+                'files/' . $data->file,
 
 
 
@@ -567,9 +552,6 @@ class MobileController extends Controller
 
 
         );
-
-
-
     }
 
 
@@ -582,15 +564,16 @@ class MobileController extends Controller
 
 
 
-        $data = Lampiran::where('id',$id)->first();
+        $data = Lampiran::where('id', $id)->first();
 
 
 
-        return response()->download(public_path(
+        return response()->download(
+            public_path(
 
 
 
-                'files/'.$data->file,
+                'files/' . $data->file,
 
 
 
@@ -603,9 +586,6 @@ class MobileController extends Controller
 
 
         );
-
-
-
     }
 
 
@@ -622,15 +602,16 @@ class MobileController extends Controller
 
 
 
-        $data = Crossfunction::where('id',$id)->first();
+        $data = Crossfunction::where('id', $id)->first();
 
 
 
-        return response()->download(public_path(
+        return response()->download(
+            public_path(
 
 
 
-                'files/'.$data->file,
+                'files/' . $data->file,
 
 
 
@@ -643,9 +624,6 @@ class MobileController extends Controller
 
 
         );
-
-
-
     }
 
 
@@ -662,7 +640,7 @@ class MobileController extends Controller
 
 
 
-        $data = Sop::where('id',$id)->first();
+        $data = Sop::where('id', $id)->first();
 
 
 
@@ -695,10 +673,7 @@ class MobileController extends Controller
 
 
             $sop->save();
-
-
-
-        }else{
+        } else {
 
 
 
@@ -711,9 +686,6 @@ class MobileController extends Controller
 
 
             $sop->save();
-
-
-
         }
 
 
@@ -722,10 +694,7 @@ class MobileController extends Controller
 
 
 
-        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
-
-
-
+        return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
 
@@ -750,7 +719,7 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+        $dt = $dt->leftJoin('user_scores as us', 'us.course_id', 'c.id');
 
 
 
@@ -759,26 +728,20 @@ class MobileController extends Controller
 
 
             return $q->where('c.company_id', $user->company_id);
-
-
-
         });
 
 
 
-        $dt = $dt->when($request->type, function ($query) use ($request){
+        $dt = $dt->when($request->type, function ($query) use ($request) {
 
 
 
             return $query->where('c.type', $request->type);
-
-
-
         });
 
 
 
-        $dt = $dt->when($request->type==1, function ($query) use ($user) {
+        $dt = $dt->when($request->type == 1, function ($query) use ($user) {
 
 
 
@@ -786,27 +749,21 @@ class MobileController extends Controller
 
 
 
-                ->where(function ($query) use ($user){
+                ->where(function ($query) use ($user) {
 
 
 
                     return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-
-
-
                 });
-
-
-
         });
 
 
 
-        $dt = $dt->groupBy('c.id','c.title','c.description','c.image');
+        $dt = $dt->groupBy('c.id', 'c.title', 'c.description', 'c.image');
 
 
 
-        $dt = $dt->orderBy('c.id','DESC');
+        $dt = $dt->orderBy('c.id', 'DESC');
 
 
 
@@ -850,22 +807,19 @@ class MobileController extends Controller
 
 
 
-        foreach($dt as $value){
+        foreach ($dt as $value) {
 
 
 
-            $exclude = explode(",",$value->user_list);
+            $exclude = explode(",", $value->user_list);
 
 
 
-            if(in_array($user->id,$exclude)) continue;
+            if (in_array($user->id, $exclude)) continue;
 
 
 
-            array_push($data,$value);
-
-
-
+            array_push($data, $value);
         }
 
 
@@ -875,9 +829,6 @@ class MobileController extends Controller
 
 
         return response()->json(['data' => $data]);
-
-
-
     }
 
 
@@ -906,7 +857,7 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->leftJoin('user_scores as us','us.course_id','c.id');
+        $dt = $dt->leftJoin('user_scores as us', 'us.course_id', 'c.id');
 
 
 
@@ -914,11 +865,11 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->groupBy('c.id','c.title','c.description','c.image','c.video');
+        $dt = $dt->groupBy('c.id', 'c.title', 'c.description', 'c.image', 'c.video');
 
 
 
-        $dt = $dt->orderBy('c.id','DESC');
+        $dt = $dt->orderBy('c.id', 'DESC');
 
 
 
@@ -966,22 +917,19 @@ class MobileController extends Controller
 
 
 
-        foreach($dt as $value){
+        foreach ($dt as $value) {
 
 
 
-            $exclude = explode(",",$value->user_list);
+            $exclude = explode(",", $value->user_list);
 
 
 
-            if(in_array($user->id,$exclude)) continue;
+            if (in_array($user->id, $exclude)) continue;
 
 
 
-            array_push($data,$value);
-
-
-
+            array_push($data, $value);
         }
 
 
@@ -991,9 +939,6 @@ class MobileController extends Controller
 
 
         return response()->json(['data' => $data]);
-
-
-
     }
 
 
@@ -1002,7 +947,8 @@ class MobileController extends Controller
 
 
 
-    public function covert_question ($value) {
+    public function covert_question($value)
+    {
 
 
 
@@ -1018,19 +964,19 @@ class MobileController extends Controller
 
 
 
-                $nameA ='';
+                $nameA = '';
 
 
 
-                $nameB ='';
+                $nameB = '';
 
 
 
-                $nameC ='';
+                $nameC = '';
 
 
 
-                $nameD ='';
+                $nameD = '';
 
 
 
@@ -1059,9 +1005,6 @@ class MobileController extends Controller
 
 
                     if ($it->is_true == 1) $answer = $it->name;
-
-
-
                 });
 
 
@@ -1099,21 +1042,12 @@ class MobileController extends Controller
 
 
                 ]);
-
-
-
             });
 
 
 
             return $temp;
-
-
-
         });
-
-
-
     }
 
 
@@ -1227,9 +1161,6 @@ class MobileController extends Controller
 
 
         return response()->json(['data' => $result]);
-
-
-
     }
 
 
@@ -1250,7 +1181,7 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->leftJoin('courses as c','c.id','us.course_id');
+        $dt = $dt->leftJoin('courses as c', 'c.id', 'us.course_id');
 
 
 
@@ -1258,7 +1189,7 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->orderBy('us.id','DESC');
+        $dt = $dt->orderBy('us.id', 'DESC');
 
 
 
@@ -1298,11 +1229,11 @@ class MobileController extends Controller
 
 
 
-//        start of formating response
+        //        start of formating response
 
 
 
-        $data= collect();        
+        $data = collect();
 
 
 
@@ -1322,15 +1253,15 @@ class MobileController extends Controller
 
 
 
-        $dt->each(function ($item) use (&$temp_id, &$temp_course_id, &$data, &$temp_score, &$temp_status){
+        $dt->each(function ($item) use (&$temp_id, &$temp_course_id, &$data, &$temp_score, &$temp_status) {
 
 
 
-            if (($item->id == $temp_id-1) && ($item->course_id == $temp_course_id)) {
+            if (($item->id == $temp_id - 1) && ($item->course_id == $temp_course_id)) {
 
 
 
-                $modifiedElement = array_merge($data[($data->count())-1], [
+                $modifiedElement = array_merge($data[($data->count()) - 1], [
 
 
 
@@ -1346,7 +1277,7 @@ class MobileController extends Controller
 
 
 
-                    "status" => ($item->status==2 && $temp_status==2) ? "2" : "1",
+                    "status" => ($item->status == 2 && $temp_status == 2) ? "2" : "1",
 
 
 
@@ -1362,18 +1293,15 @@ class MobileController extends Controller
 
 
 
-                
 
 
 
-        // dd($modifiedElement);
+
+                // dd($modifiedElement);
 
 
 
-                $data->put((($data->count())-1), $modifiedElement);
-
-
-
+                $data->put((($data->count()) - 1), $modifiedElement);
             } else {
 
 
@@ -1382,7 +1310,7 @@ class MobileController extends Controller
 
 
 
-//                    "id" => $item->id,
+                    //                    "id" => $item->id,
 
 
 
@@ -1431,9 +1359,6 @@ class MobileController extends Controller
 
 
                 ]);
-
-
-
             }
 
 
@@ -1451,21 +1376,15 @@ class MobileController extends Controller
 
 
             $temp_status = $item->status;
-
-
-
         });
 
 
 
-//        end of formating response
+        //        end of formating response
 
 
 
         return response()->json(['data' => $data]);
-
-
-
     }
 
 
@@ -1522,7 +1441,7 @@ class MobileController extends Controller
 
 
 
-        
+
 
 
 
@@ -1530,7 +1449,7 @@ class MobileController extends Controller
 
 
 
-        UserScore::query()->when($is_corp_value, function ($query) use ($course_id){
+        UserScore::query()->when($is_corp_value, function ($query) use ($course_id) {
 
 
 
@@ -1595,9 +1514,6 @@ class MobileController extends Controller
 
 
             ]);
-
-
-
         }, function ($query) use ($course_id) {
 
 
@@ -1623,9 +1539,6 @@ class MobileController extends Controller
 
 
             ]);
-
-
-
         });
 
 
@@ -1635,9 +1548,6 @@ class MobileController extends Controller
 
 
         return response()->json(['message' => 'OK']);
-
-
-
     }
 
 
@@ -1654,7 +1564,7 @@ class MobileController extends Controller
 
 
 
-        $user=auth()->user();
+        $user = auth()->user();
 
 
 
@@ -1670,7 +1580,7 @@ class MobileController extends Controller
 
 
 
-        ],[
+        ], [
 
 
 
@@ -1687,9 +1597,6 @@ class MobileController extends Controller
 
 
         return response()->json(['message' => 'OK']);
-
-
-
     }
 
 
@@ -1710,7 +1617,7 @@ class MobileController extends Controller
 
 
 
-        $user=auth()->user();
+        $user = auth()->user();
 
 
 
@@ -1739,9 +1646,6 @@ class MobileController extends Controller
 
 
             ];
-
-
-
         } else {
 
 
@@ -1763,14 +1667,11 @@ class MobileController extends Controller
 
 
             ];
-
-
-
         }
 
 
 
-        DB::table('user_scores')->updateOrInsert($params,[
+        DB::table('user_scores')->updateOrInsert($params, [
 
 
 
@@ -1791,9 +1692,6 @@ class MobileController extends Controller
 
 
         return response()->json(['message' => 'OK']);
-
-
-
     }
 
 
@@ -1818,18 +1716,15 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->leftJoin('users as u','u.id','us.user_id');
+        $dt = $dt->leftJoin('users as u', 'u.id', 'us.user_id');
 
 
 
-        $dt = $dt->when($user->role!=1, function ($q) use ($user) {
+        $dt = $dt->when($user->role != 1, function ($q) use ($user) {
 
 
 
             return $q->where('u.company_id', $user->company_id);
-
-
-
         });
 
 
@@ -1862,11 +1757,11 @@ class MobileController extends Controller
 
 
 
-        $dt = $dt->orderBy('total_score','desc')->get();
+        $dt = $dt->orderBy('total_score', 'desc')->get();
 
 
 
-//        add ui avatar
+        //        add ui avatar
 
 
 
@@ -1890,7 +1785,7 @@ class MobileController extends Controller
 
 
 
-                'ui_avatar' => 'https://ui-avatars.com/api/?background=0D8ABC&color=fff&name='.$d->name,
+                'ui_avatar' => 'https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=' . $d->name,
 
 
 
@@ -1899,17 +1794,11 @@ class MobileController extends Controller
 
 
             ]);
-
-
-
         }
 
 
 
         return response()->json(['data' => $data]);
-
-
-
     }
 
 
@@ -1955,9 +1844,6 @@ class MobileController extends Controller
 
 
         return response()->json(['message' => 'OK']);
-
-
-
     }
 
 
@@ -1974,14 +1860,11 @@ class MobileController extends Controller
 
 
 
-        $dt=DB::table('calendars')->where('user_id', auth()->id())->selectRaw('date, description')->get();
+        $dt = DB::table('calendars')->where('user_id', auth()->id())->selectRaw('date, description')->get();
 
 
 
         return response()->json(['data' => $dt]);
-
-
-
     }
 
 
@@ -2003,9 +1886,6 @@ class MobileController extends Controller
 
 
         return response()->json(['message' => 'Logout Success']);
-
-
-
     }
 
 
@@ -2022,7 +1902,7 @@ class MobileController extends Controller
 
 
 
-        $user = User::with('company','organization')
+        $user = User::with('company', 'organization')
 
 
 
@@ -2047,9 +1927,6 @@ class MobileController extends Controller
 
 
         ], $this->successStatus);
-
-
-
     }
 
 
@@ -2058,7 +1935,8 @@ class MobileController extends Controller
 
 
 
-    public function change_password(Request $request) {
+    public function change_password(Request $request)
+    {
 
 
 
@@ -2099,9 +1977,6 @@ class MobileController extends Controller
 
 
             $arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => array());
-
-
-
         } else {
 
 
@@ -2115,17 +1990,11 @@ class MobileController extends Controller
 
 
                     $arr = array("status" => 400, "message" => "Check your old password.", "data" => array());
-
-
-
                 } else if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
 
 
 
                     $arr = array("status" => 400, "message" => "Please enter a password which is not similar then current password.", "data" => array());
-
-
-
                 } else {
 
 
@@ -2135,13 +2004,7 @@ class MobileController extends Controller
 
 
                     $arr = array("status" => 200, "message" => "Password updated successfully.", "data" => array());
-
-
-
                 }
-
-
-
             } catch (\Exception $ex) {
 
 
@@ -2151,37 +2014,22 @@ class MobileController extends Controller
 
 
                     $msg = $ex->errorInfo[2];
-
-
-
                 } else {
 
 
 
                     $msg = $ex->getMessage();
-
-
-
                 }
 
 
 
                 $arr = array("status" => 400, "message" => $msg, "data" => array());
-
-
-
             }
-
-
-
         }
 
 
 
         return \Response::json($arr);
-
-
-
     }
 
 
@@ -2262,2914 +2110,463 @@ class MobileController extends Controller
 
 
 
-    public function getVHSNotFinish()
 
-
-
+    public function getVhs(Request $request)
     {
-
-
-
         $userid = Auth::guard('api')->user()->id;
-
-
-
-        try {
-
-
-
-            $data= DB::table('jadwalvhs')
-
-
-
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                ->where('jadwal_user_vhs.is_take','!=',2)
-
-
-
-                ->get();
-
-
-
-                return response()->json(
-
-
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$data,
-
-
-
-                ],
-
-
-
-                    200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
-    }
-
-
-
-
-
-
-
-    
-
-
-
-    //URUNG user vhs basic 
-
-
-
-        /*
-
-
-
-        SELECT * FROM jadwalvhs
-
-
-
-        JOIN jadwal_user_vhs ON jadwal_user_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        JOIN users ON users.id = jadwal_user_vhs.user_id
-
-
-
-        JOIN materi_vhs ON materi_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        JOIN question_vhs on question_vhs.materi_id=materi_vhs.id
-
-
-
-        JOIN zooms_vhs ON zooms_vhs.jadwal_id = materi_vhs.jadwal_id
-
-
-
-        WHERE jadwalvhs.name = "1VHS Basic" ->>dari mobile
-
-
-
-        AND users.id = 728; ->user mobile
-
-
-
-        */
-
-
-
-
-
-
-
-    public function getVhsBasic(Request $request)
-
-
-
-    {
-
-
-
-        $userid = Auth::guard('api')->user()->id;
-
-
-
         $type = $request->name;
-
-
-
         try {
-
-
-
-            $data= DB::table('jadwalvhs')
-
-
-
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                ->where('jadwal_user_vhs.is_take','=',0)
-
-
-
-                ->where('jadwalvhs.name','=',$type)
-
-
-
-                ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri', 'materi_vhs.*')
-
-
-
-                ->get();
-
-
+            if ($type == '1VHS Basic') {
+                // $datenow = Carbon::now()->toDateString();
+                $data = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->where('jadwalvhs.type', $type)
+                    ->where('jadwal_user_vhs.user_id', $userid)
+                    ->where('jadwal_user_vhs.isAllow',1)
+                    // ->where('jadwalvhs.start','<=',$datenow)
+                    // ->where('jadwalvhs.end','>=',$datenow)
+                    ->where('jadwal_user_vhs.is_take', '==', '0')
+                    ->select('jadwalvhs.*', 'jadwal_user_vhs.id as jadwal_user_id',)
+                    ->get();
 
                 return response()->json(
-
-
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$data,
-
-
-
-                ],
-
-
-
-                    200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
-    }
-
-
-
-    
-
-
-
-    public function getVhsBasicDetail(Request $request)
-
-
-
-    {
-
-
-
-        $userid = Auth::guard('api')->user()->id;
-
-
-
-        $type = $request->name;
-
-
-
-        $idmateri = $request->idmateri;
-
-
-
-        try {
-
-
-
-            $data= DB::table('jadwalvhs')
-
-
-
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                // ->where('jadwal_user_vhs.is_take','!=',2)
-
-
-
-                ->where('jadwalvhs.name','=',$type)
-
-
-
-                ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                ->select('jadwal_user_vhs.id as jadwaluservhsId','materi_vhs.*','zooms_vhs.id as idZoom','zooms_vhs.name as nameZoom','zooms_vhs.times as timesZoom','zooms_vhs.link as linkZoom','zooms_vhs.meeting_id as meetingidZoom','zooms_vhs.password as passwordZoom')
-
-
-
-                ->get();
-
-
+                    [
+                        'message' => 'success',
+                        'success' => $data,
+                    ],
+                    200
+                );
+            } elseif ($type == '1VHS Class') {
+                // $datenow = Carbon::now()->toDateString();
+                $data = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->where('jadwalvhs.type', $type)
+                    ->where('jadwal_user_vhs.user_id', $userid)
+                    ->where('jadwal_user_vhs.isAllow',1)
+                    // ->where('jadwalvhs.start','<=',$datenow)
+                    // ->where('jadwalvhs.end','>=',$datenow)
+                    ->where('jadwal_user_vhs.is_take', '==', '0')
+                    ->select('jadwalvhs.*', 'jadwal_user_vhs.id as jadwal_user_id',)
+                    ->get();
 
                 return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => $data,
+                    ],
+                    200
+                );
+            } elseif ($type == '1VHS Camp') {
+                // $datenow = Carbon::now()->toDateString();
+                $data = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->where('jadwalvhs.type', $type)
+                    ->where('jadwal_user_vhs.user_id', $userid)
+                    ->where('jadwal_user_vhs.isAllow',1)
+                    // ->where('jadwalvhs.start','<=',$datenow)
+                    // ->where('jadwalvhs.end','>=',$datenow)
+                    ->where('jadwal_user_vhs.is_take', '==', '0')
+                    ->select('jadwalvhs.*', 'jadwal_user_vhs.id as jadwal_user_id',)
+                    ->get();
 
+                return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => $data,
+                    ],
+                    200
+                );
+            } elseif ($type == '1VHS Academy') {
+                // $datenow = Carbon::now()->toDateString();
+                $data = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->where('jadwalvhs.type', $type)
+                    ->where('jadwal_user_vhs.user_id', $userid)
+                    ->where('jadwal_user_vhs.isAllow',1)
+                    // ->where('jadwalvhs.start','<=',$datenow)
+                    // ->where('jadwalvhs.end','>=',$datenow)
+                    ->where('jadwal_user_vhs.is_take', '==', '0')
+                    ->select('jadwalvhs.*', 'jadwal_user_vhs.id as jadwal_user_id',)
+                    ->get();
 
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$data,
-
-
-
-                ],
-
-
-
-                    200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
+                return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => $data,
+                    ],
+                    200
+                );
+            } else {
+                return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => 'error reading type',
+                    ],
+                    403
+                );
             }
-
-
-
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
     }
 
-
-
-    
-
-
-
-    public function confirmPickUpBasic(Request $request)
-
-
-
+    public function confirmPickUp(Request $request)
     {
-
-
-
-        // dd($request->all());
-
-
-
-        $validator = Validator::make($request->all(),[
-
-
-
-            'is_take'           =>'required',
-
-
-
-            'idjadwaluser'      =>'required',
-
-
-
-            'name'              =>'required',
-
-
-
-            'idmateri'          =>'required',
-
-
-
+        $validator = Validator::make($request->all(), [
+            'is_take'               => 'required',
+            'jadwal_user_id'        => 'required',
+            'jadwal_id'             => 'required',
+            'type'                  => 'required'
         ]);
-
-
-
-        
-
-
-
         if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+        $type = $request->type;
+        try {
+            if ($type == '1VHS Basic') {
+                $JadwalGetId = JadwalUserVhs::where('id', $request->jadwal_user_id)
+                    ->update([
+                        'is_take'  => $request->is_take,
+                    ]);
+                if ($JadwalGetId) {
+                    $data = DB::table('materi_vhs')
+                        ->where('materi_vhs.jadwal_id', '=', $request->jadwal_id)
+                        ->get();
+                    return response()->json(
+                        [
+                            'message' => 'success',
+                            'success' => $data,
+                        ],
+                        200
+                    );
+                } else {
+                    return response()->json(
+                        [
+                            'error' => 'jadwal_user_id not found on table jadwal_user_vhs',
+                        ],
+                        403
+                    );
+                }
+            } elseif ($type == '1VHS Class') {
+                $JadwalGetId = JadwalUserVhs::where('id', $request->jadwal_user_id)
+                    ->update([
+                        'is_take'  => $request->is_take,
+                    ]);
+                if ($JadwalGetId) {
+                    $data = DB::table('materi_vhs')
+                        ->where('materi_vhs.jadwal_id', '=', $request->jadwal_id)
+                        ->get();
+                    return response()->json(
+                        [
+                            'message' => 'success',
+                            'success' => $data,
+                        ],
+                        200
+                    );
+                } else {
+                    return response()->json(
+                        [
+                            'error' => 'jadwal_user_id not found on table jadwal_user_vhs',
+                        ],
+                        403
+                    );
+                }
+            } elseif ($type == '1VHS Camp') {
+                $JadwalGetId = JadwalUserVhs::where('id', $request->jadwal_user_id)
+                    ->update([
+                        'is_take'  => $request->is_take,
+                    ]);
+                if ($JadwalGetId) {
+                    $data = DB::table('materi_vhs')
+                        ->where('materi_vhs.jadwal_id', '=', $request->jadwal_id)
+                        ->get();
+                    return response()->json(
+                        [
+                            'message' => 'success',
+                            'success' => $data,
+                        ],
+                        200
+                    );
+                } else {
+                    return response()->json(
+                        [
+                            'error' => 'jadwal_user_id not found on table jadwal_user_vhs',
+                        ],
+                        403
+                    );
+                }
+            } elseif ($type == '1VHS Academy') {
+                $JadwalGetId = JadwalUserVhs::where('id', $request->jadwal_user_id)
+                    ->update([
+                        'is_take'  => $request->is_take,
+                    ]);
+                if ($JadwalGetId) {
+                    $data = DB::table('materi_vhs')
+                        ->where('materi_vhs.jadwal_id', '=', $request->jadwal_id)
+                        ->get();
+                    return response()->json(
+                        [
+                            'message' => 'success',
+                            'success' => $data,
+                        ],
+                        200
+                    );
+                } else {
+                    return response()->json(
+                        [
+                            'error' => 'jadwal_user_id not found on table jadwal_user_vhs',
+                        ],
+                        403
+                    );
+                }
+            } else {
+                return response()->json(
+                    [
+                        'error' => 'type not recognized',
+                    ],
+                    403
+                );
+            }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
 
-
-
-            return response()->json(['error' => $validator->errors()],400);
-
-
-
+    public function getMateri(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'jadwal_id'              => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
-
-
-
-
-
-
         try {
-
-
-
-            $JadwalGetId=JadwalUserVhs::findOrfail($request->idjadwaluser)->update([
-
-
-
-                'is_take'           => $request->is_take,
-
-
-
-            ]);
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            $idmateri = $request->idmateri;
-
-
-
-            $data= DB::table('jadwalvhs')
-
-
-
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                ->where('jadwalvhs.name','=',$type)
-
-
-
-                ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
+            $data = DB::table('materi_vhs')
+                ->where('materi_vhs.jadwal_id', '=', $request->jadwal_id)
                 ->get();
+            return response()->json(
+                [
+                    'message' => 'success',
+                    'success' => $data,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
 
-
+    public function getVhsDetail(Request $request)
+    {
+        $userid = Auth::guard('api')->user()->id;
+        $type = $request->name;
+        $idmateri = $request->idmateri;
+        try {
+            $data = DB::table('jadwalvhs')
+                ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('users', 'users.id', '=', 'jadwal_user_vhs.user_id')
+                ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->leftJoin('zooms_vhs', 'zooms_vhs.jadwal_id', '=', 'materi_vhs.jadwal_id')
+                ->where('users.id', '=', $userid)
+                ->where('jadwalvhs.type', '=', $type)
+                ->where('materi_vhs.id', '=', $idmateri)
+                ->select('jadwal_user_vhs.id as jadwaluservhsId', 'materi_vhs.*', 'zooms_vhs.id as idZoom', 'zooms_vhs.name as nameZoom', 'zooms_vhs.times as timesZoom', 'zooms_vhs.link as linkZoom', 'zooms_vhs.meeting_id as meetingidZoom', 'zooms_vhs.password as passwordZoom')
+                ->get();
 
             return response()->json(
-
-
-
                 [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$JadwalGetId,
-
-
-
-                    'question'=>$data,
-
-
-
-                ],200);
-
-
-
-        } catch (\Exception $exception) {
-
-
-
-            DB::rollBack();
-
-
-
-            throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-        }
-
-
-
-    }
-
-
-
-
-
-
-
-    public function getVhsBasicQuestion(Request $request)
-
-
-
-    {
-
-
-
-        $userid = Auth::guard('api')->user()->id;
-
-
-
-        $type = $request->name;
-
-
-
-        $idmateri = $request->idmateri;
-
-
-
-        try {
-
-
-
-            $data= DB::table('jadwalvhs')
-
-
-
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                ->where('jadwalvhs.name','=',$type)
-
-
-
-                ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
-                ->get();
-
-
-
-                return response()->json(
-
-
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$data,
-
-
-
+                    'message' => 'success',
+                    'success' => $data,
                 ],
-
-
-
-                    200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
     }
 
-
-
-
-
-
-
-    
-
-
-
-    public function setAnswerVhsBasic(Request $request)
-
-
-
+    public function getVhsQuestion(Request $request)
     {
-
-
-
-        //is_take => 2, wajib karena sudah menjawab
-
-
-
-        $validator = Validator::make($request->all(),[
-
-
-
-            'materi_id'          => 'required',
-
-
-
-            'question_id'        => 'required',
-
-
-
-            'answer'             => 'required',
-
-
-
-            'is_take'            => 'required',
-
-
-
-            'idjadwaluser'       => 'required',
-
-
-
-        ]);
-
-
-
-
-
-
-
-        if ($validator->fails()) {
-
-
-
-            return response()->json(['error' => $validator->errors()],400);
-
-
-
-        }
-
-
-
-        /* 
-
-
-
-        array:5 [
-
-
-
-            "materi_id" => "25"
-
-
-
-            "question_id" => "19"
-
-
-
-            "answer" => "uji jawab"
-
-
-
-            "is_take" => "1"
-
-
-
-            "idjadwaluser" => "12"
-
-
-
-            ]
-
-
-
-        */
-
-
-
-        // dd($request->all());
-
-
-
         $userid = Auth::guard('api')->user()->id;
-
-
-
-        $materiId = $request->materi_id;
-
-
-
-        $questionId = $request->question_id;
-
-
-
-        $answer = $request->answer;
-
-
-
-        $is_take = $request->is_take;
-
-
-
-        $idjadwaluser = $request->idjadwaluser;
-
-
-
+        $idmateri = $request->idmateri;
         try {
-
-
-
-            $JadwalGetId=JadwalUserVhs::findOrfail($idjadwaluser)->update([
-
-
-
-                'is_take'           => $is_take,
-
-
-
-            ]);
-
-
-
-            DB::beginTransaction();
-
-
-
-            $answerGetId = DB::table('answer_vhs')->insertGetId([
-
-
-
-                'materi_id'         => $materiId,
-
-
-
-                'question_id'       => $questionId,
-
-
-
-                'user_id'           => $userid,
-
-
-
-                'answer'            =>$answer,
-
-
-
-            ]);
-
-
-
-            DB::commit();
-
-
-
-
-
-
+            $data = DB::table('jadwalvhs')
+                ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('users', 'users.id', '=', 'jadwal_user_vhs.user_id')
+                ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('question_vhs', 'question_vhs.materi_id', '=', 'materi_vhs.id')
+                ->leftJoin('zooms_vhs', 'zooms_vhs.jadwal_id', '=', 'materi_vhs.jadwal_id')
+                ->where('users.id', '=', $userid)
+                ->where('materi_vhs.id', '=', $idmateri)
+                ->select('question_vhs.*', 'materi_vhs.name as namaMateri', 'jadwal_user_vhs.id as idJadwalUserVhs', 'materi_vhs.isPreTest')
+                ->get();
 
             return response()->json(
-
-
-
-            [
-
-
-
-                'message'=>'success',
-
-
-
-                'success'=>$answerGetId,
-
-
-
-            ],200);
-
-
-
+                [
+                    'message' => 'success',
+                    'success' => $data,
+                ],
+                200
+            );
         } catch (\Exception $exception) {
-
-
-
             DB::rollBack();
-
-
-
             throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
         }
-
-
-
     }
 
-
-
-
-
-
-
-    public function getVhsBasicPending(Request $request)
-
-
-
+    public function getVhsQuestionDetail(Request $request)
     {
-
-
-
         $userid = Auth::guard('api')->user()->id;
-
-
-
-        $type = $request->name;
-
-
-
+        $idQuestion = $request->idQuestion;
         try {
+            $data = DB::table('jadwalvhs')
+                ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('users', 'users.id', '=', 'jadwal_user_vhs.user_id')
+                ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('question_vhs', 'question_vhs.materi_id', '=', 'materi_vhs.id')
+                ->leftJoin('zooms_vhs', 'zooms_vhs.jadwal_id', '=', 'materi_vhs.jadwal_id')
+                ->where('users.id', '=', $userid)
+                ->where('question_vhs.id', '=', $idQuestion)
+                ->select('question_vhs.*', 'materi_vhs.name as namaMateri', 'jadwal_user_vhs.id as idJadwalUserVhs', 'materi_vhs.isPreTest')
+                ->first();
 
+            return response()->json(
+                [
+                    'message' => 'success',
+                    'success' => $data,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
 
+    public function setAnswerVhs(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'isPreTest'     => 'required',
+            'materi_id'     => 'required',
+            'question_id'   => 'required',
+            'idJadwalUser'  => 'required',
+            'is_take'       => 'required',
+            'answer'        => 'required'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 403);
+        }
+        try {
+            $userid = Auth::guard('api')->user()->id;       
+            $cekAnswer = DB::table('answer_vhs')
+                ->where('materi_id', $request->materi_id)
+                ->where('question_id', $request->question_id)
+                ->where('user_id', $userid)
+                ->count();
+            if ($cekAnswer > 0) {
+                return response()->json(
+                    [
+                        'error' => "Data Double",
+                    ],
+                    403
+                );
+            } else {
+                $JadwalGetId = JadwalUserVhs::findOrfail($request->idJadwalUser)->update([
+                    'is_take'           => $request->is_take,
+                ]);
+                DB::beginTransaction();
+                $answerGetId = DB::table('answer_vhs')->insertGetId([
+                    'materi_id'         => $request->materi_id,
+                    'question_id'       => $request->question_id,
+                    'user_id'           => $userid,
+                    'answer'            => $request->answer,
+                ]);
+                DB::commit();
 
-            $data= DB::table('jadwalvhs')
+                if ($request->hasFile('file') && $request->file('file')->isValid()) {
+                    $fileEXT    = $request->file('file')->getClientOriginalName();
+                    $filename   = pathinfo($fileEXT, PATHINFO_FILENAME);
+                    $EXT        = $request->file('file')->getClientOriginalExtension();
+                    $fileimage = $filename . '_' . time() . '.' . $EXT;
+                    $path       = $request->file('file')->move(public_path('file/answervhs'), $fileimage);
 
+                    DB::table('answer_vhs')->where('id', $answerGetId)->update([
+                        'file' => $fileimage
+                    ]);
+                }
 
+                return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => $answerGetId,
+                    ],
+                    200
+                );
+            }
+        } catch (\Exception $th) {
+            return response()->json(
+                [
+                    'error' => $th->getMessage(),
+                ],
+                403
+            );
+        }
+    }
 
-                ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
+    public function getOtherAnswers(Request $request)
+    {
+        try {
+            $data = DB::table('answer_vhs')
+                ->join('users', 'users.id', '=', 'answer_vhs.user_id')
+                ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
+                ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
+                ->where('answer_vhs.materi_id', $request->materi_id)
+                ->where('answer_vhs.question_id', $request->question_id)
+                ->select('users.id', 'users.name', 'answer_vhs.answer', 'answer_vhs.file')
+                ->get();
+            return response()->json(
+                [
+                    'message' => 'success',
+                    'success' => $data,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
 
-
-
-                ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                ->where('users.id','=',$userid)
-
-
-
-                ->where('jadwal_user_vhs.is_take','=',1)
-
-
-
-                ->where('jadwalvhs.name','=',$type)
-
-
-
-                ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri')
-
-
-
+    //PendingAll
+    public function getVhsPending(Request $request)
+    {
+        $userid = Auth::guard('api')->user()->id;
+        try {
+            $data = DB::table('jadwalvhs')
+                ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->select('jadwalvhs.*', 'jadwal_user_vhs.id as jadwal_user_id', 'jadwal_user_vhs.is_take')
+                ->where('jadwal_user_vhs.user_id', '=', $userid)
+                ->where(function ($query) {
+                    $query->where('jadwal_user_vhs.is_take', '=', 1)
+                        ->orWhere('jadwal_user_vhs.is_take', '=', 2);
+                })
                 ->get();
 
-
-
-                return response()->json(
-
-
-
+            return response()->json(
                 [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$data,
-
-
-
+                    'message' => 'success',
+                    'success' => $data,
                 ],
-
-
-
-                    200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //URUNG cek materi user vhs class
-
-
-
-        // SELECT * FROM jadwalvhs
-
-
-
-        // JOIN jadwal_user_vhs ON jadwal_user_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        // JOIN users ON users.id = jadwal_user_vhs.user_id
-
-
-
-        // JOIN materi_vhs ON materi_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        // JOIN question_vhs on question_vhs.materi_id=materi_vhs.id
-
-
-
-        // JOIN zooms_vhs ON zooms_vhs.jadwal_id = materi_vhs.jadwal_id
-
-
-
-        // WHERE jadwalvhs.name = "1VHS Class" ->>dari mobile
-
-
-
-        // AND users.id = 728; ->user mobile
-
-
-
-        public function getVhsClass(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwal_user_vhs.is_take','=',0)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri', 'materi_vhs.*')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function getVhsClassDetail(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            $idmateri = $request->idmateri;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    // ->where('jadwal_user_vhs.is_take','!=',2)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('jadwal_user_vhs.id as jadwaluservhsId','materi_vhs.*','zooms_vhs.id as idZoom','zooms_vhs.name as nameZoom','zooms_vhs.times as timesZoom','zooms_vhs.link as linkZoom','zooms_vhs.meeting_id as meetingidZoom','zooms_vhs.password as passwordZoom')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function confirmPickUpClass(Request $request)
-
-
-
-        {
-
-
-
-            // dd($request->all());
-
-
-
-            $validator = Validator::make($request->all(),[
-
-
-
-                'is_take'           =>'required',
-
-
-
-                'idjadwaluser'      =>'required',
-
-
-
-                'name'              =>'required',
-
-
-
-                'idmateri'          =>'required',
-
-
-
-            ]);
-
-
-
-            
-
-
-
-            if ($validator->fails()) {
-
-
-
-                return response()->json(['error' => $validator->errors()],400);
-
-
-
-            }
-
-
-
-
-
-
-
-            try {
-
-
-
-                $JadwalGetId=JadwalUserVhs::findOrfail($request->idjadwaluser)->update([
-
-
-
-                    'is_take'           => $request->is_take,
-
-
-
-                ]);
-
-
-
-                $userid = Auth::guard('api')->user()->id;
-
-
-
-                $type = $request->name;
-
-
-
-                $idmateri = $request->idmateri;
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
-                    ->get();
-
-
-
-                return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$JadwalGetId,
-
-
-
-                        'question'=>$data,
-
-
-
-                    ],200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function getVhsClassQuestion(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            $idmateri = $request->idmateri;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        
-
-
-
-        public function setAnswerVhsClass(Request $request)
-
-
-
-        {
-
-
-
-            //is_take => 2, wajib karena sudah menjawab
-
-
-
-            $validator = Validator::make($request->all(),[
-
-
-
-                'materi_id'          => 'required',
-
-
-
-                'question_id'        => 'required',
-
-
-
-                'answer'             => 'required',
-
-
-
-                'is_take'            => 'required',
-
-
-
-                'idjadwaluser'       => 'required',
-
-
-
-            ]);
-
-
-
-
-
-
-
-            if ($validator->fails()) {
-
-
-
-                return response()->json(['error' => $validator->errors()],400);
-
-
-
-            }
-
-
-
-            /* 
-
-
-
-            array:5 [
-
-
-
-                "materi_id" => "25"
-
-
-
-                "question_id" => "19"
-
-
-
-                "answer" => "uji jawab"
-
-
-
-                "is_take" => "1"
-
-
-
-                "idjadwaluser" => "12"
-
-
-
-                ]
-
-
-
-            */
-
-
-
-            // dd($request->all());
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $materiId = $request->materi_id;
-
-
-
-            $questionId = $request->question_id;
-
-
-
-            $answer = $request->answer;
-
-
-
-            $is_take = $request->is_take;
-
-
-
-            $idjadwaluser = $request->idjadwaluser;
-
-
-
-            try {
-
-
-
-                $JadwalGetId=JadwalUserVhs::findOrfail($idjadwaluser)->update([
-
-
-
-                    'is_take'           => $is_take,
-
-
-
-                ]);
-
-
-
-                DB::beginTransaction();
-
-
-
-                $answerGetId = DB::table('answer_vhs')->insertGetId([
-
-
-
-                    'materi_id'         => $materiId,
-
-
-
-                    'question_id'       => $questionId,
-
-
-
-                    'user_id'           => $userid,
-
-
-
-                    'answer'            =>$answer,
-
-
-
-                ]);
-
-
-
-                DB::commit();
-
-
-
-
-
-
-
-                return response()->json(
-
-
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$answerGetId,
-
-
-
-                ],200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function getVhsClassPending(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwal_user_vhs.is_take','=',1)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        //URUNG cek materi user vhs class
-
-
-
-        // SELECT * FROM jadwalvhs
-
-
-
-        // JOIN jadwal_user_vhs ON jadwal_user_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        // JOIN users ON users.id = jadwal_user_vhs.user_id
-
-
-
-        // JOIN materi_vhs ON materi_vhs.jadwal_id = jadwalvhs.id
-
-
-
-        // JOIN question_vhs on question_vhs.materi_id=materi_vhs.id
-
-
-
-        // JOIN zooms_vhs ON zooms_vhs.jadwal_id = materi_vhs.jadwal_id
-
-
-
-        // WHERE jadwalvhs.name = "1VHS Academy" ->>dari mobile
-
-
-
-        // AND users.id = 728; ->user mobile
-
-
-
-        public function getVhsAcademy(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwal_user_vhs.is_take','=',0)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri', 'materi_vhs.*')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success 1VHS Academy',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function getVhsAcademyDetail(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            $idmateri = $request->idmateri;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    // ->where('jadwal_user_vhs.is_take','!=',2)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('jadwal_user_vhs.id as jadwaluservhsId','materi_vhs.*','zooms_vhs.id as idZoom','zooms_vhs.name as nameZoom','zooms_vhs.times as timesZoom','zooms_vhs.link as linkZoom','zooms_vhs.meeting_id as meetingidZoom','zooms_vhs.password as passwordZoom')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-        
-
-
-
-        
-
-
-
-        public function confirmPickUpAcademy(Request $request)
-
-
-
-        {
-
-
-
-            // dd($request->all());
-
-
-
-            $validator = Validator::make($request->all(),[
-
-
-
-                'is_take'           =>'required',
-
-
-
-                'idjadwaluser'      =>'required',
-
-
-
-                'name'              =>'required',
-
-
-
-                'idmateri'          =>'required',
-
-
-
-            ]);
-
-
-
-            
-
-
-
-            if ($validator->fails()) {
-
-
-
-                return response()->json(['error' => $validator->errors()],400);
-
-
-
-            }
-
-
-
-
-
-
-
-            try {
-
-
-
-                $JadwalGetId=JadwalUserVhs::findOrfail($request->idjadwaluser)->update([
-
-
-
-                    'is_take'           => $request->is_take,
-
-
-
-                ]);
-
-
-
-                $userid = Auth::guard('api')->user()->id;
-
-
-
-                $type = $request->name;
-
-
-
-                $idmateri = $request->idmateri;
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
-                    ->get();
-
-
-
-                return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$JadwalGetId,
-
-
-
-                        'question'=>$data,
-
-
-
-                    ],200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-
-
-        
-
-
-
-        public function getVhsAcademyQuestion(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $type = $request->name;
-
-
-
-            $idmateri = $request->idmateri;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->where('materi_vhs.id','=',$idmateri)
-
-
-
-                    ->select('question_vhs.*','materi_vhs.name as namaMateri','jadwal_user_vhs.id as idJadwalUserVhs')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        
-
-
-
-        public function setAnswerVhsAcademy(Request $request)
-
-
-
-        {
-
-
-
-            //is_take => 2, wajib karena sudah menjawab
-
-
-
-            $validator = Validator::make($request->all(),[
-
-
-
-                'materi_id'          => 'required',
-
-
-
-                'question_id'        => 'required',
-
-
-
-                'answer'             => 'required',
-
-
-
-                'is_take'            => 'required',
-
-
-
-                'idjadwaluser'       => 'required',
-
-
-
-            ]);
-
-
-
-
-
-
-
-            if ($validator->fails()) {
-
-
-
-                return response()->json(['error' => $validator->errors()],400);
-
-
-
-            }
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            $materiId = $request->materi_id;
-
-
-
-            $questionId = $request->question_id;
-
-
-
-            $answer = $request->answer;
-
-
-
-            $is_take = $request->is_take;
-
-
-
-            $idjadwaluser = $request->idjadwaluser;
-
-
-
-            try {
-
-
-
-                $JadwalGetId=JadwalUserVhs::findOrfail($idjadwaluser)->update([
-
-
-
-                    'is_take'           => $is_take,
-
-
-
-                ]);
-
-
-
-                DB::beginTransaction();
-
-
-
-                $answerGetId = DB::table('answer_vhs')->insertGetId([
-
-
-
-                    'materi_id'         => $materiId,
-
-
-
-                    'question_id'       => $questionId,
-
-
-
-                    'user_id'           => $userid,
-
-
-
-                    'answer'            =>$answer,
-
-
-
-                ]);
-
-
-
-                DB::commit();
-
-
-
-
-
-
-
-                return response()->json(
-
-
-
-                [
-
-
-
-                    'message'=>'success',
-
-
-
-                    'success'=>$answerGetId,
-
-
-
-                ],200);
-
-
-
-            } catch (\Exception $exception) {
-
-
-
-                DB::rollBack();
-
-
-
-                throw new HttpException(500, $exception->getMessage(), $exception);
-
-            }
-
-        }        
-
-
-
-        public function getVhsAcademyPending(Request $request)
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            // dd($userid);
-
-
-
-            $type = $request->name;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwal_user_vhs.is_take','=',1)
-
-
-
-                    ->where('jadwalvhs.name','=',$type)
-
-
-
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri')
-
-
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-
-
-        public function getAllVhs()
-
-
-
-        {
-
-
-
-            $userid = Auth::guard('api')->user()->id;
-
-
-
-            try {
-
-
-
-                $data= DB::table('jadwalvhs')
-
-
-
-                    ->join('jadwal_user_vhs','jadwal_user_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('users','users.id','=','jadwal_user_vhs.user_id')
-
-
-
-                    ->join('materi_vhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
-
-
-
-                    ->join('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->leftJoin('zooms_vhs','zooms_vhs.jadwal_id','=','materi_vhs.jadwal_id')
-
-
-
-                    ->leftJoin('user_score_vhs','user_score_vhs.materi_id','=','materi_vhs.id')
-
-
-
-                    ->where('users.id','=',$userid)
-
-
-
-                    ->where('jadwal_user_vhs.is_take','!=',0)
-
-
-
-                    ->select('jadwalvhs.id as idJadwalVHS','jadwal_user_vhs.id as idJadwalUserVhs','users.id as idUser','materi_vhs.id as idMateriVhs','zooms_vhs.id as idZoomVhs','materi_vhs.name as namaMateriVhs','materi_vhs.type as typeMateri','jadwal_user_vhs.is_take','materi_vhs.*','user_score_vhs.score')
-
-                    ->orderBy('jadwal_user_vhs.is_take','ASC')
-
-                    ->get();
-
-
-
-                    return response()->json(
-
-
-
-                    [
-
-
-
-                        'message'=>'success',
-
-
-
-                        'success'=>$data,
-
-
-
-                    ],
-
-
-
-                        200);
-
-
-
-                } catch (\Exception $exception) {
-
-
-
-                    DB::rollBack();
-
-
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-
-
-        }
-
-
-
-
-
-        //sertif
-
-        public function getSerti()
-
-        {
-
-            try {
-
-                $user=auth()->user();
-
-                $data = Vhs_certi::where('user_id',$user->id)->get();
-
-
-
-                return response()->json(
-
-                    [
-
-                        'message'=>'success',
-
-                        'success'=>$data,
-
-                    ],200);
-
-                } catch (\Exception $exception) {
-
-                    DB::rollBack();
-
-                    throw new HttpException(500, $exception->getMessage(), $exception);
-
-
-
-                }
-
-        }
-
 }

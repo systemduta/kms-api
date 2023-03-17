@@ -9,7 +9,7 @@ class JadwalUserVhs extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id','jadwal_id','company_id','is_take'
+        'user_id','jadwal_id','company_id','is_take','isAllow'
     ];
 
     public function user()

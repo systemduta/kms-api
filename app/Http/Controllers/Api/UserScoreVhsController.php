@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\QuestionVhs;
 use App\Models\UserScoreVhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,27 +24,82 @@ class UserScoreVhsController extends Controller
     public function index()
     {        
         try {
-            $data = DB::table('users')
-                    ->join('user_score_vhs','user_score_vhs.user_id','users.id')
-                    ->join('companies','companies.id','users.company_id')
-                    ->join('materi_vhs','materi_vhs.id','user_score_vhs.materi_id')
-                    ->join('question_vhs','question_vhs.materi_id','materi_vhs.id')
-                    ->join('answer_vhs','answer_vhs.question_id','question_vhs.id')
-                    ->select('user_score_vhs.id',
-                    'users.name as nama_user',
-                    'users.username as username',
-                    'materi_vhs.name as namamateri',
-                    'question_vhs.question as question',
-                    'answer_vhs.answer as answer',
-                    'materi_vhs.type',
-                    'user_score_vhs.score')
-                    ->get();
+            $data = DB::table('jadwalvhs')
+                ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                ->join('jadwal_user_vhs', 'jadwalvhs.id', '=', 'jadwal_user_vhs.jadwal_id')
+                ->join('users', 'jadwal_user_vhs.user_id', '=', 'users.id')
+                ->leftJoin('answer_vhs', 'users.id', '=', 'answer_vhs.user_id')
+                ->groupBy('jadwalvhs.id', 'jadwalvhs.name', 'jadwalvhs.batch', 'jadwalvhs.type', 'jadwalvhs.start', 'jadwalvhs.end', 'jadwalvhs.isCity', 'jadwalvhs.quota', 'jadwalvhs.created_at', 'jadwalvhs.updated_at')
+                ->select('jadwalvhs.*', DB::raw('COUNT(DISTINCT materi_vhs.id) as ttlMateri'))
+                ->get();
+              
             return response()->json([
                 'success'=>$data,
                 'message'=>'get successfully']);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }   
+    }
+
+    public function materi($id)
+    {
+        try {
+            $data =DB::table('jadwalvhs')
+                    ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->where('jadwalvhs.id', '=', $id)
+                    ->select('materi_vhs.*')
+                    ->get();
+            return response()->json([
+                'success'=>$data,
+                'message'=>'get successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error'=>$e->getMessage()],403);
+        }
+    }
+
+    public function question($id) {
+        try {
+            $data = DB::table('question_vhs')
+                    ->where('materi_id',$id)
+                    ->get();
+            return response()->json([
+                'success'=>$data,
+                'message'=>'get successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error'=> $e->getMessage()],403);
+        }
+    }
+
+    public function answer(Request $request){
+        try {
+            $validator = Validator::make($request->all(),[
+                'materi_id'             => 'required',
+                'question_id'               => 'required',
+            ]);
+    
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()],400);
+            }
+
+            $data = DB::table('answer_vhs')
+                    ->join('users', 'users.id', '=', 'answer_vhs.user_id')
+                    ->join('companies', 'companies.id', '=', 'users.company_id')
+                    ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
+                    ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
+                    ->join('jadwalvhs','jadwalvhs.id','=','materi_vhs.jadwal_id')
+                    ->where('answer_vhs.materi_id', $request->materi_id)
+                    ->where('answer_vhs.question_id', $request->question_id)
+                    ->select('answer_vhs.*', 'question_vhs.question', 'users.name as username', 'companies.name as company','jadwalvhs.id as jadwalid')
+                    ->get();
+            return response()->json([
+                        'success'=>$data,
+                        'message'=>'get successfully'
+                    ]);
+        } catch (\Exception $e) {
+            return response()->json(['error'=> $e->getMessage()],403);
+        }
     }
 
     /**

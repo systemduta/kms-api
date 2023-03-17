@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Jadwalvhs;
 use App\Models\MateriVhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,8 +11,10 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Exists;
+use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
+//TODO: materi vhs di admin panel di bagi berdasarkan jadwal vhs
 
 class MateriVHsController extends Controller
 {
@@ -20,6 +23,26 @@ class MateriVHsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function indexSplit($id)
+     {        
+        try {
+            $data=MateriVhs::join('jadwalvhs',function($join){
+                $join->on('materi_vhs.jadwal_id','=','jadwalvhs.id');
+                })
+                ->select('materi_vhs.*','jadwalvhs.name as jadwal_vhs_name')
+                ->where('materi_vhs.jadwal_id',$id)
+                ->orderBy('materi_vhs.id','desc')
+                ->get();
+            return response()->json(
+                [
+                    'data' => $data
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }  
+     }
 
      /**
       * Ini adalah sebuah fungsi yang disebut downloadfile yang menerima satu parameter, yaitu $id. Fungsi ini digunakan untuk mengunduh file dari database. Pertama-tama, fungsi ini mengambil data file dari tabel materi_vhs di database dengan menggunakan query builder dari Laravel. Query ini akan mengambil field file dari baris di tabel materi_vhs yang memiliki id sesuai dengan parameter $id yang diberikan. Kemudian, fungsi ini akan mengembalikan respons dengan data file tersebut dalam bentuk JSON.
@@ -30,19 +53,20 @@ class MateriVHsController extends Controller
         return response()->json(['data' => $materi->file]);
     }
 
-    /**
-     * Ini adalah sebuah fungsi yang disebut index yang tidak menerima parameter apapun. Fungsi ini digunakan untuk menampilkan daftar data materi dari tabel materi_vhs di database. Pertama-tama, fungsi ini akan melakukan join dengan tabel jadwalvhs dengan menggunakan closure. Kemudian, fungsi ini akan mengambil semua data dari tabel materi_vhs dan tabel jadwalvhs yang telah dijoin tadi, dan mengambil field name dari tabel jadwalvhs dengan alias jadwal_vhs_name. Setelah itu, data yang didapat akan diurutkan berdasarkan field id dari tabel materi_vhs secara descending (dari yang terbesar ke yang terkecil). Terakhir, fungsi ini akan mengembalikan respons dengan data yang didapat dalam bentuk JSON. Jika terjadi exception atau error pada saat menjalankan query, fungsi ini akan mengembalikan respons dengan pesan error yang terjadi.
-     */
+   
     public function index()
     {
         try {
-            $data=MateriVhs::join('jadwalvhs',function($join){
-                $join->on('materi_vhs.jadwal_id','=','jadwalvhs.id');
-            })->select('materi_vhs.*','jadwalvhs.name as jadwal_vhs_name')->orderBy('materi_vhs.id','desc')->get();
+            $data = DB::table('jadwalvhs')
+                    ->select('jadwalvhs.*', DB::raw('SUM(IF(materi_vhs.id, 1, 0)) AS total'))
+                    ->join('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->groupBy('jadwalvhs.id','jadwalvhs.name','jadwalvhs.batch','jadwalvhs.type','jadwalvhs.start','jadwalvhs.end','jadwalvhs.isCity','jadwalvhs.quota','jadwalvhs.created_at','jadwalvhs.updated_at',)
+                    ->get();
+
             return response()->json(
                 [
                     'data' => $data
-                ]
+                ],
             );
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -78,7 +102,7 @@ class MateriVHsController extends Controller
             'jadwal_id' => 'required',
             'image' => 'image|max:2084|nullable',
             'file' => 'file|nullable',
-            'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|nullable'
+            'video' => 'mimetypes:video/avi,video/mpeg,video/quicktime,video/mp4|nullable',
         ]);
 
         if ($validator->fails()) {
@@ -132,6 +156,7 @@ class MateriVHsController extends Controller
                 'image' => $fileimage,
                 'file' => $fileUp,
                 'video' => $fileVideo,
+                'isPreTest' => $request->isPreTest??0,
             ]);
             return response()->json(
                 [
@@ -253,6 +278,7 @@ class MateriVHsController extends Controller
                 'desc' => $request->desc,
                 'type' => $request->type,
                 'jadwal_id' => $request->jadwal_id,
+                'isPreTest' => $request->isPreTest,
             ]);
             return response()->json(
                 [
@@ -279,20 +305,22 @@ class MateriVHsController extends Controller
     {
         try {
             $delete = MateriVhs::findOrFail($id);
-            $pathfile = app_path("file/materivhs/file/{$delete->file}");
-            $pathImage = app_path("file/materivhs/image/{$delete->image}");
-            $pathVideo = app_path("file/materivhs/video/{$delete->video}");
-            if(File::exists($pathfile) || File::exists($pathImage) || File::exists($pathVideo)){
-                unlink($pathfile);
-                unlink($pathImage);
-                unlink($pathVideo);
+            $pathfile = public_path("file/materivhs/file/{$delete->file}");
+            $pathImage = public_path("file/materivhs/image/{$delete->image}");
+            $pathVideo = public_path("file/materivhs/video/{$delete->video}");
+            if (File::exists($pathfile) || File::exists($pathImage) || File::exists($pathVideo)) {
+                File::delete($pathfile);
+                File::delete($pathImage);
+                File::delete($pathVideo);
             };
-            $delete->forceDelete();
+            $delete->delete();
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'
             ]);
-        }catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }  
+          } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Terjadi kesalahan saat menghapus data. ' . $e->getMessage()
+            ], 500);
+          }
     }
 }

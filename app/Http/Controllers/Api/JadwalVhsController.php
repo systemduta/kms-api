@@ -5,13 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Jadwalvhs;
+use App\Models\QuotaAP;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class JadwalVhsController extends Controller
 {
-    
+
     public $successStatus = 200; //variabel ayng akan dipangggil saat operasi sukses dilakukan
     public $errorStatus = 403; //variabel yang akan di panggil saat operasi gagal dilakukan
     /**
@@ -19,6 +20,88 @@ class JadwalVhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function copyJadwal($id)
+    {
+        try {
+            $typeVHs = DB::table('jadwalvhs')
+                ->where('id', $id)
+                ->select('type')
+                ->first();
+
+            if ($typeVHs->type == '1VHS Basic') {
+                $dataJadwal = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwalvhs.id', '=', 'jadwal_user_vhs.jadwal_id')
+                    ->where('jadwalvhs.id', $id)
+                    ->where('jadwal_user_vhs.isAllow', 1)
+                    ->select('jadwalvhs.*')
+                    ->first();
+
+                $name = "1VHS Class - copy";
+                $batch = $dataJadwal->batch;
+                $type = $dataJadwal->type;
+                $start = $dataJadwal->start;
+                $end = $dataJadwal->end;
+                $isCity = $dataJadwal->isCity;
+                $quota = $dataJadwal->quota;
+
+                //insert jadwalvhs
+                $id_jadwalvhs_copy = DB::table('jadwalvhs')->insertGetId([
+                    'name' => $name,
+                    'batch' => $batch,
+                    'type' => $type,
+                    'start' => $start,
+                    'end' => $end,
+                    'isCity' => $isCity,
+                    'quota' => $quota,
+                ]);
+
+                //insert 
+                $jadwalUserVhs = DB::table('jadwalvhs')
+                    ->join('jadwal_user_vhs', 'jadwalvhs.id', '=', 'jadwal_user_vhs.jadwal_id')
+                    ->where('jadwalvhs.id', $id)
+                    ->where('jadwal_user_vhs.isAllow', 1)
+                    ->select('jadwal_user_vhs.*')
+                    ->get();
+                foreach ($jadwalUserVhs as $user) {
+                    $cek = DB::table('users')
+                        ->where('id', $user->user_id)
+                        ->where('isBasic', 1)
+                        ->first();
+                    //URUNG kurang sitik copy data
+                    $id_jadwaluservhs_copy = DB::table('jadwal_user_vhs')->insertGetId([
+                        'user_id' => $cek->id,
+                        'jadwal_id' => $id_jadwalvhs_copy,
+                        'company_id' => $cek->id,
+                    ]);
+                }
+
+
+                // return response()->json([
+                //     'data'      => $datas,
+                //     'message'   => 'Data Berhasil diupdate!'
+                // ], $this->successStatus);
+            }
+            if ($typeVHs->type == '1VHS Class') {
+                return response()->json([
+                    'message'   => 'Masuk Cass'
+                ], $this->errorStatus);
+            }
+            if ($typeVHs->type == '1VHS Camp') {
+                return response()->json([
+                    'message'   => 'Masuk Basic'
+                ], $this->errorStatus);
+            }
+            if ($typeVHs->type == '1VHS Academy') {
+                return response()->json([
+                    'message'   => 'Masuk Basic'
+                ], $this->errorStatus);
+            }
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
+
     public function index()
     {
     }
@@ -28,12 +111,13 @@ class JadwalVhsController extends Controller
      * Method ini menggunakan class Jadwalvhs untuk mengakses method orderBy() dan get(). Method orderBy() digunakan untuk mengurutkan data jadwalvhs berdasarkan kolom id dengan urutan DESC (descending). Method get() digunakan untuk mengambil semua data yang diurutkan dari database.
      * Jika proses berhasil, maka method ini akan mengembalikan respon dengan data jadwalvhs dalam format JSON ke client menggunakan helper response() dengan method json(). Jika terjadi kesalahan, maka method ini akan mengembalikan respon dengan pesan kesalahan dan status kode 500 (internal server error) ke client.
      */
-    public function sop_all(){
+    public function sop_all()
+    {
         try {
-            return response()->json(['data' => Jadwalvhs::orderBy("id",'DESC')->get()]);
+            return response()->json(['data' => Jadwalvhs::orderBy("id", 'DESC')->get()]);
         } catch (\Exception $error) {
             return response()->json(['error' => $e->getMessage()], 500);
-        }   
+        }
     }
     /**
      * Show the form for creating a new resource.
@@ -59,39 +143,102 @@ class JadwalVhsController extends Controller
      */
     public function store(Request $request)
     {
-        // error_reporting(0);
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name'              => 'required',
             'batch'             => 'required',
             'start'             => 'required',
             'end'               => 'required',
+            'type'              => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()],400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
-        $auth   = auth()->user();
+        $tokenUser = DB::table('users')
+            ->join('organizations', 'organizations.id', 'users.organization_id')
+            ->where('organizations.is_str', '=', '1')
+            ->where('token', '!=', "")
+            ->pluck('token')
+            ->toArray();
 
-        try {
+        $type = $request->isCity;
+        $quotaAps = json_decode($request->quotaAP);
+        if ($type == 1 || $type == 2) {
+            try {
+                DB::beginTransaction();
+                $JadwalGetId = DB::table('jadwalvhs')->insertGetId([
+                    'name'       => $request->name,
+                    'batch'      => $request->batch,
+                    'type'       => $request->type,
+                    'start'      => $request->start,
+                    'end'        => $request->end,
+                    'isCity'     => $request->isCity,
+                    'quota'      => $request->quota,
+                ]);
+                DB::commit();
+
+                foreach ($quotaAps as $quotaAp) {
+                    DB::table('quotaaps')->insert([
+                        'jadwal_id'        => $JadwalGetId,
+                        'company_id'       => $quotaAp->id,
+                        'quota'       => $quotaAp->quota,
+                    ]);
+                }
+                if ($tokenUser) {
+                    $result = fcm()->to($tokenUser)
+                        ->timeToLive(0)
+                        ->priority('high')
+                        ->notification([
+                            'title' => 'Hai, ada jadwal 1VHS baru nih segera daftarkan teman perusahaan mu!',
+                            'body' => 'Silahkan buka website admin',
+                        ])
+                        ->data([
+                            'title' => 'Hai, ada jadwal 1VHS baru nih segera daftarkan teman perusahaan mu!',
+                            'body' => 'Silahkan buka website admin',
+                        ])
+                        ->send();
+                }
+                return response()->json([
+                    'data'      => $JadwalGetId,
+                    'status'    => '1/2',
+                    'message'   => 'Data Berhasil disimpan!'
+                ], $this->successStatus);
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                throw new HttpException(500, $exception->getMessage(), $exception);
+            }
+        } else {
             DB::beginTransaction();
             $JadwalGetId = DB::table('jadwalvhs')->insertGetId([
-                'name'        => $request->name,
-                'batch'       => $request->batch,
-                'start'       => $request->start,
-                'end'         => $request->end,
+                'name'       => $request->name,
+                'batch'      => $request->batch,
+                'type'       => $request->type,
+                'start'      => $request->start,
+                'end'        => $request->end,
+                'isCity'     => $request->isCity ?? '4',
+                'quota'      => $request->quota,
             ]);
-
             DB::commit();
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw new HttpException(500, $exception->getMessage(), $exception);
+            if ($tokenUser) {
+                $result = fcm()->to($tokenUser)
+                    ->timeToLive(0)
+                    ->priority('high')
+                    ->notification([
+                        'title' => 'Hai, ada jadwal 1VHS baru nih segera daftarkan teman perusahaan mu!',
+                        'body' => 'Silahkan buka website admin',
+                    ])
+                    ->data([
+                        'title' => 'Hai, ada jadwal 1VHS baru nih segera daftarkan teman perusahaan mu!',
+                        'body' => 'Silahkan buka website admin',
+                    ])
+                    ->send();
+            }
+            return response()->json([
+                'data'      => $JadwalGetId,
+                'message'   => 'Data Berhasil disimpan!'
+            ], $this->successStatus);
         }
-
-        return response()->json([
-            'data'      => $JadwalGetId,
-            'message'   => 'Data Berhasil disimpan!'
-        ], $this->successStatus);
     }
 
     /**
@@ -107,7 +254,7 @@ class JadwalVhsController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('jadwalvhs')->where('id',$id)->first();
+        $data = DB::table('jadwalvhs')->where('id', $id)->first();
         if ($data) {
             return response()->json(['success' => $data], $this->successStatus);
         } else {
@@ -142,28 +289,252 @@ class JadwalVhsController extends Controller
     {
         $name = $request->name;
         $batch = $request->batch;
+        $type = $request->type;
         $start = $request->start;
+        $end = $request->end;
+        $isCity = $request->isCity;
+        $quota = $request->quota;
 
-        $jadwal               = Jadwalvhs::find($id);
-        $jadwal->name         = $name;
-        $jadwal->batch       = $batch;
-        $jadwal->start        = $start;
-        $jadwal->save();
+        $tokenUser = DB::table('users')
+            ->join('organizations', 'organizations.id', 'users.organization_id')
+            ->where('organizations.is_str', '=', '1')
+            ->where('token', '!=', "")
+            ->pluck('token')
+            ->toArray();
+
+        $quotaAps = json_decode($request->quotaAP);
+        $reIsCity = Jadwalvhs::where('id', $id)->first();
+        $reIsCity = $reIsCity->isCity; //mengambil data isCity sebelumnya (is City == apakah dalam kota atau luar kota baik dengan kuota atau tanpa kuota)
 
         try {
-            $jadwal               = Jadwalvhs::find($id);
-        $jadwal->name         = $name;
-        $jadwal->batch       = $batch;
-        $jadwal->start        = $start;
-        $jadwal->save();
+            if ($reIsCity == 1) {
+                if ($isCity == 4 || $isCity == 3) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        try {
+                            $jadwal               = Jadwalvhs::find($id);
+                            $jadwal->name         = $name;
+                            $jadwal->batch        = $batch;
+                            $jadwal->type         = $type;
+                            $jadwal->start        = $start;
+                            $jadwal->end          = $end;
+                            $jadwal->isCity       = $isCity;
+                            $jadwal->quota        = $quota;
+                            $jadwal->save();
 
-        return response()->json([
-            'success'=>$jadwal,
-            'message'=>'update successfully'],
-        $this->successStatus);
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw new HttpException(500, $exception->getMessage(), $exception);
+                            $tblQuota = DB::table('quotaaps')->where('jadwal_id', $id)->get();
+                            foreach ($tblQuota as $item) {
+                                $data = QuotaAP::where('jadwal_id', $item->jadwal_id)->first();
+                                if ($data) {
+                                    $data->delete();
+                                }
+                            }
+                            return response()->json([
+                                'data'      => $jadwal,
+                                'message'   => 'Data Berhasil diupdate!'
+                            ], $this->successStatus);
+                        } catch (\Exception $exception) {
+                            DB::rollBack();
+                            throw new HttpException(500, $exception->getMessage(), $exception);
+                        }
+                    }
+                }
+                if ($isCity == 2) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal               = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json(
+                            [
+                                'success' => $jadwal,
+                                'message' => 'update successfully'
+                            ],
+                            $this->successStatus
+                        );
+                    }
+                }
+            }
+            if ($reIsCity == 2) {
+                if ($isCity == 4 || $isCity == 3) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal               = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        $tblQuota = DB::table('quotaaps')->where('jadwal_id', $id)->get();
+                        foreach ($tblQuota as $item) {
+                            $data = QuotaAP::where('jadwal_id', $item->jadwal_id)->first();
+                            if ($data) {
+                                $data->delete();
+                            }
+                        }
+                        return response()->json([
+                            'data'      => $jadwal,
+                            'message'   => 'Data Berhasil diupdate!'
+                        ], $this->successStatus);
+                    }
+                }
+                if ($isCity == 1) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal               = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json(
+                            [
+                                'success' => $jadwal,
+                                'message' => 'update successfully'
+                            ],
+                            $this->successStatus
+                        );
+                    }
+                }
+            }
+            if ($reIsCity == 3) {
+                if ($isCity == 4) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json([
+                            'data'      => $jadwal,
+                            'message'   => 'Data Berhasil diupdate!'
+                        ], $this->successStatus);
+                    }
+                }
+                if ($isCity == 2 || $isCity == 1) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal               = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json(
+                            [
+                                'success' => $jadwal,
+                                'message' => 'update successfully'
+                            ],
+                            $this->successStatus
+                        );
+                    }
+                }
+            }
+            if ($reIsCity == 4) {
+                if ($isCity == 3) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json([
+                            'data'      => $jadwal,
+                            'message'   => 'Data Berhasil diupdate!'
+                        ], $this->successStatus);
+                    }
+                }
+                if ($isCity == 2 || $isCity == 1) {
+                    $userAp = DB::table('jadwal_user_vhs')->where('jadwal_id', $id)->get();
+                    if (count($userAp) > 0) {
+                        return response()->json("Ada user yang terdaftar silahkan hapus dahulu", $this->errorStatus);
+                    } else {
+                        $jadwal               = Jadwalvhs::find($id);
+                        $jadwal->name         = $name;
+                        $jadwal->batch        = $batch;
+                        $jadwal->type         = $type;
+                        $jadwal->start        = $start;
+                        $jadwal->end          = $end;
+                        $jadwal->isCity       = $isCity;
+                        $jadwal->quota        = $quota;
+                        $jadwal->save();
+
+                        return response()->json(
+                            [
+                                'success' => $jadwal,
+                                'message' => 'update successfully'
+                            ],
+                            $this->successStatus
+                        );
+                    }
+                }
+            }
+            if ($reIsCity == $isCity) {
+                $jadwal               = Jadwalvhs::find($id);
+                $jadwal->name         = $name;
+                $jadwal->batch        = $batch;
+                $jadwal->type         = $type;
+                $jadwal->start        = $start;
+                $jadwal->end          = $end;
+                $jadwal->isCity       = $isCity;
+                $jadwal->quota        = $quota;
+                $jadwal->save();
+
+                return response()->json(
+                    [
+                        'success' => $jadwal,
+                        'message' => 'update successfully'
+                    ],
+                    $this->successStatus
+                );
+            }
+        } catch (\Exception $error) {
+            return response()->json(['error' => $error->getMessage()], 500);
         }
     }
 
@@ -179,7 +550,7 @@ class JadwalVhsController extends Controller
      */
     public function destroy($id)
     {
-        $idDestroy =Jadwalvhs::find($id);
+        $idDestroy = Jadwalvhs::find($id);
         if ($idDestroy) {
             Jadwalvhs::destroy($id);
             return response()->json([
@@ -188,6 +559,5 @@ class JadwalVhsController extends Controller
         } else {
             return response()->json(['error' => "data not delete yet"], $this->errorStatus);
         }
-        
     }
 }

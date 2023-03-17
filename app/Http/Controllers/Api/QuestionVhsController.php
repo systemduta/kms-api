@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MateriVhs;
 use App\Models\QuestionVhs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class QuestionVhsController extends Controller
@@ -15,21 +16,68 @@ class QuestionVhsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function indexMateri($id)
+    {
+            try {
+                $data = DB::table('materi_vhs')
+                    ->join('jadwalvhs','materi_vhs.jadwal_id','=','jadwalvhs.id')
+                    ->leftJoin('question_vhs','question_vhs.materi_id','=','materi_vhs.id')
+                    ->select('materi_vhs.*',DB::raw('COUNT(DISTINCT question_vhs.id) AS totalQue'))
+                    ->where('jadwalvhs.id',$id)
+                    ->groupBy('materi_vhs.id','materi_vhs.name','materi_vhs.desc','materi_vhs.type','materi_vhs.jadwal_id','materi_vhs.image','materi_vhs.file','materi_vhs.video','materi_vhs.isPreTest','materi_vhs.created_at','materi_vhs.updated_at')
+                    ->get();
+                return response()->json(
+                    [
+                        'data' => $data
+                    ]
+                );
+            } catch(\Exception $e) {
+                return response()->json(['error'=>$e->getMessage()]);
+            }
+    }
+
+    public function indexDetail($id)
+    {
+        try {
+            $data = DB::table('question_vhs')
+                ->leftJoin('answer_vhs','question_vhs.id','=','answer_vhs.question_id')
+                ->select('question_vhs.*',DB::raw('COUNT(DISTINCT answer_vhs.id) AS totalAns'))
+                ->where('question_vhs.materi_id',$id)
+                ->groupBy('question_vhs.id','question_vhs.materi_id','question_vhs.question','question_vhs.created_at','question_vhs.updated_at')
+                ->get();
+
+            return response()->json(
+                [
+                    'data' => $data
+                ],
+            );
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }  
+    }
     /**
      * Ini adalah sebuah method bernama index yang tidak memiliki parameter. Method ini digunakan untuk menampilkan data dari tabel question_vhs dan materi_vhs.
      * Pada baris ketiga, terdapat sebuah query yang melakukan join antara tabel question_vhs dan materi_vhs dengan menggunakan fungsi join. Kemudian, terdapat pemilihan kolom-kolom yang akan ditampilkan dengan menggunakan fungsi select. Fungsi orderBy digunakan untuk mengurutkan data berdasarkan kolom id dari tabel question_vhs. Fungsi get akan mengambil semua data yang dikembalikan oleh query tersebut.
      * Pada baris terakhir, terdapat sebuah statement return yang mengembalikan sebuah response dalam bentuk JSON yang berisi data yang bersangkutan.
      */
     public function index()
-    {
+    {       
         try {
-            $data=QuestionVhs::join('materi_vhs',function($join){
-                $join->on('question_vhs.materi_id','=','materi_vhs.id');
-            })->select('question_vhs.id as id_question','materi_vhs.id','question_vhs.*','materi_vhs.*')->orderBy('question_vhs.id','desc')->get();
+            $data =DB::table('jadwalvhs')
+                    ->select('jadwalvhs.id', 'jadwalvhs.name', 'jadwalvhs.batch', 'jadwalvhs.type', 'jadwalvhs.start', 'jadwalvhs.end', 'jadwalvhs.isCity', 'jadwalvhs.quota',
+                            DB::raw('SUM(IF(question_vhs.id, 1, 0)) AS totalQue'),
+                            DB::raw('COUNT(DISTINCT materi_vhs.id) AS totalMat'))
+                    ->leftJoin('materi_vhs', 'materi_vhs.jadwal_id', '=', 'jadwalvhs.id')
+                    ->leftJoin('question_vhs', 'question_vhs.materi_id', '=', 'materi_vhs.id')
+                    ->groupBy('jadwalvhs.id', 'jadwalvhs.name', 'jadwalvhs.batch', 'jadwalvhs.type', 'jadwalvhs.start', 'jadwalvhs.end', 'jadwalvhs.isCity', 'jadwalvhs.quota')
+                    ->having('totalMat', '!=', 0)
+                    ->get();             
+
             return response()->json(
                 [
                     'data' => $data
-                ]
+                ],
             );
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
