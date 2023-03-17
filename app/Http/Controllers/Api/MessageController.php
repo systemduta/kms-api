@@ -7,6 +7,7 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use PhpParser\Node\Stmt\TryCatch;
 
 class MessageController extends Controller
 {
@@ -18,9 +19,11 @@ class MessageController extends Controller
     public function index()
     {
         try {
-            $data = DB::table('message')
-                ->join('users', 'users.id', '=', 'message.user_id')
-                ->select('message.*', 'user.name')
+            $data = DB::table('messages')
+                ->join('users', 'users.id', '=', 'messages.user_id')
+                ->join('companies','companies.id','=','users.company_id')
+                ->join('organizations','organization.id','=','users.organization_id')
+                ->select('message.*', 'user.name as username','companies.name as comname','organizations.name as orgname')
                 ->get();
             return response()->json(
                 [
@@ -66,12 +69,12 @@ class MessageController extends Controller
         }
 
         try {
-            $data = Message::creategetid([
+            $data = Message::create([
                 'user_id' => $request->user_id,
                 'subject' => $request->subject,
                 'content' => $request->content,
             ]);
-
+            
             $tokenUser = DB::table('users')
                 ->where('users.id', '=', $request->user_id)
                 ->where('token', '!=', "")
@@ -115,7 +118,24 @@ class MessageController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $data = Message::findOrFail($id);
+            if ($data) {
+                return response()->json([
+                    'data' => $data,
+                    'message' => "geted successfully"
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 'cannot find id'
+                ], 403);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 403);
+        }
+        
     }
 
     /**
@@ -138,7 +158,56 @@ class MessageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            'subject' => 'required',
+            'content' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
+
+        try {
+            $data = Message::findOrFail($id)->update([
+                'user_id' => $request->user_id,
+                'subject' => $request->subject,
+                'content' => $request->content,
+            ]);
+            
+            $tokenUser = DB::table('users')
+                ->where('users.id', '=', $request->user_id)
+                ->where('token', '!=', "")
+                ->pluck('token')
+                ->toArray();
+            if ($tokenUser) {
+                $result = fcm()->to($tokenUser)
+                    ->timeToLive(0)
+                    ->priority('high')
+                    ->notification([
+                        'title' => 'Hai, ada Pesan baru untuk mu',
+                        'body' => 'Silahkan buka menu Message',
+                    ])
+                    ->data([
+                        'title' => 'Hai, ada Pesan baru untuk mu',
+                        'body' => 'Silahkan buka menu Message',
+                    ])
+                    ->send();
+            }
+
+            return response()->json(
+                [
+                    'data' => $data,
+                    'message' => "saved successfully"
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage()
+                ]
+            );
+        }
     }
 
     /**
@@ -150,16 +219,25 @@ class MessageController extends Controller
     public function destroy($id)
     {
         try {
-            $data = Message::destroy($id);
+            $data = Message::findOrFail($id);
+            if ($data) {
+                Message::destroy($id);
 
-            return response()->json([
-                'message' => 'Success destroy data'
-            ]);
-        } catch (\Exception $th) {
+                return response()->json([
+                    'message' => 'Success destroy data'
+                ]);
+            } else {
+                return response()->json(
+                    [
+                        'message' => 'cannot find id'
+                    ],403
+                );
+            }           
+        } catch (\Exception $e) {
             return response()->json(
                 [
                     'message' => $e->getMessage()
-                ]
+                ],403
             );
         }
     }
