@@ -7,7 +7,6 @@ use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use PhpParser\Node\Stmt\TryCatch;
 
 class MessageController extends Controller
 {
@@ -22,8 +21,8 @@ class MessageController extends Controller
             $data = DB::table('messages')
                 ->join('users', 'users.id', '=', 'messages.user_id')
                 ->join('companies','companies.id','=','users.company_id')
-                ->join('organizations','organization.id','=','users.organization_id')
-                ->select('message.*', 'user.name as username','companies.name as comname','organizations.name as orgname')
+                ->join('organizations','organizations.id','=','users.organization_id')
+                ->select('messages.*', 'users.name as username','companies.name as comname','organizations.name as orgname')
                 ->get();
             return response()->json(
                 [
@@ -73,6 +72,7 @@ class MessageController extends Controller
                 'user_id' => $request->user_id,
                 'subject' => $request->subject,
                 'content' => $request->content,
+                'isSee'  => 0,
             ]);
             
             $tokenUser = DB::table('users')
@@ -159,6 +159,7 @@ class MessageController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
+            'id' => 'required',
             'user_id' => 'required',
             'subject' => 'required',
             'content' => 'required',
@@ -169,10 +170,11 @@ class MessageController extends Controller
         }
 
         try {
-            $data = Message::findOrFail($id)->update([
+            $data = Message::findOrFail($request->id)->update([
                 'user_id' => $request->user_id,
                 'subject' => $request->subject,
                 'content' => $request->content,
+                'isSee'   => 0
             ]);
             
             $tokenUser = DB::table('users')

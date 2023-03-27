@@ -90,7 +90,7 @@ Route::group([
             Route::get('getAll/{id}', 'QuotaapController@getAll');
             Route::put('updateSingle/{id}', 'QuotaapController@singleUpdate');
 
-            Route::get('get_user', 'UserController@index');
+            Route::get('get_user', 'UserController@index');    //get list user
             Route::get('detail_admin', 'UserController@details');
             Route::get('detail_user/{id}', 'UserController@detailsUser');
             Route::put('update_user/{id}', 'UserController@update');
@@ -216,6 +216,9 @@ Route::group([
             //profile
             Route::resource('profile', 'ProfileAdminController');
             Route::put('updateprofile', 'ProfileAdminController@updateself');
+
+            //message
+            Route::resource('message','MessageController');
         });
     });
 

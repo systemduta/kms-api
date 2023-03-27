@@ -2471,7 +2471,7 @@ class MobileController extends Controller
             if ($cekAnswer > 0) {
                 return response()->json(
                     [
-                        'error' => "Data Double",
+                        'message' => "Data Double",
                     ],
                     403
                 );
@@ -2511,7 +2511,7 @@ class MobileController extends Controller
         } catch (\Exception $th) {
             return response()->json(
                 [
-                    'error' => $th->getMessage(),
+                    'message' => $th->getMessage(),
                 ],
                 403
             );
@@ -2519,27 +2519,46 @@ class MobileController extends Controller
     }
 
     public function getOtherAnswers(Request $request)
-    {
-        try {
-            $data = DB::table('answer_vhs')
+    {        
+        $userid = Auth::guard('api')->user()->id;  
+        $cekAnswer = DB::table('answer_vhs')
                 ->join('users', 'users.id', '=', 'answer_vhs.user_id')
                 ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
                 ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
                 ->where('answer_vhs.materi_id', $request->materi_id)
                 ->where('answer_vhs.question_id', $request->question_id)
+                ->where('answer_vhs.user_id',$userid)
                 ->select('users.id', 'users.name', 'answer_vhs.answer', 'answer_vhs.file')
-                ->get();
+                ->count();
+        
+        if ($cekAnswer > 0) {
+            try {
+                $data = DB::table('answer_vhs')
+                    ->join('users', 'users.id', '=', 'answer_vhs.user_id')
+                    ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
+                    ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
+                    ->where('answer_vhs.materi_id', $request->materi_id)
+                    ->where('answer_vhs.question_id', $request->question_id)
+                    ->select('users.id', 'users.name', 'answer_vhs.answer', 'answer_vhs.file')
+                    ->get();
+                return response()->json(
+                    [
+                        'message' => 'success',
+                        'success' => $data,
+                    ],
+                    200
+                );
+            } catch (\Exception $exception) {
+                DB::rollBack();
+                throw new HttpException(500, $exception->getMessage(), $exception);
+            }
+        } else {
             return response()->json(
                 [
-                    'message' => 'success',
-                    'success' => $data,
-                ],
-                200
+                    'message' => 'anda belum menjawab, pastikan sudah menjawab',
+                ], 403
             );
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw new HttpException(500, $exception->getMessage(), $exception);
-        }
+        }        
     }
 
     //PendingAll
@@ -2569,4 +2588,22 @@ class MobileController extends Controller
             throw new HttpException(500, $exception->getMessage(), $exception);
         }
     }
+
+     //sertif
+     public function getSerti()
+     {
+         try {
+             $user=auth()->user();
+             $data = Vhs_certi::where('user_id',$user->id)->get();
+
+             return response()->json(
+                 [
+                     'message'=>'success',
+                     'success'=>$data,
+                 ],200);
+             } catch (\Exception $exception) {
+                 DB::rollBack();
+                 throw new HttpException(500, $exception->getMessage(), $exception);
+             }
+     }
 }

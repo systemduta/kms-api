@@ -184,7 +184,8 @@ class UserController extends Controller
             ->when($auth->role!=1, function ($q) use ($auth) {
                 return $q->where('company_id', $auth->company_id);
             })
-            ->orderBy('id', 'DESC')
+            ->where('status','!=',0)
+            ->orderBy('name', 'ASC')
             ->get();
         return response()->json(['data' => $user]);
     }

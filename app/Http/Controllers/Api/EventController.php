@@ -18,6 +18,7 @@ class EventController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request->all());
         $data = DB::table('events')->where('company_id', $request->company_id)->orderBy('id','DESC')->get();
         return response()->json(['data' => $data]);
     }
