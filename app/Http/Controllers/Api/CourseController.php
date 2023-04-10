@@ -19,12 +19,288 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class CourseController extends Controller
 {
     public $successStatus = 200; //variabel yang akan dipanggil saat proses berhasil dilakukan
+    public $errorStatus = 403; //variabel yang akan dipanggil saat proses tidak berhasil dilakukan
 
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+    public function newIndex()
+    {
+        try {
+            $data = DB::table('golongans')
+            ->whereNotIn('id', [9, 10, 11,5,6,7])
+            ->get();
+            
+            return response()->json(['data' => $data],$this->successStatus);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()],$this->errorStatus);
+        }
+    }
+
+    public function allcourse($id)
+    {
+        $auth = auth()->user();
+        try {
+            if ($id == 4) {
+                try {
+                    $data = DB::table('courses')
+                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
+                        ->when($auth->role!=1, function ($q) use ($auth) {
+                            return $q->where('company_id', $auth->company_id);
+                        })
+                        ->where('type',4)
+                        ->select('courses.*','golongans.name as golongan_name')
+                        ->get();
+                    
+                    return response()->json(['data' => $data],$this->successStatus);
+                } catch (\Exception $e) {
+                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
+                }
+            } elseif ($id == 1) {
+                try {
+                    $data = DB::table('courses')
+                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
+                        ->when($auth->role!=1, function ($q) use ($auth) {
+                            return $q->where('company_id', $auth->company_id);
+                        })
+                        ->where('type',1)
+                        ->select('courses.*','golongans.name as golongan_name')
+                        ->get();
+                    
+                    return response()->json(['data' => $data],$this->successStatus);
+                } catch (\Exception $e) {
+                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
+                }
+            } else {
+                try {
+                    $data = DB::table('courses')
+                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
+                        ->when($auth->role!=1, function ($q) use ($auth) {
+                            return $q->where('company_id', $auth->company_id);
+                        })
+                        ->where('type',2)
+                        ->select('courses.*','golongans.name as golongan_name')
+                        ->get();
+                    
+                    return response()->json(['data' => $data],$this->successStatus);
+                } catch (\Exception $e) {
+                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
+                }
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $e->getMessage()],$this->errorStatus);
+        }
+    }
+
+//softskill
+
+    public function storesofskill(Request $request)
+    {
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'organization_id' => 'numeric|nullable',
+            'golongan_id' => 'numeric|nullable',
+            'title' => 'required',
+            'description' => 'required',
+            'image' => 'required',
+            'video' => 'file|nullable',
+            'file' => 'required',
+            'link' => 'string|nullable',
+            'type' => 'required',
+            'questions' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);
+        }
+
+        $auth = auth()->user();
+        /* START FILE UPLOAD */
+        $file64 = $request->file;
+        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $file = str_replace($replace, '', $file64);
+        $file = str_replace(' ', '+', $file);
+        $filename = 'file_'.Str::random(10).'.'.$ext;
+        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        /* END FILE UPLOAD */
+
+        /* PREPARE VIDEO UPLOAD */
+        $video_name = null;
+        $video_path = null;
+        $video = null;
+        if ($request->hasFile('video')) {
+            $video = $request->video;
+            $video_path = 'files/course/video/';
+            $video_name = Str::random(20).'.'.$video->getClientOriginalExtension();
+        }
+        /* END PREPARE VIDEO UPLOAD */
+        try {
+            DB::beginTransaction();
+            $courseGetId=DB::table('courses')->insertGetId([
+                'company_id' => $request->company_id ?? null,
+                'organization_id' => $request->organization_id ?? null,
+                'golongan_id' => $request->golongan_id ?? null,
+                'title' => $request->title,
+                'description' => $request->description,
+                'image' => '',
+                'video' => $video_path.$video_name,
+                'file' => 'files/'.$filename,
+                'link' => $request->link,
+                'type' => $request->type
+            ]);
+
+            /* START VIDEO UPLOAD */
+            if ($request->hasFile('video')) {
+                try {
+                    Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
+                } catch (Exception $e){
+                    return response()->json(['error'=>$e->getMessage()], 401);
+                }
+            }
+            /* END VIDEO UPLOAD */
+            $organization_id = $request->organization_id ?? null;
+            $tokenUser = DB::table('users')
+                // ->when($auth->role!=1, function ($q) use ($auth) {
+                //     return $q->where('company_id', $auth->company_id);
+                // })
+                ->when( $organization_id, function ($query) use ($organization_id) {
+                    return $query->where('organization_id', $organization_id);
+                })
+                ->where('token','!=',"")
+                ->pluck('token')->toArray();
+            if($tokenUser) {
+                $result = fcm()->to($tokenUser)
+                ->timeToLive(0)
+                ->priority('high')
+                ->notification([
+                    'title' => 'Hai, ada course baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->data([
+                    'title' => 'Hai, ada course baru nih buat kamu!',
+                    'body' => $request->title,
+                ])
+                ->send();
+            }
+            if($request->filled('image')) {
+                $imgName='';
+                $baseString = explode(';base64,', $request->image);
+                $image = base64_decode($baseString[1]);
+                $image = imagecreatefromstring($image);
+
+                $ext = explode('/', $baseString[0]);
+                $ext = $ext[1];
+                $imgName = 'course_'.uniqid().'.'.$ext;
+                if($ext=='png'){
+                    imagepng($image,public_path().'/files/'.$imgName,8);
+                } else {
+                    imagejpeg($image,public_path().'/files/'.$imgName,20);
+                }
+                DB::table('courses')->where('id', $courseGetId)->update(['image' => $imgName]);
+            }
+
+            foreach ($request->questions as $question) {
+                if (!$question["answers"]) continue;
+                $qId=DB::table('test_questions')->insertGetId([
+                    'course_id' => $courseGetId,
+                    'is_pre_test' => $question['is_pre_test'],
+                    'description' => $question['description'],
+                ]);
+                foreach ($question['answers'] as $answer) {
+                    $ans = DB::table('test_answers')->insert([
+                        'test_question_id' => $qId,
+                        'name' => $answer['name'],
+                        'is_true' => $answer['is_true'],
+                    ]);
+                }
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+        return response()->json([
+            'data' => $courseGetId,
+            'message' => 'Data berhasil disimpan!'
+        ], $this->successStatus);
+    }
+
+    public function detailssoftskill($id)
+    {
+        $course = Course::where('id', $id)->first();
+        return response()->json(['success' => $course], $this->successStatus);
+    }
+
+    public function updatesoftskill(Request $request, $id)
+    {
+        $title = $request->title;
+        $description = $request->description;
+        $image = '';
+        $video = $request->video;
+        $link = $request->link;
+
+        if ($request->has('file')) {
+            /* START FILE UPLOAD */
+            $file64 = $request->file;
+            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+            $replace = substr($file64, 0, strpos($file64, ',')+1);
+            $file = str_replace($replace, '', $file64);
+            $file = str_replace(' ', '+', $file);
+            $filename = 'file_'.Str::random(10).'.'.$ext;
+            Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+            /* END FILE UPLOAD */
+
+            $course = Course::find($id);
+            $course->file = 'files/'.$filename;
+            $course->save();
+        }
+       
+
+        if($request->filled('image')) {
+            $imgName='';
+            $baseString = explode(';base64,', $request->image);
+            $image = base64_decode($baseString[1]);
+            $image = imagecreatefromstring($image);
+
+            $ext = explode('/', $baseString[0]);
+            $ext = $ext[1];
+            $imgName = 'course_'.uniqid().'.'.$ext;
+            if($ext=='png'){
+                imagepng($image,public_path().'/files/'.$imgName,8);
+            } else {
+                imagejpeg($image,public_path().'/files/'.$imgName,20);
+            }
+            $course = Course::find($id);
+            $course->image = $imgName;
+            $course->save();
+        }
+
+        $course = Course::find($id);
+        $course->company_id = null;
+        $course->organization_id = null;
+        $course->golongan_id = $request->golongan_id;
+        $course->title = $title;
+        $course->description = $description;
+        $course->video = $video;
+        $course->link = $link;
+        $course->save();
+
+
+        return response()->json([
+            'success'=>$course,
+            'message'=>'update successfully'],
+        $this->successStatus);
+    }
+
+    public function showsoftskill($id)
+    {
+        $course = Course::where('golongan_id', $id)->where('type',4)->get();
+        return response()->json(['success' => $course], $this->successStatus);
+    }
+//endsoftskill
 
     /**
      * Pada function coursedown, terdapat sebuah query yang menggunakan fungsi DB::table() untuk mengambil data dari tabel 'courses'. Kemudian, fungsi select() digunakan untuk memilih kolom 'file' yang akan ditampilkan pada hasil query, dan fungsi where() digunakan untuk memfilter data berdasarkan kondisi yang ditentukan. Kemudian, fungsi first() digunakan untuk mengambil satu baris data yang sesuai dengan kondisi tersebut. Setelah itu, nilai dari kolom 'file' tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json().
@@ -48,10 +324,11 @@ class CourseController extends Controller
             ->when(($request->filled('type') && $request->type == 3), function (Builder $query) use ($request){
                 return $query->where('type', '=', 3);
             }, function (Builder $builder) use ($request) {
-                return $builder->where('type','!=',3)
+                return $builder->where('type','!=',4)
                     ->where('type', '!=' , 1)
+                    ->where('type', '!=' , 3)
                     ->orWhere(function (Builder $query) use ($request) {
-                        return $query->where('type',1)
+                        return $query
                             ->where('organization_id',$request->organization_id);
                     });
             })
@@ -261,7 +538,6 @@ class CourseController extends Controller
       */
     public function update(Request $request, $id)
     {
-        // dd($request->all());
         $title = $request->title;
         $description = $request->description;
         $image = '';

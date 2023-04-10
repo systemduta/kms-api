@@ -153,6 +153,15 @@ Route::group([
             Route::resource('golongan', 'GolonganController');
             Route::resource('course', 'CourseController');
 
+            //newcourse
+            Route::get('newIndexCourse','CourseController@newIndex');
+            Route::get('newAllCourse/{id}','CourseController@allcourse');
+                //softskill
+            Route::post('addsoftskill','CourseController@storesofskill');
+            Route::get('detailsoftskill/{id}', 'CourseController@detailssoftskill');
+            Route::get('showsoftskill/{id}', 'CourseController@showsoftskill');
+            Route::put('updatesoftskill/{id}', 'CourseController@updatesoftskill');
+
             //download
             Route::get('downcourse/{id}', [CourseController::class, 'coursedown']);
             Route::get('downsop/{id}', [SOPController::class, 'sopdown']);
@@ -234,7 +243,7 @@ Route::group([
             Route::get('detail_user', 'MobileController@details');
             Route::post('logout', 'MobileController@logout');
             // Route::get('course_list','MobileController@course_list'); Sementara ndak di pakai
-            Route::get('course_list_dashboard', 'MobileController@course_list_dashboard');
+            Route::post('course_list_dashboard', 'MobileController@course_list_dashboard');
 
             // Route::post('accept_sop','MobileController@accept_sop');
             Route::get('/sop_status/{id}', 'MobileController@sop_status');
