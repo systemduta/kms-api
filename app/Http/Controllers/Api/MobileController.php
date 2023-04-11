@@ -217,7 +217,6 @@ class MobileController extends Controller
         return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
-    //URUNG di user belum
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();
@@ -480,6 +479,42 @@ class MobileController extends Controller
                     array_push($data, $value);
                 }
             return response()->json(['data' => $data]);
+        } elseif ($request->type == 2) {
+            $dt = DB::table('courses as c')
+                ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
+                // ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
+                //     return $q->where('c.company_id', $user->company_id);
+                //     })
+                ->when($request->type, function ($query) use ($request) {
+                        return $query->where('c.type', $request->type);
+                    })
+                // ->when($request->type == 1, function ($query) use ($user) {
+                //         return $query->where('c.organization_id', $user->organization_id)
+                //             ->where(function ($query) use ($user) {
+                //                 return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
+                //             });
+                //     })
+                ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
+                ->orderBy('c.id', 'DESC')
+                ->selectRaw('
+                c.id,
+                c.title,
+                c.description,
+                c.image,
+                count(us.id) as jml,
+                group_concat(us.user_id) as user_list
+                ')
+                // ->where('c.golongan_id',$user->golongan_id)
+                ->where('c.type',2)
+                ->get();
+                        
+                $data = array();
+                foreach ($dt as $value) {
+                    $exclude = explode(",", $value->user_list);
+                    if (in_array($user->id, $exclude)) continue;
+                    array_push($data, $value);
+                }
+                return response()->json(['data' => $data]);
         } else {
             return response()->json(['error' => 'error'],403);
         }
