@@ -300,7 +300,33 @@ class CourseController extends Controller
         $course = Course::where('golongan_id', $id)->where('type',4)->get();
         return response()->json(['success' => $course], $this->successStatus);
     }
+
+    public function showscore($id)
+    {
+        try {
+            $data = DB::table('user_scores as us')
+            ->leftJoin('users as u', 'u.id', '=', 'us.user_id')
+            ->leftJoin('courses as c', 'c.id', '=', 'us.course_id')
+            ->leftJoin('companies as com', 'com.id', '=', 'u.company_id')
+            ->leftJoin('golongans as gol', 'gol.id', '=', 'u.golongan_id')
+            ->select('us.id', 'u.name as username', 'com.name as comname', 'gol.name as golname', 'c.title', 'score')
+            ->where('c.id', '=', $id)
+            ->get();
+         
+            return response()->json(['success' => $data],$this->successStatus);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], $this->errorStatus);
+        }
+    }
 //endsoftskill
+
+//ourcompany
+
+
+
+//end-ourcompany
+
+
 
     /**
      * Pada function coursedown, terdapat sebuah query yang menggunakan fungsi DB::table() untuk mengambil data dari tabel 'courses'. Kemudian, fungsi select() digunakan untuk memilih kolom 'file' yang akan ditampilkan pada hasil query, dan fungsi where() digunakan untuk memfilter data berdasarkan kondisi yang ditentukan. Kemudian, fungsi first() digunakan untuk mengambil satu baris data yang sesuai dengan kondisi tersebut. Setelah itu, nilai dari kolom 'file' tersebut dikembalikan dalam bentuk JSON melalui fungsi response()->json().

@@ -144,6 +144,7 @@ Route::group([
             //course
             Route::resource('lampiran', 'LampiranController');
             Route::get('lamp_status/{id}', 'LampiranController@status');
+            Route::get('showscore/{id}','CourseController@showscore');
 
             Route::resource('crossfunction', 'CrossfunctionController');
             Route::get('cross_status/{id}', 'CrossfunctionController@status');
