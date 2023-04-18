@@ -217,41 +217,32 @@ class MobileController extends Controller
         return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
+    //URUNG di user belum
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();
         if ($request->type==4) {  //softskill
             if ($user->golongan_id==8||$user->golongan_id==9||$user->golongan_id==10||$user->golongan_id==11) {
                 $dt = DB::table('courses as c')
-                ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                    return $q->where('c.company_id', $user->company_id);
+                    ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
+                    ->where('c.type', 4)
+                    ->where(function($query) {
+                        $query->where('c.golongan_id', 8)
+                            ->orWhere('c.golongan_id', 9)
+                            ->orWhere('c.golongan_id', 10)
+                            ->orWhere('c.golongan_id', 11);
                     })
-                ->when($request->type, function ($query) use ($request) {
-                        return $query->where('c.type', $request->type);
-                    })
-                ->when($request->type == 1, function ($query) use ($user) {
-                        return $query->where('c.organization_id', $user->organization_id)
-                            ->where(function ($query) use ($user) {
-                                return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                            });
-                    })
-                ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
-                ->orderBy('c.id', 'DESC')
-                ->selectRaw('
-                    c.id,
-                    c.title,
-                    c.description,
-                    c.image,
-                    count(us.id) as jml,
-                    group_concat(us.user_id) as user_list
-                ')
-                ->where('c.type',4)
-                ->where('c.golongan_id',8)
-                ->orWhere('c.golongan_id',9)
-                ->orWhere('c.golongan_id',10)
-                ->orWhere('c.golongan_id',11)
-                ->get();
+                    ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
+                    ->orderBy('c.id', 'DESC')
+                    ->selectRaw('
+                        c.id,
+                        c.title,
+                        c.description,
+                        c.image,
+                        count(us.id) as jml,
+                        group_concat(us.user_id) as user_list
+                    ')
+                    ->get();
                         
                 $data = array();
                 foreach ($dt as $value) {
@@ -263,18 +254,10 @@ class MobileController extends Controller
             } elseif ($user->golongan_id==4) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                    ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                        return $q->where('c.company_id', $user->company_id);
-                        })
-                    ->when($request->type, function ($query) use ($request) {
-                            return $query->where('c.type', $request->type);
-                        })
-                    ->when($request->type == 1, function ($query) use ($user) {
-                            return $query->where('c.organization_id', $user->organization_id)
-                                ->where(function ($query) use ($user) {
-                                    return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                                });
-                        })
+                    ->where('c.type', 4)
+                    ->where(function($query) {
+                        $query->where('c.golongan_id', 4);
+                    })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
                     ->orderBy('c.id', 'DESC')
                     ->selectRaw('
@@ -285,8 +268,6 @@ class MobileController extends Controller
                         count(us.id) as jml,
                         group_concat(us.user_id) as user_list
                     ')
-                    ->where('c.type',4)
-                    ->where('c.golongan_id',4)
                     ->get();
                             
                     $data = array();
@@ -299,18 +280,10 @@ class MobileController extends Controller
             } elseif ($user->golongan_id==3) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                    ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                        return $q->where('c.company_id', $user->company_id);
-                        })
-                    ->when($request->type, function ($query) use ($request) {
-                            return $query->where('c.type', $request->type);
-                        })
-                    ->when($request->type == 1, function ($query) use ($user) {
-                            return $query->where('c.organization_id', $user->organization_id)
-                                ->where(function ($query) use ($user) {
-                                    return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                                });
-                        })
+                    ->where('c.type', 4)
+                    ->where(function($query) {
+                        $query->where('c.golongan_id', 3);
+                    })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
                     ->orderBy('c.id', 'DESC')
                     ->selectRaw('
@@ -321,8 +294,6 @@ class MobileController extends Controller
                         count(us.id) as jml,
                         group_concat(us.user_id) as user_list
                     ')
-                    ->where('c.type',4)
-                    ->where('c.golongan_id',3)
                     ->get();
                             
                     $data = array();
@@ -335,32 +306,22 @@ class MobileController extends Controller
             
             } elseif ($user->golongan_id==2) {
                 $dt = DB::table('courses as c')
-                    ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                    ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                        return $q->where('c.company_id', $user->company_id);
+                        ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
+                        ->where('c.type', 4)
+                        ->where(function($query) {
+                            $query->where('c.golongan_id', 2);
                         })
-                    ->when($request->type, function ($query) use ($request) {
-                            return $query->where('c.type', $request->type);
-                        })
-                    ->when($request->type == 1, function ($query) use ($user) {
-                            return $query->where('c.organization_id', $user->organization_id)
-                                ->where(function ($query) use ($user) {
-                                    return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                                });
-                        })
-                    ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
-                    ->orderBy('c.id', 'DESC')
-                    ->selectRaw('
-                        c.id,
-                        c.title,
-                        c.description,
-                        c.image,
-                        count(us.id) as jml,
-                        group_concat(us.user_id) as user_list
-                    ')
-                    ->where('c.type',4)
-                    ->where('c.golongan_id',2)
-                    ->get();
+                        ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
+                        ->orderBy('c.id', 'DESC')
+                        ->selectRaw('
+                            c.id,
+                            c.title,
+                            c.description,
+                            c.image,
+                            count(us.id) as jml,
+                            group_concat(us.user_id) as user_list
+                        ')
+                        ->get();
                             
                     $data = array();
                     foreach ($dt as $value) {
@@ -372,18 +333,10 @@ class MobileController extends Controller
             } elseif ($user->golongan_id==1) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                    ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                        return $q->where('c.company_id', $user->company_id);
-                        })
-                    ->when($request->type, function ($query) use ($request) {
-                            return $query->where('c.type', $request->type);
-                        })
-                    ->when($request->type == 1, function ($query) use ($user) {
-                            return $query->where('c.organization_id', $user->organization_id)
-                                ->where(function ($query) use ($user) {
-                                    return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                                });
-                        })
+                    ->where('c.type', 4)
+                    ->where(function($query) {
+                        $query->where('c.golongan_id', 1);
+                    })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
                     ->orderBy('c.id', 'DESC')
                     ->selectRaw('
@@ -394,8 +347,6 @@ class MobileController extends Controller
                         count(us.id) as jml,
                         group_concat(us.user_id) as user_list
                     ')
-                    ->where('c.type',4)
-                    ->where('c.golongan_id',1)
                     ->get();
                             
                     $data = array();
