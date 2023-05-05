@@ -5,12 +5,8 @@ use App\Http\Controllers\Api\CrossfunctionController;
 use App\Http\Controllers\Api\JadwalVhsController;
 use App\Http\Controllers\Api\LampiranController;
 use App\Http\Controllers\Api\MateriVHsController;
-use App\Http\Controllers\Api\MobileController;
-use App\Http\Controllers\Api\ProfileAdminController;
-use App\Http\Controllers\Api\SetAdminController;
 use App\Http\Controllers\Api\SOPController;
 use App\Http\Controllers\Api\ZoomController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -229,6 +225,35 @@ Route::group([
 
             //message
             Route::resource('message','MessageController');
+
+            /************* Awal part PAS ******************/
+
+            //pas master controller
+                //People
+                    Route::get('pas_master_3p','Pas\MasterController@index_3p');
+                    Route::get('pas_master_company','Pas\MasterController@index_company');
+                    Route::get('pas_master_division/{id}','Pas\People\MasterController@index_division');
+
+            //pas dimensi
+                //People
+                    Route::resource('pas_dimensi','Pas\People\DimensiController');
+                    Route::get('index_per_3p/{id}','Pas\People\DimensiController@index_per_3p');
+                
+                //Process
+                    Route::resource('pas_process_dimensi','Pas\Process\DimensiController');
+                    Route::get('index_process_per_3p/{id}','Pas\Process\DimensiController@index_per_3p');
+            
+            //pas kpi
+                //People
+                    Route::resource('pas_kpi','Pas\People\KPIController');
+                    Route::get('index_per_dimensi/{id}','Pas\People\KPIController@index_per_dimensi');
+
+            //pas indikator Penilaian
+                //People
+                    Route::resource('pas_indpenilaian','Pas\People\IndPenilaianController');
+                    Route::get('index_per_kpi/{id}','Pas\People\IndPenilaianController@index_per_kpi');
+
+            /************* Akhir part PAS ******************/
         });
     });
 

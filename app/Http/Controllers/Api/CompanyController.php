@@ -27,7 +27,7 @@ class CompanyController extends Controller
      */
     public function index()
     { 
-        // $user = auth()->user();
+        $user = auth()->user();
         // dd($user);
         // $company = Company::query()
         //     ->when(($user && $user->role!=1), function ($q) use ($user) {
@@ -56,7 +56,8 @@ class CompanyController extends Controller
                 'HENNESSY CUISINE',
                 'WERKST MATERIAL HANDLING',
                 'PT. Prama Madya Parama'
-                ])->orderBy('id','ASC')->get()]
+                ])
+                ->orderBy('id','ASC')->get()]
         );
 
         // return response()->json(
