@@ -229,10 +229,9 @@ Route::group([
             /************* Awal part PAS ******************/
 
             //pas master controller
-                //People
                     Route::get('pas_master_3p','Pas\MasterController@index_3p');
                     Route::get('pas_master_company','Pas\MasterController@index_company');
-                    Route::get('pas_master_division/{id}','Pas\People\MasterController@index_division');
+                    Route::get('pas_master_division/{id}','Pas\MasterController@index_division');
 
             //pas dimensi
                 //People
@@ -247,11 +246,21 @@ Route::group([
                 //People
                     Route::resource('pas_kpi','Pas\People\KPIController');
                     Route::get('index_per_dimensi/{id}','Pas\People\KPIController@index_per_dimensi');
+                
+                //Process
+                    Route::resource('pas_process_kpi','Pas\Process\KPIController');
+                    //index_per_company&divisi
+                    Route::post('index_process_kpi','Pas\Process\KPIController@index');
 
             //pas indikator Penilaian
                 //People
                     Route::resource('pas_indpenilaian','Pas\People\IndPenilaianController');
                     Route::get('index_per_kpi/{id}','Pas\People\IndPenilaianController@index_per_kpi');
+                
+                //Process
+                    Route::resource('pas_process_indpenilaian','Pas\Process\IndPenilaianController');
+                    //index per 3p,kpi,company,divisi
+                    Route::post('index_process_indpenilaian','Pas\Process\IndPenilaianController@index');
 
             /************* Akhir part PAS ******************/
         });
