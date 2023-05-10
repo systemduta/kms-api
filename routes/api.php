@@ -232,6 +232,7 @@ Route::group([
                         Route::get('pas_master_3p','Pas\MasterController@index_3p');
                         Route::get('pas_master_company','Pas\MasterController@index_company');
                         Route::get('pas_master_division/{id}','Pas\MasterController@index_division');
+                        Route::post('pas_master_employee','Pas\MasterController@index_employee');
 
                 //pas dimensi
                     //People

@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api\Pas;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company;
+use App\Models\Organization;
 use App\Models\Pas_3P;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class MasterController extends Controller
 {
@@ -15,6 +18,41 @@ class MasterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function index_employee(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'idCompany' => 'required',
+                'idDivisi' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
+            }
+
+            $Company = Company::find($request->idCompany);
+            $Organization = Organization::find($request->idDivisi);
+            $listEmployee = User::where('company_id', $request->idCompany)
+                ->where('organization_id', $request->idDivisi)
+                ->where('status', 1)
+                ->get();
+            return response()->json(
+                [
+                    'company' => $Company,
+                    'divisi' => $Organization,
+                    'data' => $listEmployee,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
     public function index_division($id)
     {
         try {
