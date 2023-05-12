@@ -18,6 +18,94 @@ class MasterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function all_ind(){
+        try {
+            $datas = DB::table('pas_ind_penilaians')->get();
+            return response()->json(
+                [
+                    'data' => $datas,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
+    public function all_kpi(){
+        try {
+            $datas = DB::table('pas_kpis')->get();
+            return response()->json(
+                [
+                    'data' => $datas,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
+    public function all_dimensi(){
+        try {
+            $datas = DB::table('pas_dimensis')->get();
+            return response()->json(
+                [
+                    'data' => $datas,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
+    public function index(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'idCompany' => 'required',
+                'idDivisi' => 'required',
+                'idUser' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
+            }
+            $dataCompany = Company::find($request->idCompany);
+            $dataOrg = Organization::find($request->idDivisi);
+            $dataUser = User::find($request->idUser);
+            $datas = Pas_3P::all();
+
+            return response()->json(
+                [
+                    'data' => $datas,
+                    'dataCompany' => $dataCompany,
+                    'dataOrg' => $dataOrg,
+                    'dataUser' => $dataUser,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
     public function index_employee(Request $request)
     {
         try {
