@@ -67,7 +67,6 @@ class JadwalVhsController extends Controller
                         ->where('id', $user->user_id)
                         ->where('isBasic', 1)
                         ->first();
-                    //URUNG kurang sitik copy data
                     $id_jadwaluservhs_copy = DB::table('jadwal_user_vhs')->insertGetId([
                         'user_id' => $cek->id,
                         'jadwal_id' => $id_jadwalvhs_copy,

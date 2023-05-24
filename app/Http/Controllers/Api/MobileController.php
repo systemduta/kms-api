@@ -217,7 +217,6 @@ class MobileController extends Controller
         return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
-    //URUNG di user belum
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();
@@ -834,23 +833,7 @@ class MobileController extends Controller
         return \Response::json($arr);
     }
 
-    /*URUNG style response
-    message: 'success'
-    data: {
-    }
-    /*
-        SELECT question_vhs.*, materi_vhs.name as nama_materi, jadwal_user_vhs.is_take as status FROM jadwalvhs
-        JOIN jadwal_user_vhs ON jadwal_user_vhs.jadwal_id = jadwalvhs.id
-        JOIN users ON users.id = jadwal_user_vhs.user_id
-        JOIN materi_vhs ON materi_vhs.jadwal_id = jadwalvhs.id
-        JOIN question_vhs on question_vhs.materi_id=materi_vhs.id
-        JOIN zooms_vhs ON zooms_vhs.jadwal_id = materi_vhs.jadwal_id
-        WHERE jadwalvhs.name = "1VHS Basic"
-        AND users.id = 728
-        AND materi_vhs.id = 25
-        AND jadwal_user_vhs.is_take != 2;
-    */
-
+    
     public function getVhs(Request $request)
     {
         $userid = Auth::guard('api')->user()->id;

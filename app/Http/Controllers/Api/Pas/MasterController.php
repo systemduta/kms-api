@@ -18,6 +18,8 @@ class MasterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    
+
     public function all_ind(){
         try {
             $datas = DB::table('pas_ind_penilaians')->get();

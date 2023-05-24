@@ -14,7 +14,6 @@ use Illuminate\Validation\Rules\Exists;
 use PhpParser\Node\Stmt\TryCatch;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-//TODO: materi vhs di admin panel di bagi berdasarkan jadwal vhs
 
 class MateriVHsController extends Controller
 {

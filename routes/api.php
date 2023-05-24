@@ -278,11 +278,16 @@ Route::group([
                         Route::resource('pas_performance_indpenilaian','Pas\Performance\IndPenilaianController');
                         
 
-
               /**akhir setting pas */
 
               /**awal penilaian pas */
-              
+                //People 
+                    Route::get('pas_people_1','Pas\Penilaian\PeopleController@people');
+                    Route::post('pas_people_2','Pas\Penilaian\PeopleController@getInd');
+                    Route::post('pas_people_3','Pas\Penilaian\PeopleController@store'); // store data
+                    Route::post('pas_people_4','Pas\Penilaian\PeopleController@show'); //show data 
+                //Process
+                    
               /**akhir penilaian pas */
 
 

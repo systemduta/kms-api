@@ -1,5 +1,4 @@
 <?php
-//URUNG inbox ke user
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
