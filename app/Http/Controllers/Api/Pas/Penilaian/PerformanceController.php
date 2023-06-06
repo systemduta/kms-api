@@ -1,5 +1,5 @@
 <?php
-//URUNG bagian ini besok
+
 namespace App\Http\Controllers\Api\Pas\Penilaian;
 
 use App\Http\Controllers\Controller;
@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class ProcessController extends Controller
+class PerformanceController extends Controller
 {
-    public function process(Request $request)
+    public function performance(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -55,23 +55,20 @@ class ProcessController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'Routine' => 'required',
-                'Cross Function' => 'required',
-                'Interaction' => 'required',
                 'final_record' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['message' => $validator->errors()], 400);
             }
-            $data = $request->only(['Routine', 'Cross Function', 'Interaction', 'final_record']);
-            $routine = $data['Routine'];
-            $cross_function = $data['Cross Function'];
-            $interaction = $data['Interaction'];
+            $data = $request->only(['Finance', 'Daya saing', 'Kepuasan Konsumen', 'Kapasitas Karyawan', 'final_record']);
+            $finance = $data['Finance'];
+            $daya_saing = $data['Daya saing'];
+            $kepuasan_konsumen = $data['Kepuasan Konsumen'];
+            $kapasitas_karyawan = $data['Kapasitas Karyawan'];
             $final_record = $data['final_record'];
 
             try {
-
                 DB::beginTransaction();
 
                 $bulan = Carbon::parse($final_record['date'])->format('m');
@@ -90,44 +87,62 @@ class ProcessController extends Controller
                         'message' => "User sudah dinilai pada bulan yang dipilih",
                     ], 422);
                 } else {
-                    $insertRoutine = [];
-                    foreach ($routine as $item) {
-                        $insertRoutine[] = [
-                            'user_id' => $item['user_id'],
-                            'dimensi_id' => $item['dimensi_id'],
-                            'kpi_id' => $item['kpi_id'],
-                            'date' => $item['date'],
-                            'nilai' => $item['value'],
-                            'max_nilai' => $item['max_nilai'],
-                        ];
+                    if (count($finance) > 0) {
+                        $insertFinance = [];
+                        foreach ($finance as $item) {
+                            $insertFinance[] = [
+                                'user_id' => $item['user_id'],
+                                'dimensi_id' => $item['dimensi_id'],
+                                'kpi_id' => $item['kpi_id'],
+                                'date' => $item['date'],
+                                'nilai' => $item['value'],
+                                'max_nilai' => $item['max_nilai'],
+                            ];
+                        }
+                        DB::table('pas_penilaian_others')->insert($insertFinance);
                     }
-                    DB::table('pas_penilaian_others')->insert($insertRoutine);
-
-                    $insertCrossFunction = [];
-                    foreach ($cross_function as $item) {
-                        $insertCrossFunction[] = [
-                            'user_id' => $item['user_id'],
-                            'dimensi_id' => $item['dimensi_id'],
-                            'kpi_id' => $item['kpi_id'],
-                            'date' => $item['date'],
-                            'nilai' => $item['value'],
-                            'max_nilai' => $item['max_nilai'],
-                        ];
+                    if (count($daya_saing) > 0) {
+                        $insertDayaSaing = [];
+                        foreach ($daya_saing as $item) {
+                            $insertDayaSaing[] = [
+                                'user_id' => $item['user_id'],
+                                'dimensi_id' => $item['dimensi_id'],
+                                'kpi_id' => $item['kpi_id'],
+                                'date' => $item['date'],
+                                'nilai' => $item['value'],
+                                'max_nilai' => $item['max_nilai'],
+                            ];
+                        }
+                        DB::table('pas_penilaian_others')->insert($insertDayaSaing);
                     }
-                    DB::table('pas_penilaian_others')->insert($insertCrossFunction);
-                    
-                    $insertInteraction = [];
-                    foreach ($interaction as $item) {
-                        $insertInteraction[] = [
-                            'user_id' => $item['user_id'],
-                            'dimensi_id' => $item['dimensi_id'],
-                            'kpi_id' => $item['kpi_id'],
-                            'date' => $item['date'],
-                            'nilai' => $item['value'],
-                            'max_nilai' => $item['max_nilai'],
-                        ];
+                    if (count($kepuasan_konsumen) > 0) {
+                        $insertKepuasanKonsumen = [];
+                        foreach ($kepuasan_konsumen as $item) {
+                            $insertKepuasanKonsumen[] = [
+                                'user_id' => $item['user_id'],
+                                'dimensi_id' => $item['dimensi_id'],
+                                'kpi_id' => $item['kpi_id'],
+                                'date' => $item['date'],
+                                'nilai' => $item['value'],
+                                'max_nilai' => $item['max_nilai'],
+                            ];
+                        }
+                        DB::table('pas_penilaian_others')->insert($insertKepuasanKonsumen);
                     }
-                    DB::table('pas_penilaian_others')->insert($insertInteraction);
+                    if (count($kapasitas_karyawan) > 0) {
+                        $insertKapasitasKaryawan = [];
+                        foreach ($kapasitas_karyawan as $item) {
+                            $insertKapasitasKaryawan[] = [
+                                'user_id' => $item['user_id'],
+                                'dimensi_id' => $item['dimensi_id'],
+                                'kpi_id' => $item['kpi_id'],
+                                'date' => $item['date'],
+                                'nilai' => $item['value'],
+                                'max_nilai' => $item['max_nilai'],
+                            ];
+                        }
+                        DB::table('pas_penilaian_others')->insert($insertKapasitasKaryawan);
+                    }
 
                     $InsertToFinalRecord = DB::table('pas_final_record_3ps')->insertGetId([
                         'user_id' => $final_record['user_id'],
@@ -146,9 +161,6 @@ class ProcessController extends Controller
                     DB::commit();
 
                     return response()->json([
-                        'statusRoutine' => 'Data Routine tersimpan',
-                        'statusCrossFunction' => 'Data CrossFunction tersimpan',
-                        'statusInteraction' => 'Data Interaction tersimpan',
                         'statusFinal' => 'Data Final tersimpan',
                         'statusCode' => 200
                     ]);
@@ -157,7 +169,7 @@ class ProcessController extends Controller
                 DB::rollBack();
                 return response()->json([
                     'message' => 'Gagal masuk ke database [code: BR1-500]',
-                    'statusCode' =>500,
+                    'statusCode' => 500,
                 ], 500);
             }
         } catch (\Exception $e) {

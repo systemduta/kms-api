@@ -19,7 +19,7 @@ class CreatePasPenilaianOthersTable extends Migration
             $table->unsignedBigInteger('dimensi_id');
             $table->unsignedBigInteger('kpi_id');
             $table->date('date');
-            $table->integer('nilai');
+            $table->float('nilai');
             $table->integer('max_nilai')->default(4);
             $table->timestamps();
 

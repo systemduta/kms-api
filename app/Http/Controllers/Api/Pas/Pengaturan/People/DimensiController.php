@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\People;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\People;
 
 use App\Http\Controllers\Controller;
 use App\Models\Pas_dimensi;

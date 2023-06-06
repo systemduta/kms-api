@@ -1,43 +1,28 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\People;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\Performance;
 
 use App\Http\Controllers\Controller;
-use App\Models\Pas_ind_penilaian;
+use App\Models\Pas_dimensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class IndPenilaianController extends Controller
+class DimensiController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index_per_kpi($id)
+    public function index_per_3p($id)
     {
         try {
-            $datas = Pas_ind_penilaian::where('kpi_id', $id)->orderBy('nilai', 'desc')->orderBy('grade', 'asc')->get();
-
-            return response()->json([
-                'data' => $datas,
-                'message' => 'sukses'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'message' => $e->getMessage(),
-                ],
-                403
-            );
-        }
-    }
-
-    public function index()
-    {
-        try {
-            $datas = Pas_ind_penilaian::all();
+            $datas = DB::table('pas_dimensis as d')
+                ->join('pas_3p as p', 'd.3p_id', '=', 'p.id')
+                ->select('d.id','p.id as pas_3p_id', 'd.name', 'p.name as name_3p')
+                ->where('d.3p_id', $id)
+                ->get();
             return response()->json(
                 [
                     'data' => $datas,
@@ -52,6 +37,11 @@ class IndPenilaianController extends Controller
                 403
             );
         }
+    }
+    
+    public function index()
+    {
+        //
     }
 
     /**
@@ -75,44 +65,24 @@ class IndPenilaianController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id_3p' => 'required',
-                'kpi_id' => 'required',
-                'nilai' => 'required',
-                'grade' => 'required',
-                'desc' => 'required',
+                'name' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
-            $cek = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id_3p)
-                ->where('kpi_id', $request->kpi_id)
-                ->where('nilai', $request->nilai)
-                ->where('grade', $request->grade)
-                ->count();
-            if ($cek) {
-                return response()->json(
-                    [
-                        'message' => 'Data Sama',
-                    ],
-                    403
-                );
-            } else {
-                $InsertGetId = DB::table('pas_ind_penilaians')->insertGetId([
-                    '3p_id' => $request->id_3p,
-                    'kpi_id' => $request->kpi_id,
-                    'nilai' => $request->nilai,
-                    'grade' => $request->grade,
-                    'desc' => $request->desc,
-                ]);
 
-                return response()->json(
-                    [
-                        'data' => $InsertGetId,
-                        'message' => 'success',
-                    ]
-                );
-            }
+            $InsertGetId = DB::table('pas_dimensis')->insertGetId([
+                '3p_id' => $request->id_3p,
+                'name' => $request->name,
+            ]);
+
+            return response()->json(
+                [
+                    'data' => $InsertGetId,
+                    'message' => 'success',
+                ]
+            );
         } catch (\Exception $e) {
             return response()->json(
                 [
@@ -132,7 +102,8 @@ class IndPenilaianController extends Controller
     public function show($id)
     {
         try {
-            $data = DB::table('pas_ind_penilaians')
+            $data = DB::table('pas_dimensis')
+                ->select('id', '3p_id as id_3p', 'name', 'created_at', 'updated_at')
                 ->where('id', $id)
                 ->first();
             return response()->json(
@@ -175,27 +146,21 @@ class IndPenilaianController extends Controller
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'id_3p' => 'required',
-                'kpi_id' => 'required',
-                'nilai' => 'required',
-                'grade' => 'required',
-                'desc' => 'required',
+                'name' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_ind_penilaians')->where('id', $request->id)->update([
+            $datas = DB::table('pas_dimensis')->where('id', $request->id)->update([
                 '3p_id' => $request->id_3p,
-                'kpi_id' => $request->kpi_id,
-                'nilai' => $request->nilai,
-                'grade' => $request->grade,
-                'desc' => $request->desc,
+                'name' => $request->name,
             ]);
 
             return response()->json(
                 [
-                    'data' => $InsertGetId,
+                    'data' => $datas,
                     'message' => 'success',
                 ]
             );
@@ -218,7 +183,7 @@ class IndPenilaianController extends Controller
     public function destroy($id)
     {
         try {
-            $delete = Pas_ind_penilaian::findOrFail($id);
+            $delete = Pas_dimensi::findOrFail($id);
             $delete->delete();
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'

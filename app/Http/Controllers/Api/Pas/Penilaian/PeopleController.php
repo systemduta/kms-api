@@ -16,8 +16,11 @@ class PeopleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+   
+
     public function getInd(Request $request)
     {
+        // dd($request->all());
         try {
             $validator = Validator::make($request->all(), [
                 'id3p' => 'required',
@@ -27,39 +30,74 @@ class PeopleController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
-            $nilai4 = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id3p)
-                ->where('kpi_id', $request->kpi_id)
-                ->where('nilai', 4)
-                ->orderBy('grade', 'asc')
-                ->get();
-            $nilai3 = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id3p)
-                ->where('kpi_id', $request->kpi_id)
-                ->where('nilai', 3)
-                ->orderBy('grade', 'asc')
-                ->get();
-            $nilai2 = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id3p)
-                ->where('kpi_id', $request->kpi_id)
-                ->where('nilai', 2)
-                ->orderBy('grade', 'asc')
-                ->get();
-            $nilai1 = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id3p)
-                ->where('kpi_id', $request->kpi_id)
-                ->where('nilai', 1)
-                ->orderBy('grade', 'asc')
-                ->get();
+            $nilaiA = DB::table('pas_ind_penilaians')
+                    ->where('3p_id',$request->id3p)
+                    ->where('kpi_id',$request->kpi_id)
+                    ->where(function ($query) {
+                        $query->where('grade', 'a')
+                            ->orWhere('grade', 'A');
+                    })
+                    ->orderBy('nilai','desc')
+                    ->get();
+            $nilaiB = DB::table('pas_ind_penilaians')
+                    ->where('3p_id',$request->id3p)
+                    ->where('kpi_id',$request->kpi_id)
+                    ->where(function ($query) {
+                        $query->where('grade', 'b')
+                            ->orWhere('grade', 'B');
+                    })
+                    ->orderBy('nilai','desc')
+                    ->get();
+            $nilaiC = DB::table('pas_ind_penilaians')
+                    ->where('3p_id',$request->id3p)
+                    ->where('kpi_id',$request->kpi_id)
+                    ->where(function ($query) {
+                        $query->where('grade', 'c')
+                            ->orWhere('grade', 'C');
+                    })
+                    ->orderBy('nilai','desc')
+                    ->get();
             return response()->json(
                 [
-                    'nilai4' => $nilai4,
-                    'nilai3' => $nilai3,
-                    'nilai2' => $nilai2,
-                    'nilai1' => $nilai1,
+                    'nilaiA' => $nilaiA,
+                    'nilaiB' => $nilaiB,
+                    'nilaiC' => $nilaiC,
                     'message' => 'success',
                 ]
             );
+            // $nilai4 = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id3p)
+            //     ->where('kpi_id', $request->kpi_id)
+            //     ->where('nilai', 4)
+            //     ->orderBy('grade', 'asc')
+            //     ->get();
+            // $nilai3 = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id3p)
+            //     ->where('kpi_id', $request->kpi_id)
+            //     ->where('nilai', 3)
+            //     ->orderBy('grade', 'asc')
+            //     ->get();
+            // $nilai2 = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id3p)
+            //     ->where('kpi_id', $request->kpi_id)
+            //     ->where('nilai', 2)
+            //     ->orderBy('grade', 'asc')
+            //     ->get();
+            // $nilai1 = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id3p)
+            //     ->where('kpi_id', $request->kpi_id)
+            //     ->where('nilai', 1)
+            //     ->orderBy('grade', 'asc')
+            //     ->get();
+            // return response()->json(
+            //     [
+            //         'nilai4' => $nilai4,
+            //         'nilai3' => $nilai3,
+            //         'nilai2' => $nilai2,
+            //         'nilai1' => $nilai1,
+            //         'message' => 'success',
+            //     ]
+            // );
         } catch (\Exception $e) {
             return response()->json(
                 [
@@ -73,11 +111,13 @@ class PeopleController extends Controller
     public function people()
     {
         try {
+            $p3 = DB::table('pas_3p')->where('id',1)->first();
             $dimensi = DB::table('pas_dimensis')->where('3p_id', 1)->get();
             $kpi     = DB::table('pas_kpis')->where('3p_id', 1)->get();
 
             return response()->json(
                 [
+                    'p3' => $p3,
                     'dimensi' => $dimensi,
                     'kpi' => $kpi,
                     'message' => 'success',
@@ -119,7 +159,7 @@ class PeopleController extends Controller
 
             try {
                 DB::beginTransaction();
-            
+
                 $bulan = Carbon::parse($absen['date'])->format('m');
                 $tahun = Carbon::parse($absen['date'])->format('Y');
                 $cekData = DB::table('pas_penilaian_absens')
@@ -128,7 +168,7 @@ class PeopleController extends Controller
                     ->whereMonth('date', $bulan)
                     ->whereYear('date', $tahun)
                     ->first();
-            
+
                 if ($cekData) {
                     DB::rollBack();
                     return response()->json([
@@ -142,7 +182,7 @@ class PeopleController extends Controller
                         'nilai' => $absen['nilaiAkhir'],
                         'max_nilai' => $absen['max_nilai'],
                     ]);
-            
+
                     if ($InsertGetId) {
                         $insertToKpiAbsen = [];
                         foreach ($absen['detail'] as $item) {
@@ -152,30 +192,30 @@ class PeopleController extends Controller
                                 'nilai' => $item['value'],
                             ];
                         }
-            
+
                         $InsertToKpiAbsen = DB::table('pas_kpi_absens')->insert($insertToKpiAbsen);
-            
+
                         if (!$InsertToKpiAbsen) {
                             DB::rollBack();
                             return response()->json([
                                 'message' => 'Gagal masuk ke database [code: BR1-500]',
                             ], 500);
                         }
-            
+
                         $InsertToFinalRecord = DB::table('pas_final_record_3ps')->insertGetId([
                             'user_id' => $final_record['user_id'],
                             'id_3p' => $final_record['id_3p'],
                             'date' => $final_record['date'],
                             'nilai' => $final_record['nilai'],
                         ]);
-            
+
                         if (!$InsertToFinalRecord) {
                             DB::rollBack();
                             return response()->json([
                                 'message' => 'Gagal masuk ke database [code: D-A-500]',
                             ], 500);
                         }
-            
+
                         // insert Unity
                         $insertUnity = [];
                         foreach ($unity as $item) {
@@ -189,7 +229,7 @@ class PeopleController extends Controller
                             ];
                         }
                         DB::table('pas_penilaian_others')->insert($insertUnity);
-            
+
                         // insert Visi
                         $insertVisi = [];
                         foreach ($visi as $item) {
@@ -203,7 +243,7 @@ class PeopleController extends Controller
                             ];
                         }
                         DB::table('pas_penilaian_others')->insert($insertVisi);
-            
+
                         // insert Hati
                         $insertHati = [];
                         foreach ($hati as $item) {
@@ -217,7 +257,7 @@ class PeopleController extends Controller
                             ];
                         }
                         DB::table('pas_penilaian_others')->insert($insertHati);
-            
+
                         // insert Semangat
                         $insertSemangat = [];
                         foreach ($semangat as $item) {
@@ -231,9 +271,9 @@ class PeopleController extends Controller
                             ];
                         }
                         DB::table('pas_penilaian_others')->insert($insertSemangat);
-            
+
                         DB::commit();
-            
+
                         return response()->json([
                             'statusAbsen' => 'Data Absen tersimpan',
                             'statusUnity' => 'Data Unity tersimpan',

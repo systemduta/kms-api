@@ -1,9 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\Performance;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\Process;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Organization;
+use App\Models\Pas_3P;
+use App\Models\Pas_dimensi;
+use App\Models\Pas_ind_penilaian;
+use App\Models\Pas_kpi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class IndPenilaianController extends Controller
 {

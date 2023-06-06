@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePasPenilaianAbsensTable extends Migration
+class CreatePasFinalSkorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,14 @@ class CreatePasPenilaianAbsensTable extends Migration
      */
     public function up()
     {
-        Schema::create('pas_penilaian_absens', function (Blueprint $table) {
+        Schema::create('pas_final_skors', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('dimensi_id');
             $table->date('date');
-            $table->float('nilai');
-            $table->integer('max_nilai')->default(4);
+            $table->integer('nilai');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('dimensi_id')->references('id')->on('pas_dimensis');
         });
     }
 
@@ -34,6 +31,6 @@ class CreatePasPenilaianAbsensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pas_penilaian_absens');
+        Schema::dropIfExists('pas_final_skors');
     }
 }

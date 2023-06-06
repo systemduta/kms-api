@@ -35,6 +35,12 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'namespace' => 'Api',
 ], function () {
+    /**PAS maesa one */
+
+    Route::post('user_pas','Pas\GetPasController@index');
+
+    /**PAS maesa one */
+    
     //mengatur login user web
     Route::post('login', 'UserController@login');
     //mengatur login user dari mobile
@@ -237,58 +243,72 @@ Route::group([
                         Route::get('pas_master_all_dimensis','Pas\MasterController@all_dimensi');
                         Route::get('pas_master_all_kpi','Pas\MasterController@all_kpi');
                         Route::get('pas_master_all_ind','Pas\MasterController@all_ind');
+                        Route::post('pas_getkpi','Pas\MasterController@getKpi');
 
                 //pas dimensi
                     //People
-                        Route::resource('pas_dimensi','Pas\People\DimensiController');
-                        Route::get('index_per_3p/{id}','Pas\People\DimensiController@index_per_3p');
+                        Route::resource('pas_dimensi','Pas\Pengaturan\People\DimensiController');
+                        Route::get('index_per_3p/{id}','Pas\Pengaturan\People\DimensiController@index_per_3p');
                     
                     //Process
-                        Route::resource('pas_process_dimensi','Pas\Process\DimensiController');
-                        Route::get('index_process_per_3p/{id}','Pas\Process\DimensiController@index_per_3p');
+                        Route::resource('pas_process_dimensi','Pas\Pengaturan\Process\DimensiController');
+                        Route::get('index_process_per_3p/{id}','Pas\Pengaturan\Process\DimensiController@index_per_3p');
 
                     //Performance
-                        Route::get('index_performance_per_3p/{id}','Pas\Performance\DimensiController@index_per_3p');
-                        Route::resource('pas_performance_dimensi','Pas\Performance\DimensiController');
+                        Route::get('index_performance_per_3p/{id}','Pas\Pengaturan\Performance\DimensiController@index_per_3p');
+                        Route::resource('pas_performance_dimensi','Pas\Pengaturan\Performance\DimensiController');
                 
                 //pas kpi
                     //People
-                        Route::resource('pas_kpi','Pas\People\KPIController');
-                        Route::get('index_per_dimensi/{id}','Pas\People\KPIController@index_per_dimensi');
+                        Route::resource('pas_kpi','Pas\Pengaturan\People\KPIController');
+                        Route::get('index_per_dimensi/{id}','Pas\Pengaturan\People\KPIController@index_per_dimensi');
                     
                     //Process
-                        Route::resource('pas_process_kpi','Pas\Process\KPIController');
+                        Route::resource('pas_process_kpi','Pas\Pengaturan\Process\KPIController');
                         //index_per_company&divisi
-                        Route::post('index_process_kpi','Pas\Process\KPIController@index');
+                        Route::post('index_process_kpi','Pas\Pengaturan\Process\KPIController@index');
                     //performance
-                        Route::resource('pas_performance_kpi','Pas\Performance\KPIController');
-                        Route::post('index_performance_kpi','Pas\Performance\KPIController@index');
+                        Route::resource('pas_performance_kpi','Pas\Pengaturan\Performance\KPIController');
+                        Route::post('index_performance_kpi','Pas\Pengaturan\Performance\KPIController@index');
 
                 //pas indikator Penilaian
                     //People
-                        Route::resource('pas_indpenilaian','Pas\People\IndPenilaianController');
-                        Route::get('index_per_kpi/{id}','Pas\People\IndPenilaianController@index_per_kpi');
+                        Route::resource('pas_indpenilaian','Pas\Pengaturan\People\IndPenilaianController');
+                        Route::get('index_per_kpi/{id}','Pas\Pengaturan\People\IndPenilaianController@index_per_kpi');
                     
                     //Process
-                        Route::resource('pas_process_indpenilaian','Pas\Process\IndPenilaianController');
+                        Route::resource('pas_process_indpenilaian','Pas\Pengaturan\Process\IndPenilaianController');
                         //index per 3p,kpi,company,divisi
-                        Route::post('index_process_indpenilaian','Pas\Process\IndPenilaianController@index');
+                        Route::post('index_process_indpenilaian','Pas\Pengaturan\Process\IndPenilaianController@index');
                     //performance
-                        Route::post('index_performance_indpenilaian','Pas\Performance\IndPenilaianController@index');
-                        Route::resource('pas_performance_indpenilaian','Pas\Performance\IndPenilaianController');
+                        Route::post('index_performance_indpenilaian','Pas\Pengaturan\Performance\IndPenilaianController@index');
+                        Route::resource('pas_performance_indpenilaian','Pas\Pengaturan\Performance\IndPenilaianController');
                         
 
               /**akhir setting pas */
 
               /**awal penilaian pas */
+                    Route::post('pas_final_insert','Pas\MasterController@finalsave');
                 //People 
                     Route::get('pas_people_1','Pas\Penilaian\PeopleController@people');
                     Route::post('pas_people_2','Pas\Penilaian\PeopleController@getInd');
                     Route::post('pas_people_3','Pas\Penilaian\PeopleController@store'); // store data
                     Route::post('pas_people_4','Pas\Penilaian\PeopleController@show'); //show data 
                 //Process
-                    
+                    Route::post('pas_proses_1','Pas\Penilaian\ProcessController@process');
+                    Route::post('pas_proses_2','Pas\Penilaian\ProcessController@store');
+                //Performance
+                    Route::post('pas_performance_1','Pas\Penilaian\PerformanceController@performance');
+                    Route::post('pas_performance_2','Pas\Penilaian\PerformanceController@store');
               /**akhir penilaian pas */
+
+              /**awal edit penilaian pas */
+                    Route::post('pas_edit_1','Pas\Penilaian\Edit\EditController@show');
+                    Route::post('pas_edit_2','Pas\Penilaian\Edit\EditController@update');
+                    Route::post('pas_edit_3','Pas\Penilaian\Edit\EditController@delete');
+
+
+              /**akhir edit penilaian pas */
 
 
 

@@ -1,18 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\Process;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\Performance;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
-use App\Models\Organization;
-use App\Models\Pas_3P;
-use App\Models\Pas_dimensi;
-use App\Models\Pas_kpi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
-class KPIController extends Controller
+class IndPenilaianController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,6 +17,7 @@ class KPIController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id3p' => 'required',
+                'idKpi' => 'required',
                 'idDimensi' => 'required',
                 'idCompany' => 'required',
                 'idDivisi' => 'required',
@@ -35,23 +29,22 @@ class KPIController extends Controller
 
             $name3P = Pas_3P::find($request->id3p);
             $nameDimensi = Pas_dimensi::find($request->idDimensi);
+            $nameKpi = Pas_kpi::find($request->idKpi);
             $nameCompany = Company::find($request->idCompany);
             $nameDivisi = Organization::find($request->idDivisi);
-            $datas = DB::table('pas_kpis')
-                ->join('pas_3p', 'pas_kpis.3p_id', '=', 'pas_3p.id')
-                ->join('pas_dimensis', 'pas_kpis.dimensi_id', '=', 'pas_dimensis.id')
-                ->join('companies', 'pas_kpis.company_id', '=', 'companies.id')
-                ->join('organizations', 'pas_kpis.division_id', '=', 'organizations.id')
-                ->where('pas_kpis.3p_id', $request->id3p)
-                ->where('pas_kpis.dimensi_id', $request->idDimensi)
-                ->where('pas_kpis.company_id', $request->idCompany)
-                ->where('pas_kpis.division_id', $request->idDivisi)
-                ->select('pas_kpis.*')
+
+            $datas = DB::table('pas_ind_penilaians')
+                ->where('3p_id', $request->id3p)
+                ->where('kpi_id', $request->idKpi)
+                ->where('company_id', $request->idCompany)
+                ->where('division_id', $request->idDivisi)
+                ->orderBy('nilai', 'desc')->orderBy('grade', 'asc')
                 ->get();
             return response()->json(
                 [
                     'name3p' => $name3P->name,
                     'nameDimensi' => $nameDimensi->name,
+                    'nameKpi' => $nameKpi->name,
                     'nameCompany' => $nameCompany->name,
                     'nameDivisi' => $nameDivisi->name,
                     'data' => $datas,
@@ -89,24 +82,26 @@ class KPIController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id3p' => 'required',
-                'idDimensi' => 'required',
+                'idKpi' => 'required',
                 'idCompany' => 'required',
                 'idDivisi' => 'required',
-                'name' => 'required',
-                'max_nilai' => 'required',
+                'nilai' => 'required',
+                'grade' => 'required',
+                'desc' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_kpis')->insertGetId([
+            $InsertGetId = DB::table('pas_ind_penilaians')->insertGetId([
                 '3p_id' => $request->id3p,
-                'dimensi_id' => $request->idDimensi,
+                'kpi_id' => $request->idKpi,
                 'company_id' => $request->idCompany,
                 'division_id' => $request->idDivisi,
-                'name' => $request->name,
-                'max_nilai' => $request->max_nilai,
+                'nilai' => $request->nilai,
+                'grade' => $request->grade,
+                'desc' => $request->desc,
             ]);
             return response()->json(
                 [
@@ -133,7 +128,7 @@ class KPIController extends Controller
     public function show($id)
     {
         try {
-            $datas = DB::table('pas_kpis')
+            $datas = DB::table('pas_ind_penilaians')
                 ->where('id', $id)
                 ->first();
             return response()->json(
@@ -176,24 +171,26 @@ class KPIController extends Controller
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'id3p' => 'required',
-                'idDimensi' => 'required',
+                'idKpi' => 'required',
                 'idCompany' => 'required',
                 'idDivisi' => 'required',
-                'name' => 'required',
-                'max_nilai' => 'required',
+                'nilai' => 'required',
+                'grade' => 'required',
+                'desc' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_kpis')->where('id', $request->id)->update([
+            $InsertGetId = DB::table('pas_ind_penilaians')->where('id', $request->id)->update([
                 '3p_id' => $request->id3p,
-                'dimensi_id' => $request->idDimensi,
+                'kpi_id' => $request->idKpi,
                 'company_id' => $request->idCompany,
                 'division_id' => $request->idDivisi,
-                'name' => $request->name,
-                'max_nilai' => $request->max_nilai,
+                'nilai' => $request->nilai,
+                'grade' => $request->grade,
+                'desc' => $request->desc,
             ]);
             return response()->json(
                 [
@@ -220,7 +217,7 @@ class KPIController extends Controller
     public function destroy($id)
     {
         try {
-            $delete = Pas_kpi::findOrFail($id);
+            $delete = Pas_ind_penilaian::findOrFail($id);
             $delete->delete();
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'

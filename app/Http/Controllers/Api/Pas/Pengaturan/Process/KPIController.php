@@ -1,53 +1,59 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\Process;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\Process;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Organization;
+use App\Models\Pas_3P;
 use App\Models\Pas_dimensi;
+use App\Models\Pas_kpi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class DimensiController extends Controller
+class KPIController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index_per_3p($id)
+    public function index(Request $request)
     {
         try {
-            $datas = DB::table('pas_dimensis as d')
-                ->join('pas_3p as p', 'd.3p_id', '=', 'p.id')
-                ->select('d.id','p.id as pas_3p_id', 'd.name', 'p.name as name_3p')
-                ->where('d.3p_id', $id)
-                ->get();
-            return response()->json(
-                [
-                    'data' => $datas,
-                    'message' => 'success',
-                ]
-            );
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    'message' => $e->getMessage(),
-                ],
-                403
-            );
-        }
-    }
+            $validator = Validator::make($request->all(), [
+                'id3p' => 'required',
+                'idDimensi' => 'required',
+                'idCompany' => 'required',
+                'idDivisi' => 'required',
+            ]);
 
-    public function index()
-    {
-        try {
-            $datas = DB::table('pas_dimensis as d')
-                ->join('pas_3p as p', 'd.3p_id', '=', 'p.id')
-                ->select('d.id','d.3p_id as id_3p', 'd.name', 'p.name as name_3p')
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
+            }
+
+            $name3P = Pas_3P::find($request->id3p);
+            $nameDimensi = Pas_dimensi::find($request->idDimensi);
+            $nameCompany = Company::find($request->idCompany);
+            $nameDivisi = Organization::find($request->idDivisi);
+            $datas = DB::table('pas_kpis')
+                ->join('pas_3p', 'pas_kpis.3p_id', '=', 'pas_3p.id')
+                ->join('pas_dimensis', 'pas_kpis.dimensi_id', '=', 'pas_dimensis.id')
+                ->join('companies', 'pas_kpis.company_id', '=', 'companies.id')
+                ->join('organizations', 'pas_kpis.division_id', '=', 'organizations.id')
+                ->where('pas_kpis.3p_id', $request->id3p)
+                ->where('pas_kpis.dimensi_id', $request->idDimensi)
+                ->where('pas_kpis.company_id', $request->idCompany)
+                ->where('pas_kpis.division_id', $request->idDivisi)
+                ->select('pas_kpis.*')
                 ->get();
             return response()->json(
                 [
+                    'name3p' => $name3P->name,
+                    'nameDimensi' => $nameDimensi->name,
+                    'nameCompany' => $nameCompany->name,
+                    'nameDivisi' => $nameDivisi->name,
                     'data' => $datas,
                     'message' => 'success',
                 ]
@@ -82,24 +88,31 @@ class DimensiController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_3p' => 'required',
+                'id3p' => 'required',
+                'idDimensi' => 'required',
+                'idCompany' => 'required',
+                'idDivisi' => 'required',
                 'name' => 'required',
+                'max_nilai' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_dimensis')->insertGetId([
-                '3p_id' => $request->id_3p,
+            $InsertGetId = DB::table('pas_kpis')->insertGetId([
+                '3p_id' => $request->id3p,
+                'dimensi_id' => $request->idDimensi,
+                'company_id' => $request->idCompany,
+                'division_id' => $request->idDivisi,
                 'name' => $request->name,
+                'max_nilai' => $request->max_nilai,
             ]);
-
             return response()->json(
                 [
                     'data' => $InsertGetId,
                     'message' => 'success',
-                ]
+                ],
             );
         } catch (\Exception $e) {
             return response()->json(
@@ -120,13 +133,12 @@ class DimensiController extends Controller
     public function show($id)
     {
         try {
-            $data = DB::table('pas_dimensis')
-                ->select('id', '3p_id as id_3p', 'name', 'created_at', 'updated_at')
+            $datas = DB::table('pas_kpis')
                 ->where('id', $id)
                 ->first();
             return response()->json(
                 [
-                    'data' => $data,
+                    'data' => $datas,
                     'message' => 'success',
                 ]
             );
@@ -163,24 +175,31 @@ class DimensiController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'id_3p' => 'required',
+                'id3p' => 'required',
+                'idDimensi' => 'required',
+                'idCompany' => 'required',
+                'idDivisi' => 'required',
                 'name' => 'required',
+                'max_nilai' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $datas = DB::table('pas_dimensis')->where('id', $request->id)->update([
-                '3p_id' => $request->id_3p,
+            $InsertGetId = DB::table('pas_kpis')->where('id', $request->id)->update([
+                '3p_id' => $request->id3p,
+                'dimensi_id' => $request->idDimensi,
+                'company_id' => $request->idCompany,
+                'division_id' => $request->idDivisi,
                 'name' => $request->name,
+                'max_nilai' => $request->max_nilai,
             ]);
-
             return response()->json(
                 [
-                    'data' => $datas,
+                    'data' => $InsertGetId,
                     'message' => 'success',
-                ]
+                ],
             );
         } catch (\Exception $e) {
             return response()->json(
@@ -201,7 +220,7 @@ class DimensiController extends Controller
     public function destroy($id)
     {
         try {
-            $delete = Pas_dimensi::findOrFail($id);
+            $delete = Pas_kpi::findOrFail($id);
             $delete->delete();
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'

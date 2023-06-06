@@ -1,60 +1,57 @@
 <?php
 
-namespace App\Http\Controllers\Api\Pas\Process;
+namespace App\Http\Controllers\Api\Pas\Pengaturan\People;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
-use App\Models\Organization;
-use App\Models\Pas_3P;
-use App\Models\Pas_dimensi;
-use App\Models\Pas_ind_penilaian;
 use App\Models\Pas_kpi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class IndPenilaianController extends Controller
+class KPIController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index_per_dimensi($id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'id3p' => 'required',
-                'idKpi' => 'required',
-                'idDimensi' => 'required',
-                'idCompany' => 'required',
-                'idDivisi' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()], 401);
-            }
-
-            $name3P = Pas_3P::find($request->id3p);
-            $nameDimensi = Pas_dimensi::find($request->idDimensi);
-            $nameKpi = Pas_kpi::find($request->idKpi);
-            $nameCompany = Company::find($request->idCompany);
-            $nameDivisi = Organization::find($request->idDivisi);
-
-            $datas = DB::table('pas_ind_penilaians')
-                ->where('3p_id', $request->id3p)
-                ->where('kpi_id', $request->idKpi)
-                ->where('company_id', $request->idCompany)
-                ->where('division_id', $request->idDivisi)
-                ->orderBy('nilai', 'desc')->orderBy('grade', 'asc')
+            $userData = auth()->user();
+            $datas = DB::table('pas_kpis')
+                ->join('pas_3p', 'pas_kpis.3p_id', '=', 'pas_3p.id')
+                ->join('pas_dimensis', 'pas_kpis.dimensi_id', '=', 'pas_dimensis.id')
+                ->leftjoin('companies', 'pas_kpis.company_id', '=', 'companies.id')
+                ->leftjoin('organizations', 'pas_kpis.division_id', '=', 'organizations.id')
+                ->when($userData->role!=1, function ($q) use ($userData) {
+                    return $q->where('pas_kpis.company_id', $userData->company_id);
+                })
+                ->where('pas_kpis.dimensi_id', $id)
+                ->select('pas_kpis.id', 'pas_3p.name as name_3p', 'pas_dimensis.name as name_dimensi', 'companies.name as name_company','organizations.name as name_organization','pas_kpis.name','pas_kpis.max_nilai', 'pas_kpis.created_at', 'pas_kpis.updated_at')
                 ->get();
             return response()->json(
                 [
-                    'name3p' => $name3P->name,
-                    'nameDimensi' => $nameDimensi->name,
-                    'nameKpi' => $nameKpi->name,
-                    'nameCompany' => $nameCompany->name,
-                    'nameDivisi' => $nameDivisi->name,
+                    'data' => $datas,
+                    'message' => 'success',
+                ]
+            );
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    'message' => $e->getMessage(),
+                ],
+                403
+            );
+        }
+    }
+
+    public function index()
+    {
+        try {
+            $datas = Pas_kpi::all();
+            return response()->json(
+                [
                     'data' => $datas,
                     'message' => 'success',
                 ]
@@ -89,33 +86,28 @@ class IndPenilaianController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id3p' => 'required',
-                'idKpi' => 'required',
-                'idCompany' => 'required',
-                'idDivisi' => 'required',
-                'nilai' => 'required',
-                'grade' => 'required',
-                'desc' => 'required',
+                'id_3p' => 'required',
+                'dimensi_id' => 'required',
+                'name' => 'required',
+                'max_nilai' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_ind_penilaians')->insertGetId([
-                '3p_id' => $request->id3p,
-                'kpi_id' => $request->idKpi,
-                'company_id' => $request->idCompany,
-                'division_id' => $request->idDivisi,
-                'nilai' => $request->nilai,
-                'grade' => $request->grade,
-                'desc' => $request->desc,
+            $InsertGetId = DB::table('pas_kpis')->insertGetId([
+                '3p_id' => $request->id_3p,
+                'dimensi_id' => $request->dimensi_id,
+                'name' => $request->name,
+                'max_nilai' => $request->max_nilai,
             ]);
+
             return response()->json(
                 [
                     'data' => $InsertGetId,
                     'message' => 'success',
-                ],
+                ]
             );
         } catch (\Exception $e) {
             return response()->json(
@@ -136,12 +128,12 @@ class IndPenilaianController extends Controller
     public function show($id)
     {
         try {
-            $datas = DB::table('pas_ind_penilaians')
+            $data = DB::table('pas_kpis')
                 ->where('id', $id)
                 ->first();
             return response()->json(
                 [
-                    'data' => $datas,
+                    'data' => $data,
                     'message' => 'success',
                 ]
             );
@@ -178,33 +170,28 @@ class IndPenilaianController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'id3p' => 'required',
-                'idKpi' => 'required',
-                'idCompany' => 'required',
-                'idDivisi' => 'required',
-                'nilai' => 'required',
-                'grade' => 'required',
-                'desc' => 'required',
+                'id_3p' => 'required',
+                'dimensi_id' => 'required',
+                'name' => 'required',
+                'max_nilai' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
-            $InsertGetId = DB::table('pas_ind_penilaians')->where('id', $request->id)->update([
-                '3p_id' => $request->id3p,
-                'kpi_id' => $request->idKpi,
-                'company_id' => $request->idCompany,
-                'division_id' => $request->idDivisi,
-                'nilai' => $request->nilai,
-                'grade' => $request->grade,
-                'desc' => $request->desc,
+            $InsertGetId = DB::table('pas_kpis')->where('id', $request->id)->update([
+                '3p_id' => $request->id_3p,
+                'dimensi_id' => $request->dimensi_id,
+                'name' => $request->name,
+                'max_nilai' => $request->max_nilai,
             ]);
+
             return response()->json(
                 [
                     'data' => $InsertGetId,
                     'message' => 'success',
-                ],
+                ]
             );
         } catch (\Exception $e) {
             return response()->json(
@@ -225,7 +212,7 @@ class IndPenilaianController extends Controller
     public function destroy($id)
     {
         try {
-            $delete = Pas_ind_penilaian::findOrFail($id);
+            $delete = Pas_kpi::findOrFail($id);
             $delete->delete();
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'

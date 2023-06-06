@@ -17,7 +17,7 @@ class CreatePasKpiAbsensTable extends Migration
             $table->id();
             $table->unsignedBigInteger('penilaianAbsen_id');
             $table->unsignedBigInteger('kpi_id');
-            $table->integer('nilai');
+            $table->float('nilai');
             $table->timestamps();
 
             $table->foreign('penilaianAbsen_id')->references('id')->on('pas_penilaian_absens');
