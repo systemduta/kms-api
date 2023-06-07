@@ -20,6 +20,69 @@ class EditController extends Controller
     // iduser;
     // idcompany
     // iddivisi
+    public function cekData(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'idUser' => 'required',
+                'date' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors(),'statusCode'=>400], 400);
+            }
+
+            $bulan = Carbon::parse($request->date)->format('m');
+            $tahun = Carbon::parse($request->date)->format('Y');
+            $cek = DB::table('pas_final_skors')
+                    ->where('user_id',$request->idUser)
+                    ->whereMonth('date',$bulan)
+                    ->whereYear('date',$tahun)
+                    ->count();
+            return response()->json([
+                'data' => $cek, 
+                'message' => 'sukses mendapatkan data',
+                'statusCode' => 200 
+            ],200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message'=> $e->getMessage(),
+                'statusCode'=> 400,
+            ],400);
+        }
+    }
+    public function showPerDate(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'idUser' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors(),'statusCode'=>400], 400);
+            }
+
+            $dataUser = DB::table('users')->where('id',$request->idUser)->first();
+            
+            $getMonthUser = DB::table('pas_final_skors')
+                            ->where('user_id',$request->idUser)
+                            ->orderBy('date','asc')
+                            ->get();
+            return response()->json([
+                'dataUser' => $dataUser,
+                'dataBulan' => $getMonthUser,
+                'message' => 'sukses get data',
+                'statusCode' => 200,
+            ],200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message'=>$e->getMessage(),
+                'statusCode'=>500
+            ],500);
+        }
+    }
+
     public function show(Request $request)
     {
         try {
