@@ -50,6 +50,9 @@ Route::group([
     Route::group([
         'prefix' => 'web'
     ], function () {
+        //set permisssion user
+        Route::resource('permission','PermissionController');
+        Route::get('permissionAll','PermissionController@showAll');
         //untuk menambahkan user
         Route::post('register', 'UserController@register');
         //untuk memperoleh data perusahaan saat ini
