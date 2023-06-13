@@ -1,3 +1,9 @@
+## Persiapan:
+
+1. PHP 7
+2. nodeJS v12.22.12
+3. npm v6.14.16
+
 ## Instalasi:
 
 1. Jalankan perintah ini di git bash

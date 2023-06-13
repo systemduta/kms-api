@@ -20,7 +20,6 @@ class PeopleController extends Controller
 
     public function getInd(Request $request)
     {
-        // dd($request->all());
         try {
             $validator = Validator::make($request->all(), [
                 'id3p' => 'required',
@@ -65,39 +64,6 @@ class PeopleController extends Controller
                     'message' => 'success',
                 ]
             );
-            // $nilai4 = DB::table('pas_ind_penilaians')
-            //     ->where('3p_id', $request->id3p)
-            //     ->where('kpi_id', $request->kpi_id)
-            //     ->where('nilai', 4)
-            //     ->orderBy('grade', 'asc')
-            //     ->get();
-            // $nilai3 = DB::table('pas_ind_penilaians')
-            //     ->where('3p_id', $request->id3p)
-            //     ->where('kpi_id', $request->kpi_id)
-            //     ->where('nilai', 3)
-            //     ->orderBy('grade', 'asc')
-            //     ->get();
-            // $nilai2 = DB::table('pas_ind_penilaians')
-            //     ->where('3p_id', $request->id3p)
-            //     ->where('kpi_id', $request->kpi_id)
-            //     ->where('nilai', 2)
-            //     ->orderBy('grade', 'asc')
-            //     ->get();
-            // $nilai1 = DB::table('pas_ind_penilaians')
-            //     ->where('3p_id', $request->id3p)
-            //     ->where('kpi_id', $request->kpi_id)
-            //     ->where('nilai', 1)
-            //     ->orderBy('grade', 'asc')
-            //     ->get();
-            // return response()->json(
-            //     [
-            //         'nilai4' => $nilai4,
-            //         'nilai3' => $nilai3,
-            //         'nilai2' => $nilai2,
-            //         'nilai1' => $nilai1,
-            //         'message' => 'success',
-            //     ]
-            // );
         } catch (\Exception $e) {
             return response()->json(
                 [

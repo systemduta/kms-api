@@ -33,44 +33,42 @@ class UserController extends Controller
      */
     public function login(Request $request)
     {
-        if (Auth::attempt([
-            'nik' => $request->nik,
-            // 'username' => $request->username,
-            'password' => $request->password
-        ])) {
+        $credentials = $request->only(['nik', 'password']);
+
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $cekPermision = DB::table('permissions')
                 ->where('user_id', $user->id)
                 ->first();
+
             if (!$cekPermision) {
-                return response()->json(['message' => 'Unauthorized - Not all permissions granted'], 401);
+                return response()->json(['message' => 'Unauthorized - Akun tidak memiliki akses untuk masuk ke sistem'], 401);
             }
 
-            // $org= DB::table('organizations')->where('id', $user->organization_id)->first();
-            // if($request->isWeb=="1") {
-            //     if($org->is_str!=1) return response()->json(['message' => 'Unauthorized'], 401);
-            // }
             $company = DB::table('companies')->where('id', $user->company_id)->first();
-            $success['name'] = $user->name;
-            $success['avatar'] = $user->image;
-            $success['company_name'] = $company->name;
-            $success['company_id'] = $user->company_id;
-            $success['organization_id'] = $user->organization_id;
-            $success['city'] = $user->kota;
-            $success['phone'] = $user->phone;
-            $success['file'] = $user->file;
-            $success['role'] = $user->role;
-            $success['isSuperAdmin'] = $cekPermision->isSuperAdmin;
-            $success['isSOP'] = $cekPermision->isSOP;
-            $success['isKMS'] = $cekPermision->isKMS;
-            $success['is1VHS'] = $cekPermision->is1VHS;
-            $success['isPAS'] = $cekPermision->isPAS;
-            $success['accessToken'] = $user->createToken('nApp')->accessToken;
+            $success = [
+                'name' => $user->name,
+                'avatar' => $user->image,
+                'company_name' => $company->name,
+                'company_id' => $user->company_id,
+                'organization_id' => $user->organization_id,
+                'city' => $user->kota,
+                'phone' => $user->phone,
+                'file' => $user->file,
+                'role' => $user->role,
+                'isSuperAdmin' => $cekPermision->isSuperAdmin,
+                'isSOP' => $cekPermision->isSOP,
+                'isKMS' => $cekPermision->isKMS,
+                'is1VHS' => $cekPermision->is1VHS,
+                'isPAS' => $cekPermision->isPAS,
+                'accessToken' => $user->createToken('nApp')->accessToken
+            ];
             return response()->json($success, $this->successStatus);
-        } else {
-            return response()->json(['message' => 'Unauthorized'], 401);
         }
+
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
+
 
     /**
      * hubungan Route: 

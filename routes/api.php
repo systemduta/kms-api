@@ -311,11 +311,7 @@ Route::group([
                     Route::post('pas_edit_3','Pas\Penilaian\Edit\EditController@delete');
                     Route::post('pas_edit_4','Pas\Penilaian\Edit\EditController@showPerDate'); //untuk liat user pas per bulan
                     Route::post('pas_edit_5','Pas\Penilaian\Edit\EditController@cekData');
-
-
               /**akhir edit penilaian pas */
-
-
 
             /************* Akhir part PAS ******************/
         });
