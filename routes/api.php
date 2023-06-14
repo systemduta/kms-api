@@ -36,7 +36,6 @@ Route::group([
     'namespace' => 'Api',
 ], function () {
     /**PAS maesa one */
-
     Route::post('user_pas','Pas\GetPasController@index');
 
     /**PAS maesa one */

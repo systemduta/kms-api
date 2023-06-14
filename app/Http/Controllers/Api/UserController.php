@@ -47,6 +47,7 @@ class UserController extends Controller
 
             $company = DB::table('companies')->where('id', $user->company_id)->first();
             $success = [
+                'id' => $user->id,
                 'name' => $user->name,
                 'avatar' => $user->image,
                 'company_name' => $company->name,
