@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -15,6 +15,41 @@ class UserController extends Controller
 {
     public $successStatus = 200;
     public $errorStatus = 403;
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'nik' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->errors()], 401);
+            }
+
+            $user = User::where('id', $request->id)
+                ->where('nik', $request->nik)
+                ->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $user->password = bcrypt('12345678');
+            $user->save();
+
+            return response()->json([
+                'message' => 'Password successfully reset',
+                'statusCode' => 200,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
     /**
      * untuk route:

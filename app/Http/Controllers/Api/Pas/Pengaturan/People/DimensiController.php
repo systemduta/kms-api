@@ -15,6 +15,9 @@ class DimensiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /** index_per_3p 
+     * digunakan untuk mendapatkan data dimensi berdasarkan data id 3p (peaople,process,performance) yang didapat dari id yang dikirim user
+     */
     public function index_per_3p($id)
     {
         try {
@@ -39,6 +42,11 @@ class DimensiController extends Controller
         }
     }
 
+    /**
+     * index
+     * 
+     * function digunakan untuk mendapatkan data dimensi dari PAS
+     */
     public function index()
     {
         try {
@@ -81,6 +89,7 @@ class DimensiController extends Controller
     public function store(Request $request)
     {
         try {
+            /**digunakan untuk validasi inputan harus ada id_3p dan name */
             $validator = Validator::make($request->all(), [
                 'id_3p' => 'required',
                 'name' => 'required',
@@ -90,6 +99,7 @@ class DimensiController extends Controller
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
+            /**digunakan untuk menambahkan data kedalam table pas_dimensis dengan return id jika berhasil insert data */
             $InsertGetId = DB::table('pas_dimensis')->insertGetId([
                 '3p_id' => $request->id_3p,
                 'name' => $request->name,
@@ -116,6 +126,10 @@ class DimensiController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     * 
+     * show
+     * 
+     * function ini digunakan untuk mendapatkan data pas_dimensis berdasarkan id yng dikirim 
      */
     public function show($id)
     {
@@ -161,6 +175,7 @@ class DimensiController extends Controller
     public function update(Request $request, $id)
     {
         try {
+            /**digunakan untuk validasi, dengan syarat harus ada id, id_3p, name */
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'id_3p' => 'required',
@@ -171,6 +186,7 @@ class DimensiController extends Controller
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
+            /**line untuk update data */
             $datas = DB::table('pas_dimensis')->where('id', $request->id)->update([
                 '3p_id' => $request->id_3p,
                 'name' => $request->name,
@@ -195,8 +211,6 @@ class DimensiController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {

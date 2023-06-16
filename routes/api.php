@@ -100,6 +100,7 @@ Route::group([
             Route::put('update_user/{id}', 'UserController@update');
             Route::delete('delete_user/{id}', 'UserController@delete');
             Route::post('logout', 'UserController@logout');
+            Route::post('updatepass','UserController@resetPassword');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
 
             //division
