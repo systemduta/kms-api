@@ -322,6 +322,9 @@ Route::group([
     ], function () {
         Route::resource('books', 'BookController');
         Route::get('splash_screen', 'SplashScreenController@index');
+        
+        Route::post('reset_password','MobileController@reset_password');
+        Route::get('verify-email/{token}', 'MobileController@verifyEmail')->name('verify-email');
 
         Route::group(['middleware' => 'auth:api'], function () {
             Route::post('firebase_token', 'MobileController@firebase_token');
@@ -349,6 +352,8 @@ Route::group([
             Route::post('submit_question', 'MobileController@submit_question');
             Route::post('submit_answer', 'MobileController@submit_answer');
             Route::post('change_password', 'MobileController@change_password');
+
+
             Route::get('vhs', 'MobileController@list_vhs');
             Route::get('vhs_dashboard', 'VhsController@index');
 

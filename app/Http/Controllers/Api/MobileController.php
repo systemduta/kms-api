@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use Illuminate\Validation\Validator as ValidationValidator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Illuminate\Support\Facades\Mail;
 
 
 class MobileController extends Controller
@@ -36,6 +37,58 @@ class MobileController extends Controller
      * Setelah itu, method ini mengambil objek user yang sedang login saat ini dengan menggunakan fungsi auth(). Kemudian, method ini mengupdate token pada tabel "users" dengan menggunakan DB::table() dan fungsi where(). Setelah itu, method ini mengembalikan response dengan pesan berhasil update token firebase.
 
      */
+
+    public function reset_password(Request $request)
+    {
+        try {
+            $request->validate(['email' => 'required|email']);
+
+            $user = DB::table('users')->where('email', $request->email)->first();
+            if (!empty($user)) {
+                $this->sendVerificationEmail($user->id);
+                return response()->json([
+                    'status' => 200,
+                    'message' => 'Sukses mendapatkan email',
+                    'data' => $user,
+                ]);
+            } else {
+                return response()->json(['status' => 400, 'message' => 'Tidak dapat menemukan email'], 403);
+            }
+        } catch (\Exception $e) {
+            $msg = $e->getMessage();
+            return response()->json(['status' => 400, 'message' => $msg], 403);
+        }
+    }
+
+    private function sendVerificationEmail($id)
+    {
+        $user = DB::table('users')->where('id', $id)->first();
+        $verificationLink = route('verify-email', ['token' => $user->username]);
+
+        Mail::send('emails.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
+            $message->from('admin-app@maesagroup.co.id', 'Administrator Maesa Grow');
+            $message->to($user->email, 'Admin');
+            $message->subject('Verifikasi Email');
+        });
+    }
+
+    public function verifyEmail($token)
+    {
+        $user = DB::table('users')->where('username', $token)->first();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Token verifikasi tidak valid.',
+                'statusCode' => 404,
+            ], 404);
+        }
+
+        DB::table('users')->where('username', $token)->update([
+            'password' => Hash::make('12345678'),
+        ]);
+
+        return view('emails.success', compact('user'));
+    }
 
     public function firebase_token(Request $request)
     {
@@ -220,12 +273,12 @@ class MobileController extends Controller
     public function course_list_dashboard(Request $request)
     {
         $user = auth()->user();
-        if ($request->type==4) {  //softskill
-            if ($user->golongan_id==8||$user->golongan_id==9||$user->golongan_id==10||$user->golongan_id==11) {
+        if ($request->type == 4) {  //softskill
+            if ($user->golongan_id == 8 || $user->golongan_id == 9 || $user->golongan_id == 10 || $user->golongan_id == 11) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
                     ->where('c.type', 4)
-                    ->where(function($query) {
+                    ->where(function ($query) {
                         $query->where('c.golongan_id', 8)
                             ->orWhere('c.golongan_id', 9)
                             ->orWhere('c.golongan_id', 10)
@@ -242,7 +295,7 @@ class MobileController extends Controller
                         group_concat(us.user_id) as user_list
                     ')
                     ->get();
-                        
+
                 $data = array();
                 foreach ($dt as $value) {
                     $exclude = explode(",", $value->user_list);
@@ -250,11 +303,11 @@ class MobileController extends Controller
                     array_push($data, $value);
                 }
                 return response()->json(['data' => $data]);
-            } elseif ($user->golongan_id==4) {
+            } elseif ($user->golongan_id == 4) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
                     ->where('c.type', 4)
-                    ->where(function($query) {
+                    ->where(function ($query) {
                         $query->where('c.golongan_id', 4);
                     })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
@@ -268,19 +321,19 @@ class MobileController extends Controller
                         group_concat(us.user_id) as user_list
                     ')
                     ->get();
-                            
-                    $data = array();
-                    foreach ($dt as $value) {
-                        $exclude = explode(",", $value->user_list);
-                        if (in_array($user->id, $exclude)) continue;
-                        array_push($data, $value);
-                    }
-                    return response()->json(['data' => $data]);
-            } elseif ($user->golongan_id==3) {
+
+                $data = array();
+                foreach ($dt as $value) {
+                    $exclude = explode(",", $value->user_list);
+                    if (in_array($user->id, $exclude)) continue;
+                    array_push($data, $value);
+                }
+                return response()->json(['data' => $data]);
+            } elseif ($user->golongan_id == 3) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
                     ->where('c.type', 4)
-                    ->where(function($query) {
+                    ->where(function ($query) {
                         $query->where('c.golongan_id', 3);
                     })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
@@ -294,25 +347,24 @@ class MobileController extends Controller
                         group_concat(us.user_id) as user_list
                     ')
                     ->get();
-                            
-                    $data = array();
-                    foreach ($dt as $value) {
-                        $exclude = explode(",", $value->user_list);
-                        if (in_array($user->id, $exclude)) continue;
-                        array_push($data, $value);
-                    }
-                    return response()->json(['data' => $data]);
-            
-            } elseif ($user->golongan_id==2) {
+
+                $data = array();
+                foreach ($dt as $value) {
+                    $exclude = explode(",", $value->user_list);
+                    if (in_array($user->id, $exclude)) continue;
+                    array_push($data, $value);
+                }
+                return response()->json(['data' => $data]);
+            } elseif ($user->golongan_id == 2) {
                 $dt = DB::table('courses as c')
-                        ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-                        ->where('c.type', 4)
-                        ->where(function($query) {
-                            $query->where('c.golongan_id', 2);
-                        })
-                        ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
-                        ->orderBy('c.id', 'DESC')
-                        ->selectRaw('
+                    ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
+                    ->where('c.type', 4)
+                    ->where(function ($query) {
+                        $query->where('c.golongan_id', 2);
+                    })
+                    ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
+                    ->orderBy('c.id', 'DESC')
+                    ->selectRaw('
                             c.id,
                             c.title,
                             c.description,
@@ -320,20 +372,20 @@ class MobileController extends Controller
                             count(us.id) as jml,
                             group_concat(us.user_id) as user_list
                         ')
-                        ->get();
-                            
-                    $data = array();
-                    foreach ($dt as $value) {
-                        $exclude = explode(",", $value->user_list);
-                        if (in_array($user->id, $exclude)) continue;
-                        array_push($data, $value);
-                    }
+                    ->get();
+
+                $data = array();
+                foreach ($dt as $value) {
+                    $exclude = explode(",", $value->user_list);
+                    if (in_array($user->id, $exclude)) continue;
+                    array_push($data, $value);
+                }
                 return response()->json(['data' => $data]);
-            } elseif ($user->golongan_id==1) {
+            } elseif ($user->golongan_id == 1) {
                 $dt = DB::table('courses as c')
                     ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
                     ->where('c.type', 4)
-                    ->where(function($query) {
+                    ->where(function ($query) {
                         $query->where('c.golongan_id', 1);
                     })
                     ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
@@ -347,35 +399,35 @@ class MobileController extends Controller
                         group_concat(us.user_id) as user_list
                     ')
                     ->get();
-                            
-                    $data = array();
-                    foreach ($dt as $value) {
-                        $exclude = explode(",", $value->user_list);
-                        if (in_array($user->id, $exclude)) continue;
-                        array_push($data, $value);
-                    }
+
+                $data = array();
+                foreach ($dt as $value) {
+                    $exclude = explode(",", $value->user_list);
+                    if (in_array($user->id, $exclude)) continue;
+                    array_push($data, $value);
+                }
                 return response()->json(['data' => $data]);
             } else {
-                return response()->json(['error' => 'error'],403);
+                return response()->json(['error' => 'error'], 403);
             }
-        } elseif ($request->type==1) { //hardskill
+        } elseif ($request->type == 1) { //hardskill
             $dt = DB::table('courses as c')
-            ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
-            ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
-                return $q->where('c.company_id', $user->company_id);
+                ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
+                ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
+                    return $q->where('c.company_id', $user->company_id);
                 })
-            ->when($request->type, function ($query) use ($request) {
+                ->when($request->type, function ($query) use ($request) {
                     return $query->where('c.type', $request->type);
                 })
-            ->when($request->type == 1, function ($query) use ($user) {
+                ->when($request->type == 1, function ($query) use ($user) {
                     return $query->where('c.organization_id', $user->organization_id)
                         ->where(function ($query) use ($user) {
                             return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
                         });
                 })
-            ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
-            ->orderBy('c.id', 'DESC')
-            ->selectRaw('
+                ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
+                ->orderBy('c.id', 'DESC')
+                ->selectRaw('
                 c.id,
                 c.title,
                 c.description,
@@ -383,9 +435,9 @@ class MobileController extends Controller
                 count(us.id) as jml,
                 group_concat(us.user_id) as user_list
             ')
-            ->where('c.type',1)
-            ->get();
-                    
+                ->where('c.type', 1)
+                ->get();
+
             $data = array();
             foreach ($dt as $value) {
                 $exclude = explode(",", $value->user_list);
@@ -393,22 +445,21 @@ class MobileController extends Controller
                 array_push($data, $value);
             }
             return response()->json(['data' => $data]);
- 
         } elseif ($request->type == 3) {  //corporatevalue
             $dt = DB::table('courses as c')
                 ->leftJoin('user_scores as us', 'us.course_id', 'c.id')
                 ->when($user->role != 1 && $request->type != 4, function ($q) use ($user) {
                     return $q->where('c.company_id', $user->company_id);
-                    })
+                })
                 ->when($request->type, function ($query) use ($request) {
-                        return $query->where('c.type', $request->type);
-                    })
+                    return $query->where('c.type', $request->type);
+                })
                 ->when($request->type == 1, function ($query) use ($user) {
-                        return $query->where('c.organization_id', $user->organization_id)
-                            ->where(function ($query) use ($user) {
-                                return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
-                            });
-                    })
+                    return $query->where('c.organization_id', $user->organization_id)
+                        ->where(function ($query) use ($user) {
+                            return $query->where('c.golongan_id', $user->golongan_id)->orWhereNull('c.golongan_id');
+                        });
+                })
                 ->groupBy('c.id', 'c.title', 'c.description', 'c.image')
                 ->orderBy('c.id', 'DESC')
                 ->selectRaw('
@@ -419,15 +470,15 @@ class MobileController extends Controller
                     count(us.id) as jml,
                     group_concat(us.user_id) as user_list
                 ')
-                ->where('c.type',3)
+                ->where('c.type', 3)
                 ->get();
-                        
-                $data = array();
-                foreach ($dt as $value) {
-                    $exclude = explode(",", $value->user_list);
-                    if (in_array($user->id, $exclude)) continue;
-                    array_push($data, $value);
-                }
+
+            $data = array();
+            foreach ($dt as $value) {
+                $exclude = explode(",", $value->user_list);
+                if (in_array($user->id, $exclude)) continue;
+                array_push($data, $value);
+            }
             return response()->json(['data' => $data]);
         } elseif ($request->type == 2) {
             $dt = DB::table('courses as c')
@@ -436,8 +487,8 @@ class MobileController extends Controller
                 //     return $q->where('c.company_id', $user->company_id);
                 //     })
                 ->when($request->type, function ($query) use ($request) {
-                        return $query->where('c.type', $request->type);
-                    })
+                    return $query->where('c.type', $request->type);
+                })
                 // ->when($request->type == 1, function ($query) use ($user) {
                 //         return $query->where('c.organization_id', $user->organization_id)
                 //             ->where(function ($query) use ($user) {
@@ -455,18 +506,18 @@ class MobileController extends Controller
                 group_concat(us.user_id) as user_list
                 ')
                 // ->where('c.golongan_id',$user->golongan_id)
-                ->where('c.type',2)
+                ->where('c.type', 2)
                 ->get();
-                        
-                $data = array();
-                foreach ($dt as $value) {
-                    $exclude = explode(",", $value->user_list);
-                    if (in_array($user->id, $exclude)) continue;
-                    array_push($data, $value);
-                }
-                return response()->json(['data' => $data]);
+
+            $data = array();
+            foreach ($dt as $value) {
+                $exclude = explode(",", $value->user_list);
+                if (in_array($user->id, $exclude)) continue;
+                array_push($data, $value);
+            }
+            return response()->json(['data' => $data]);
         } else {
-            return response()->json(['error' => 'error'],403);
+            return response()->json(['error' => 'error'], 403);
         }
 
         // $user = auth()->user();
@@ -496,7 +547,7 @@ class MobileController extends Controller
         //         ')
         //         ->where('c.golongan_id',$user->golongan_id)
         //         ->get();
-                        
+
         //         $data = array();
         //         foreach ($dt as $value) {
         //             $exclude = explode(",", $value->user_list);
@@ -802,38 +853,49 @@ class MobileController extends Controller
     {
         $input = $request->all();
         $userid = Auth::guard('api')->user()->id;
-        $rules = array(
+    
+        $rules = [
+            'name' => 'required',
+            'email' => 'required|email',
             'old_password' => 'required',
-            'new_password' => 'required',
+            'new_password' => 'required|min:8',
             'confirm_password' => 'required|same:new_password',
-        );
+        ];
+    
         $validator = Validator::make($input, $rules);
-
+    
         if ($validator->fails()) {
-            $arr = array("status" => 400, "message" => $validator->errors()->first(), "data" => array());
-        } else {
-            try {
-                if ((Hash::check(request('old_password'), Auth::user()->password)) == false) {
-                    $arr = array("status" => 400, "message" => "Check your old password.", "data" => array());
-                } else if ((Hash::check(request('new_password'), Auth::user()->password)) == true) {
-                    $arr = array("status" => 400, "message" => "Please enter a password which is not similar then current password.", "data" => array());
-                } else {
-                    User::where('id', $userid)->update(['password' => Hash::make($input['new_password'])]);
-                    $arr = array("status" => 200, "message" => "Password updated successfully.", "data" => array());
-                }
-            } catch (\Exception $ex) {
-                if (isset($ex->errorInfo[2])) {
-                    $msg = $ex->errorInfo[2];
-                } else {
-                    $msg = $ex->getMessage();
-                }
-                $arr = array("status" => 400, "message" => $msg, "data" => array());
-            }
+            return response()->json(['status' => 400, 'message' => $validator->errors()->first(), 'data' => []]);
         }
-        return \Response::json($arr);
+    
+        try {
+            $user = User::find($userid);
+    
+            if (!Hash::check($input['old_password'], $user->password)) {
+                return response()->json(['status' => 400, 'message' => 'Check your old password.', 'data' => []]);
+            }
+    
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($input['new_password']),
+            ]);
+    
+            $cekEmail = DB::table('users')->where('email', $request->email)->where('id', '!=', $userid)->count();
+    
+            if ($cekEmail) {
+                return response()->json(['status' => 200, 'message' => 'Sukses update password dan Email sudah terdaftar di user lain', 'data' => []]);
+            } else {
+                $user->update([
+                    'email' => $request->email,]);
+                return response()->json(['status' => 200, 'message' => 'Updated successfully.', 'data' => $user]);
+            }
+        } catch (\Exception $ex) {
+            $msg = $ex->getMessage();
+            return response()->json(['status' => 400, 'message' => $msg, 'data' => []]);
+        }
     }
 
-    
     public function getVhs(Request $request)
     {
         $userid = Auth::guard('api')->user()->id;
@@ -845,7 +907,7 @@ class MobileController extends Controller
                     ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
                     ->where('jadwalvhs.type', $type)
                     ->where('jadwal_user_vhs.user_id', $userid)
-                    ->where('jadwal_user_vhs.isAllow',1)
+                    ->where('jadwal_user_vhs.isAllow', 1)
                     // ->where('jadwalvhs.start','<=',$datenow)
                     // ->where('jadwalvhs.end','>=',$datenow)
                     ->where('jadwal_user_vhs.is_take', '==', '0')
@@ -865,7 +927,7 @@ class MobileController extends Controller
                     ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
                     ->where('jadwalvhs.type', $type)
                     ->where('jadwal_user_vhs.user_id', $userid)
-                    ->where('jadwal_user_vhs.isAllow',1)
+                    ->where('jadwal_user_vhs.isAllow', 1)
                     // ->where('jadwalvhs.start','<=',$datenow)
                     // ->where('jadwalvhs.end','>=',$datenow)
                     ->where('jadwal_user_vhs.is_take', '==', '0')
@@ -885,7 +947,7 @@ class MobileController extends Controller
                     ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
                     ->where('jadwalvhs.type', $type)
                     ->where('jadwal_user_vhs.user_id', $userid)
-                    ->where('jadwal_user_vhs.isAllow',1)
+                    ->where('jadwal_user_vhs.isAllow', 1)
                     // ->where('jadwalvhs.start','<=',$datenow)
                     // ->where('jadwalvhs.end','>=',$datenow)
                     ->where('jadwal_user_vhs.is_take', '==', '0')
@@ -905,7 +967,7 @@ class MobileController extends Controller
                     ->join('jadwal_user_vhs', 'jadwal_user_vhs.jadwal_id', '=', 'jadwalvhs.id')
                     ->where('jadwalvhs.type', $type)
                     ->where('jadwal_user_vhs.user_id', $userid)
-                    ->where('jadwal_user_vhs.isAllow',1)
+                    ->where('jadwal_user_vhs.isAllow', 1)
                     // ->where('jadwalvhs.start','<=',$datenow)
                     // ->where('jadwalvhs.end','>=',$datenow)
                     ->where('jadwal_user_vhs.is_take', '==', '0')
@@ -1185,7 +1247,7 @@ class MobileController extends Controller
             return response()->json(['error' => $validator->errors()], 403);
         }
         try {
-            $userid = Auth::guard('api')->user()->id;       
+            $userid = Auth::guard('api')->user()->id;
             $cekAnswer = DB::table('answer_vhs')
                 ->where('materi_id', $request->materi_id)
                 ->where('question_id', $request->question_id)
@@ -1242,18 +1304,18 @@ class MobileController extends Controller
     }
 
     public function getOtherAnswers(Request $request)
-    {        
-        $userid = Auth::guard('api')->user()->id;  
+    {
+        $userid = Auth::guard('api')->user()->id;
         $cekAnswer = DB::table('answer_vhs')
-                ->join('users', 'users.id', '=', 'answer_vhs.user_id')
-                ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
-                ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
-                ->where('answer_vhs.materi_id', $request->materi_id)
-                ->where('answer_vhs.question_id', $request->question_id)
-                ->where('answer_vhs.user_id',$userid)
-                ->select('users.id', 'users.name', 'answer_vhs.answer', 'answer_vhs.file')
-                ->count();
-        
+            ->join('users', 'users.id', '=', 'answer_vhs.user_id')
+            ->join('materi_vhs', 'materi_vhs.id', '=', 'answer_vhs.materi_id')
+            ->join('question_vhs', 'question_vhs.id', '=', 'answer_vhs.question_id')
+            ->where('answer_vhs.materi_id', $request->materi_id)
+            ->where('answer_vhs.question_id', $request->question_id)
+            ->where('answer_vhs.user_id', $userid)
+            ->select('users.id', 'users.name', 'answer_vhs.answer', 'answer_vhs.file')
+            ->count();
+
         if ($cekAnswer > 0) {
             try {
                 $data = DB::table('answer_vhs')
@@ -1279,9 +1341,10 @@ class MobileController extends Controller
             return response()->json(
                 [
                     'message' => 'anda belum menjawab, pastikan sudah menjawab',
-                ], 403
+                ],
+                403
             );
-        }        
+        }
     }
 
     //PendingAll
@@ -1312,21 +1375,31 @@ class MobileController extends Controller
         }
     }
 
-     //sertif
-     public function getSerti()
-     {
-         try {
-             $user=auth()->user();
-             $data = Vhs_certi::where('user_id',$user->id)->get();
+    //sertif
+    public function getSerti()
+    {
+        try {
+            $user = auth()->user();
+            $data = Vhs_certi::where('user_id', $user->id)->get();
 
-             return response()->json(
-                 [
-                     'message'=>'success',
-                     'success'=>$data,
-                 ],200);
-             } catch (\Exception $exception) {
-                 DB::rollBack();
-                 throw new HttpException(500, $exception->getMessage(), $exception);
-             }
-     }
+            return response()->json(
+                [
+                    'message' => 'success',
+                    'success' => $data,
+                ],
+                200
+            );
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            throw new HttpException(500, $exception->getMessage(), $exception);
+        }
+    }
+
+    //  public function fpassword(Request $request){
+    //     try {
+    //         //code...
+    //     } catch (\Exception $e) {
+
+    //     }
+    //  }
 }
