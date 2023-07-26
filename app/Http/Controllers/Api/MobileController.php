@@ -63,6 +63,10 @@ class MobileController extends Controller
     private function sendVerificationEmail($id)
     {
         $user = DB::table('users')->where('id', $id)->first();
+        $expiryTime = Carbon::now()->addMinutes(30);
+
+        DB::table('users')->where('id',$id)->update(['verification_link_expiry'=>$expiryTime]);
+
         $verificationLink = route('verify-email', ['token' => $user->username]);
 
         Mail::send('emails.verify', ['user' => $user, 'verificationLink' => $verificationLink], function ($message) use ($user) {
@@ -77,10 +81,18 @@ class MobileController extends Controller
         $user = DB::table('users')->where('username', $token)->first();
 
         if (!$user) {
-            return response()->json([
-                'message' => 'Token verifikasi tidak valid.',
-                'statusCode' => 404,
-            ], 404);
+            $error = [
+                'message'=>'Token Verifikasi tidak valid, silahkan ulangi',
+            ];
+            return view('emails.error',compact('error'));
+        }
+
+        $expiryTime = Carbon::parse($user->verification_link_expiry);
+        if ($expiryTime->isPast()) {
+            $error = [
+                'message'=>'Token Verifikasi telah kadaluarsa, silahkan ulangi',
+            ];
+            return view('emails.error',compact('error'));
         }
 
         DB::table('users')->where('username', $token)->update([

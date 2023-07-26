@@ -126,8 +126,8 @@
                     <tr>
                         <td align="center" valign="top" style="padding: 36px 24px;">
                             <img src="https://maesagroup.co.id/wp-content/uploads/2020/12/Logo-Maesa-Horizontal-2048x494.png"
-                                alt="Logo" border="0" width="48"
-                                style="display: block; width: 70px; max-width: 70px; min-width: 70px;">
+                                alt="Logo" border="0" width="300"
+                                style="display: block; width: 300px; max-width: 300px; min-width: 300px;">
                         </td>
                     </tr>
                 </table>

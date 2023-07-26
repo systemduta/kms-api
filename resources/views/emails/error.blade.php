@@ -5,7 +5,7 @@
 
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Password Reset</title>
+    <title>Password Reset Error</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style type="text/css">
         /**
@@ -111,7 +111,7 @@
     <!-- start preheader -->
     <div class="preheader"
         style="display: none; max-width: 0; max-height: 0; overflow: hidden; font-size: 1px; line-height: 1px; color: #fff; opacity: 0;">
-        Hey {{ $user->name }},
+        Hey,
     </div>
     <!-- end preheader -->
 
@@ -146,17 +146,9 @@
                             style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
                             <h1
                                 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">
-                                Reset Your Password</h1>
+                                Error while reset your password</h1>
                         </td>
 
-                    </tr>
-                    <tr>
-                        <td align="left" bgcolor="#ffffff"
-                            style="padding: 36px 24px 0; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; border-top: 3px solid #d4dadf;">
-                            <h3
-                                style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -1px; line-height: 48px;">
-                                {{ $user->name }}</h3>
-                        </td>
                     </tr>
                 </table>
 
@@ -174,52 +166,11 @@
                     <tr>
                         <td align="left" bgcolor="#ffffff"
                             style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-                            <p style="margin: 0;">Tap the button below to reset password. If you didn't
-                                request this email, you can safely delete
-                                this email.</p>
+                            <p style="margin: 0;">{{ $error['message'] }}</p>
                         </td>
                     </tr>
                     <!-- end copy -->
 
-                    <!-- start button -->
-                    <tr>
-                        <td align="left" bgcolor="#ffffff">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                <tr>
-                                    <td align="center" bgcolor="#ffffff" style="padding: 12px;">
-                                        <table border="0" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td align="center" bgcolor="#1a82e2" style="border-radius: 6px;">
-                                                    <a href="{{ $verificationLink }}" target="_blank"
-                                                        style="display: inline-block; padding: 16px 36px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; color: #ffffff; text-decoration: none; border-radius: 6px;">Reset
-                                                        Password</a>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <!-- end button -->
-
-                    <!-- start copy -->
-                    <tr>
-                        <td align="left" bgcolor="#ffffff"
-                            style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-                            <p style="margin: 0;">If that doesn't work, copy and paste the following link in your
-                                browser:</p>
-                            <p style="margin: 0;"><a href="{{ $verificationLink }}"
-                                    target="_blank">{{ $verificationLink }}</a></p>
-                        </td>
-                    </tr>
-                    <!-- end copy -->
-                    <tr>
-                        <td align="left" bgcolor="#ffffff"
-                            style="padding: 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 16px; line-height: 24px;">
-                            <p style="margin: 0;"><b>The link is valid for 30 minutes</b></p>
-                        </td>
-                    </tr>
                     <!-- start copy -->
                     <tr>
                         <td align="left" bgcolor="#ffffff"
@@ -235,26 +186,6 @@
         </tr>
         <!-- end copy block -->
 
-        <!-- start footer -->
-        <tr>
-            <td align="center" bgcolor="#e9ecef" style="padding: 24px;">
-
-                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
-
-                    <!-- start permission -->
-                    <tr>
-                        <td align="center" bgcolor="#e9ecef"
-                            style="padding: 12px 24px; font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif; font-size: 14px; line-height: 20px; color: #666;">
-                            <p style="margin: 0;">You received this email because we received a request for
-                                reset password for your account. If you didn't request reset password you can safely
-                                delete this email.</p>
-                        </td>
-                    </tr>
-                    <!-- end permission -->
-
-                </table>
-            </td>
-        </tr>
 
     </table>
 
