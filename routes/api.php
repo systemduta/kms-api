@@ -69,6 +69,9 @@ Route::group([
         Route::group(['middleware' => 'auth:api'], function () {
             // Route::resource('setadmin','SetAdminController');
 
+            //btach email
+            Route::post('batch','SendEmailController@send');
+
             //uservhscontroller 
             Route::resource('uservhs', 'UserVhsController');
             Route::get('listuser/{id}', 'UserVhsController@listUser');
