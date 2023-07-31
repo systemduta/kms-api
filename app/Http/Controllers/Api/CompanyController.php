@@ -108,7 +108,7 @@ class CompanyController extends Controller
                 ->join('companies','companies.id','=','users.company_id')
                 ->where('organizations.id',$request->iddivision)
                 ->where('companies.id',$request->idcompany)
-                ->select('users.id','users.nik','users.name','users.status')
+                ->select('users.id','users.nik','users.name','users.status','users.email')
                 ->get();
             return response()->json(
                     [

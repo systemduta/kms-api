@@ -167,6 +167,7 @@ class UserController extends Controller
             'organization_id' => $request->organization_id,
             'golongan_id' => $request->golongan_id,
             'nik' => $request->nik,
+            'email' => $request->email,
             'username' => $username,
             'role' => 2
         ]);
@@ -242,14 +243,23 @@ class UserController extends Controller
      */
     public function update(request $request, $id)
     {
-        $request->validate([
-            'password' => 'string|nullable',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'company_id' => 'required',
+            'organization_id' => 'required',
+            'golongan_id' => 'required|exists:golongans,id',
+            'nik' => 'required',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
+        }
         $name = $request->name;
         $nik = $request->nik;
         $company_id = $request->company_id;
         $organization_id = $request->organization_id;
         $golongan_id = $request->golongan_id;
+        $email = $request->email;
         // $password = $request->password;
 
         $filename = null;
@@ -292,6 +302,7 @@ class UserController extends Controller
         $user->organization_id = $organization_id;
         $user->golongan_id = $golongan_id;
         $user->status = $request->status;
+        $user->email = $email;
         $user->resign_date = $request->resign_date;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
