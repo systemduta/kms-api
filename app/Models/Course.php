@@ -13,7 +13,7 @@ class Course extends Model
         'id'
     ];
     protected $hidden = ['golongan'];
-    protected $appends = ['golongan_name'];
+    protected $appends = ['golongan_name','golongan_code'];
 
     public function golongan() {
         return $this->belongsTo(Golongan::class);
@@ -32,5 +32,10 @@ class Course extends Model
     public function getGolonganNameAttribute()
     {
         return $this->golongan ? $this->golongan->name : null;
+    }
+    
+    public function getGolonganCodeAttribute()
+    {
+        return $this->golongan ? $this->golongan->code : null;
     }
 }
