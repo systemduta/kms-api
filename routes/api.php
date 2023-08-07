@@ -157,9 +157,11 @@ Route::group([
             Route::resource('crossfunction', 'CrossfunctionController');
             Route::get('cross_status/{id}', 'CrossfunctionController@status');
 
-
+            //golongan
             Route::get('golongan/list_by_company', 'GolonganController@get_golongan_by_company');
             Route::resource('golongan', 'GolonganController');
+            
+
             Route::resource('course', 'CourseController');
 
             //newcourse
@@ -178,8 +180,11 @@ Route::group([
             Route::get('downlamp/{id}', [LampiranController::class, 'lampdown']);
             Route::get('downmateri/{id}', [MateriVHsController::class, 'downloadfile']);
 
+            //leaderboard
             Route::get('leaderboard/exam_result', 'LeaderboardController@exam_result');
             Route::resource('leaderboard', 'LeaderboardController');
+            Route::post('leaderboard/detail','LeaderboardController@detail');
+
             Route::resource('event', 'EventController');
             Route::resource('test', 'TestController');
             Route::resource('vhs', 'VhsController');

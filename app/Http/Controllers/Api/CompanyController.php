@@ -180,7 +180,7 @@ class CompanyController extends Controller
             return response()->json(
                 [
                     'data'      => $data,
-                    'message'   => "saved successfully",
+                    'message'   => "get data successfully",
                 ]
             );
         } catch (\Throwable $th) {
@@ -233,7 +233,7 @@ class CompanyController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message'   => $th->getMessage(),
-            ]);
+            ],500);
         }
     }
 
@@ -245,6 +245,25 @@ class CompanyController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $data = Company::findOrFail($id);
+            if ($data) {
+                Company::destroy($id);
+
+                return response()->json([
+                    'message' => 'Success destroy data'
+                ]);
+            } else {
+                return response()->json(
+                    [
+                        'message' => 'cannot find id'
+                    ],403
+                );
+            }    
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => $th->getMessage(),
+            ],500);
+        }
     }
 }

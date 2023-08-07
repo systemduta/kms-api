@@ -25,7 +25,7 @@ class LampiranController extends Controller
      */
     public function lampdown($id)
     {
-        $sop = DB::table('lampirans')->select('file')->where('id',$id)->first();
+        $sop = DB::table('lampirans')->select('file')->where('id', $id)->first();
         return response()->json(['data' => $sop->file]);
     }
 
@@ -37,14 +37,23 @@ class LampiranController extends Controller
      */
     public function index()
     {
-        $auth       = auth()->user();
-        $lampiran   = Lampiran::with(['company','organization','sop'])
-                    ->when($auth->role!=1, function ($q) use ($auth) {
-                        return $q->where('company_id', $auth->company_id);
-                    })
-                    ->orderBy('id', 'DESC')
-                    ->get();
-        return response()->json(['data' => $lampiran]);
+        $auth       = auth()->user();        
+        $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+
+        // $lampiran   = Lampiran::with(['company', 'organization', 'sop'])
+        //     ->when($auth->role != 1, function ($q) use ($auth) {
+        //         return $q->where('company_id', $auth->company_id);
+        //     })
+        //     ->orderBy('id', 'DESC')
+        //     ->get();
+        // return response()->json(['data' => $lampiran]);
+
+        $query = Lampiran::with(['company','organization','sop'])
+                ->orderBy('id','DESC');
+        if (!$cek) {
+            $query->where('company_id', $auth->company_id);
+        }
+        return response()->json(['data'=>$query->get()]);
     }
 
     /**
@@ -64,7 +73,7 @@ class LampiranController extends Controller
      */
     public function status($id)
     {
-        $data = Lampiran::where('id',$id)->first();
+        $data = Lampiran::where('id', $id)->first();
         // dd($data->title);
 
         $st_sekarang = $data->status;
@@ -73,13 +82,13 @@ class LampiranController extends Controller
             $sop = Lampiran::find($id);
             $sop->status = 2;
             $sop->save();
-        }else{
+        } else {
             $sop = Lampiran::find($id);
             $sop->status = 1;
             $sop->save();
         }
 
-        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+        return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
     /**
@@ -97,13 +106,13 @@ class LampiranController extends Controller
     public function store(Request $request)
     {
         // error_reporting(0);
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name'              => 'required',
             'file'              => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()],400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
         $auth   = auth()->user();
@@ -111,11 +120,11 @@ class LampiranController extends Controller
         /* START FILE UPLOAD */
         $file64 = $request->file;
         $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $replace = substr($file64, 0, strpos($file64, ',') + 1);
         $file = str_replace($replace, '', $file64);
         $file = str_replace(' ', '+', $file);
-        $filename = 'sop_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        $filename = 'sop_' . Str::random(10) . '.' . $ext;
+        Storage::disk('public')->put('files/' . $filename, base64_decode($file));
         /* END FILE UPLOAD */
 
         try {
@@ -124,7 +133,7 @@ class LampiranController extends Controller
                 'company_id'        => $auth->company_id,
                 'name'              => $request->name,
                 'sop_id'            => $request->sop_id,
-                'file'              => 'files/'.$filename,
+                'file'              => 'files/' . $filename,
             ]);
 
             DB::commit();
@@ -151,7 +160,7 @@ class LampiranController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('lampirans')->where('id',$id)->first();
+        $data = DB::table('lampirans')->where('id', $id)->first();
         return response()->json(['success' => $data], $this->successStatus);
     }
 
@@ -184,45 +193,52 @@ class LampiranController extends Controller
         $description = $request->sop_id;
         $image = '';
 
-        /* START FILE UPLOAD */
-        $file64 = $request->file;
-        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
-        $file = str_replace($replace, '', $file64);
-        $file = str_replace(' ', '+', $file);
-        $filename = 'sop_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
-        /* END FILE UPLOAD */
+        $lampiran      = Lampiran::find($id);
+        if ($request->has('file')) {
+            /* START FILE UPLOAD */
+            $file64 = $request->file;
+            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+            $replace = substr($file64, 0, strpos($file64, ',') + 1);
+            $file = str_replace($replace, '', $file64);
+            $file = str_replace(' ', '+', $file);
+            $filename = 'sop_' . Str::random(10) . '.' . $ext;
+            Storage::disk('public')->put('files/' . $filename, base64_decode($file));
+            /* END FILE UPLOAD */
 
-        if($request->filled('image')) {
-            $imgName='';
-            $baseString = explode(';base64,', $request->image);
-            $image = base64_decode($baseString[1]);
-            $image = imagecreatefromstring($image);
-
-            $ext = explode('/', $baseString[0]);
-            $ext = $ext[1];
-            $imgName = 'sop_'.uniqid().'.'.$ext;
-            if($ext=='png'){
-                imagepng($image,public_path().'/files/'.$imgName,8);
-            } else {
-                imagejpeg($image,public_path().'/files/'.$imgName,20);
-            }
+            $lampiran->file         = 'files/' . $filename;
         }
 
-        $lampiran               = Lampiran::find($id);
+
+        // if($request->filled('image')) {
+        //     $imgName='';
+        //     $baseString = explode(';base64,', $request->image);
+        //     $image = base64_decode($baseString[1]);
+        //     $image = imagecreatefromstring($image);
+
+        //     $ext = explode('/', $baseString[0]);
+        //     $ext = $ext[1];
+        //     $imgName = 'sop_'.uniqid().'.'.$ext;
+        //     if($ext=='png'){
+        //         imagepng($image,public_path().'/files/'.$imgName,8);
+        //     } else {
+        //         imagejpeg($image,public_path().'/files/'.$imgName,20);
+        //     }
+        // }
+
         $lampiran->name         = $title;
         $lampiran->sop_id       = $description;
-        $lampiran->image        = $imgName;
-        $lampiran->file         = 'files/'.$filename;
+        // $lampiran->image        = $imgName;
         $lampiran->save();
 
 
         // DB::commit();
-        return response()->json([
-            'success'=>$lampiran,
-            'message'=>'update successfully'],
-        $this->successStatus);
+        return response()->json(
+            [
+                'success' => $lampiran,
+                'message' => 'update successfully'
+            ],
+            $this->successStatus
+        );
     }
 
     /**

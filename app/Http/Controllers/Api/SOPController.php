@@ -29,15 +29,114 @@ class SOPController extends Controller
      * Ini adalah contoh fungsi getall yang tidak menerima parameter di PHP. Fungsi ini terlihat seperti mengambil dan mengembalikan semua data dari tabel atau model Company di database.
      * Fungsi ini pertama kali mengambil objek user yang sedang login dengan menggunakan auth()->user(). Kemudian, fungsi tersebut mengembalikan respons JSON dengan data dari tabel atau model Company yang diurutkan berdasarkan kolom id secara descending (dari yang terbaru). Jika objek user yang sedang login merupakan user dengan role yang bukan 1 (bukan admin), maka query akan dibatasi hanya menampilkan data dari perusahaan yang memiliki id sama dengan $user->company_id. Jika tidak, maka query akan menampilkan semua data.
      */
+    // public function getall()
+    // {
+    //     $user = auth()->user();
+    //     $cek = DB::table('permissions')->where('user_id',$user->id)->where('isSuperAdmin',1)->first();
+
+    //     if ($cek) {
+    //         return response()->json(
+    //             [
+    //                 'data' => Company::whereNotIn(
+    //                     'name',
+    //                     [
+    //                         'MAESA HOLDING',
+    //                         'ANUGERAH UTAMA MOTOR',
+    //                         'BANK ARTHAYA',
+    //                         'CUN MOTOR GROUP',
+    //                         'DUA TANGAN INDONESIA',
+    //                         'ES KRISTAL PMP GROUP',
+    //                         'HENNESY CUISINE',
+    //                         'KOPERASI SDM',
+    //                         'MAESA FOUNDATION',
+    //                         'MAESA HOTEL',
+    //                         'MIXTRA INTI TEKINDO',
+    //                         'PABRIK ES PMP GROUP',
+    //                         'PANDHU DISTRIBUTOR',
+    //                         'PRAMA LOGISTIC',
+    //                         'PT. PUTRA MAESA PERSADA',
+    //                         'Panen Mutiara Pakis',
+    //                         'HENNESSY CUISINE',
+    //                         'WERKST MATERIAL HANDLING',
+    //                         'PT. Prama Madya Parama'
+    //                     ]
+    //                 )
+    //                     ->orderBy('id', 'ASC')
+    //                     ->get()
+    //             ]
+    //         );
+    //     } else {
+    //         return response()->json(
+    //             [
+    //                 'data' => Company::whereNotIn(
+    //                     'name',
+    //                     [
+    //                         'MAESA HOLDING',
+    //                         'ANUGERAH UTAMA MOTOR',
+    //                         'BANK ARTHAYA',
+    //                         'CUN MOTOR GROUP',
+    //                         'DUA TANGAN INDONESIA',
+    //                         'ES KRISTAL PMP GROUP',
+    //                         'HENNESY CUISINE',
+    //                         'KOPERASI SDM',
+    //                         'MAESA FOUNDATION',
+    //                         'MAESA HOTEL',
+    //                         'MIXTRA INTI TEKINDO',
+    //                         'PABRIK ES PMP GROUP',
+    //                         'PANDHU DISTRIBUTOR',
+    //                         'PRAMA LOGISTIC',
+    //                         'PT. PUTRA MAESA PERSADA',
+    //                         'Panen Mutiara Pakis',
+    //                         'HENNESSY CUISINE',
+    //                         'WERKST MATERIAL HANDLING',
+    //                         'PT. Prama Madya Parama'
+    //                     ]
+    //                 )
+    //                     ->where('id', $user->company_id)
+    //                     ->orderBy('id', 'ASC')
+    //                     ->get()
+    //             ]
+    //         );
+    //     }
+    // }
+
     public function getall()
     {
         $user = auth()->user();
-        return response()->json(
-            ['data' => Company::when(($user && $user->role!=1), function ($q) use ($user) {
-                return $q->where('id', $user->company_id);
-                })->orderBy('id','DESC')->get()]
-        );
+        $cek = DB::table('permissions')->where('user_id', $user->id)->where('isSuperAdmin', 1)->first();
+
+        $query = Company::whereNotIn(
+            'name',
+            [
+                'MAESA HOLDING',
+                'ANUGERAH UTAMA MOTOR',
+                'BANK ARTHAYA',
+                'CUN MOTOR GROUP',
+                'DUA TANGAN INDONESIA',
+                'ES KRISTAL PMP GROUP',
+                'HENNESY CUISINE',
+                'KOPERASI SDM',
+                'MAESA FOUNDATION',
+                'MAESA HOTEL',
+                'MIXTRA INTI TEKINDO',
+                'PABRIK ES PMP GROUP',
+                'PANDHU DISTRIBUTOR',
+                'PRAMA LOGISTIC',
+                'PT. PUTRA MAESA PERSADA',
+                'Panen Mutiara Pakis',
+                'HENNESSY CUISINE',
+                'WERKST MATERIAL HANDLING',
+                'PT. Prama Madya Parama'
+            ]
+        )->orderBy('id', 'ASC');
+
+        if (!$cek) {
+            $query->where('id', $user->company_id);
+        }
+
+        return response()->json(['data' => $query->get()]);
     }
+
 
     /**
      * Ini adalah contoh fungsi getOrg yang menerima parameter $id di PHP. Fungsi ini terlihat seperti mengambil dan mengembalikan data perusahaan dan divisi yang terkait dengan $id dari tabel companies dan organizations di database.
@@ -45,15 +144,15 @@ class SOPController extends Controller
      */
     public function getOrg($id)
     {
-        $detailCompany =  Company::where('id',$id)->orderBy('id','ASC')->get();
+        $detailCompany =  Company::where('id', $id)->orderBy('id', 'ASC')->get();
         $listDivision = DB::table('companies')
-            ->join('organizations','organizations.company_id','=','companies.id')
-            ->where('companies.id',$id)
+            ->join('organizations', 'organizations.company_id', '=', 'companies.id')
+            ->where('companies.id', $id)
             ->get();
         return response()->json(
             [
-                'detailcompany' =>$detailCompany,
-                'listorganizations' =>$listDivision,
+                'detailcompany' => $detailCompany,
+                'listorganizations' => $listDivision,
             ]
         );
     }
@@ -63,18 +162,30 @@ class SOPController extends Controller
      * Pada baris pertama, variabel $auth diinisialisasikan dengan objek user yang sedang login saat ini. Kemudian, variabel $data diinisialisasikan dengan data dari tabel Sop yang memiliki relasi dengan tabel company dan organization menggunakan fungsi with.
      * Pada baris ketiga, terdapat sebuah when statement yang memiliki sebuah closure sebagai parameter. Jika role dari user yang sedang login tidak sama dengan 1, maka closure tersebut akan dijalankan dan menambahkan kondisi where pada query untuk mencari data yang memiliki company_id sama dengan company_id dari user yang sedang login.
      * Pada baris keempat, terdapat kondisi where yang mencari data yang memiliki organization_id sama dengan organization_id yang dikirim dalam request. Kemudian, data tersebut diurutkan berdasarkan kolom id dengan urutan DESC (descending) dan di-return sebagai response dalam bentuk JSON.
+     * 
+     * //lama
+     * // $data = Sop::with(['company', 'organization'])
+     * ->when($auth->role != 1, function ($q) use ($auth) {
+     *          return $q->where('company_id', $auth->company_id);
+     *      })
+     *      ->where('organization_id', $request->organization_id)
+     *      ->orderBy('id', 'DESC')
+     *      ->get();
      */
     public function index(Request $request)
     {
         $auth = auth()->user();
-        $data = Sop::with(['company','organization'])
-                ->when($auth->role!=1, function ($q) use ($auth) {
-                    return $q->where('company_id', $auth->company_id);
-                })
-                ->where('organization_id', $request->organization_id)
-                ->orderBy('id', 'DESC')
-                ->get();
-        return response()->json(['data' => $data]);
+        $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+
+        $query = Company::with(['company', 'organization'])
+            ->where('organization_id', $request->organization_id)
+            ->orderBy('id', 'DESC');
+
+        if (!$cek) {
+            $query->where('company_id',$auth->company_id);
+        }
+
+        return response()->json(['data' => $query->get()]);
     }
 
     /**
@@ -83,7 +194,22 @@ class SOPController extends Controller
      */
     public function sop()
     {
-        return response()->json(['data' => Sop::get()]);
+        // $auth       = auth()->user();
+        // return response()->json([
+        //     'data' => Sop::when($auth->role != 1, function ($q) use ($auth) {
+        //         return $q->where('company_id', $auth->company_id);
+        //     })->get()
+        // ]);
+        $auth = auth()->user();
+        $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+
+        $query = Sop::orderBy('id', 'DESC');
+
+        if (!$cek) {
+            $query->where('company_id',$auth->company_id);
+        }
+
+        return response()->json(['data' => $query->get()]);
     }
 
     /**
@@ -93,7 +219,7 @@ class SOPController extends Controller
      */
     public function sopdown($id)
     {
-        $sop = DB::table('sops')->select('file')->where('id',$id)->first();
+        $sop = DB::table('sops')->select('file')->where('id', $id)->first();
         return response()->json(['data' => $sop->file]);
     }
 
@@ -133,8 +259,8 @@ class SOPController extends Controller
             'file'              => 'required',
         ]);
 
-        if($validator->fails()){
-            return response()->json(['error' => $validator->errors()],401);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
         $auth = auth()->user();
@@ -142,11 +268,11 @@ class SOPController extends Controller
         //* START FILE UPLOAD */
         $file64 = $request->file;
         $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $replace = substr($file64, 0, strpos($file64, ',') + 1);
         $file = str_replace($replace, '', $file64);
         $file = str_replace(' ', '+', $file);
-        $filename = 'sop_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        $filename = 'sop_' . Str::random(10) . '.' . $ext;
+        Storage::disk('public')->put('files/' . $filename, base64_decode($file));
         /* END FILE UPLOAD */
 
         try {
@@ -155,24 +281,24 @@ class SOPController extends Controller
                 // ->when($auth->role!=1, function ($q) use ($auth) {
                 //     return $q->where('company_id', $auth->company_id);
                 // })
-                ->when( $organization_id, function ($query) use ($organization_id) {
+                ->when($organization_id, function ($query) use ($organization_id) {
                     return $query->where('organization_id', $organization_id);
                 })
-                ->where('token','!=',"")
+                ->where('token', '!=', "")
                 ->pluck('token')->toArray();
-            if($tokenUser) {
+            if ($tokenUser) {
                 $result = fcm()->to($tokenUser)
-                ->timeToLive(0)
-                ->priority('high')
-                ->notification([
-                    'title' => 'Hai, ada SOP baru nih buat kamu!',
-                    'body' => $request->title,
-                ])
-                ->data([
-                    'title' => 'Hai, ada SOP baru nih buat kamu!',
-                    'body' => $request->title,
-                ])
-                ->send();
+                    ->timeToLive(0)
+                    ->priority('high')
+                    ->notification([
+                        'title' => 'Hai, ada SOP baru nih buat kamu!',
+                        'body' => $request->title,
+                    ])
+                    ->data([
+                        'title' => 'Hai, ada SOP baru nih buat kamu!',
+                        'body' => $request->title,
+                    ])
+                    ->send();
             }
             DB::beginTransaction();
             $sopGetId = DB::table('sops')->insertGetId([
@@ -182,23 +308,23 @@ class SOPController extends Controller
                 'title'             => $request->title,
                 'image'             => '',
                 'description'       => $request->description,
-                'file'              => 'files/'.$filename,
+                'file'              => 'files/' . $filename,
                 // 'file'              => env('APP_URL') . '/' . $url,
             ]);
 
-            if($request->filled('image')) {
-                $imgName='';
+            if ($request->filled('image')) {
+                $imgName = '';
                 $baseString = explode(';base64,', $request->image);
                 $image = base64_decode($baseString[1]);
                 $image = imagecreatefromstring($image);
 
                 $ext = explode('/', $baseString[0]);
                 $ext = $ext[1];
-                $imgName = 'sop_'.uniqid().'.'.$ext;
-                if($ext=='png'){
-                    imagepng($image,public_path().'/files/'.$imgName,8);
+                $imgName = 'sop_' . uniqid() . '.' . $ext;
+                if ($ext == 'png') {
+                    imagepng($image, public_path() . '/files/' . $imgName, 8);
                 } else {
-                    imagejpeg($image,public_path().'/files/'.$imgName,20);
+                    imagejpeg($image, public_path() . '/files/' . $imgName, 20);
                 }
                 DB::table('sops')->where('id', $sopGetId)->update(['image' => $imgName]);
             }
@@ -213,7 +339,6 @@ class SOPController extends Controller
             'data'      => $sopGetId,
             'message'   => 'Data Berhasil disimpan!'
         ], $this->successStatus);
-
     }
 
     /**
@@ -248,7 +373,7 @@ class SOPController extends Controller
      */
     public function status($id)
     {
-        $data = Sop::where('id',$id)->first();
+        $data = Sop::where('id', $id)->first();
         // dd($data->title);
 
         $st_sekarang = $data->status;
@@ -257,13 +382,13 @@ class SOPController extends Controller
             $sop = Sop::find($id);
             $sop->status = 2;
             $sop->save();
-        }else{
+        } else {
             $sop = Sop::find($id);
             $sop->status = 1;
             $sop->save();
         }
 
-        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+        return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
     /**
@@ -293,33 +418,33 @@ class SOPController extends Controller
             /* START FILE UPLOAD */
             $file64 = $request->file;
             $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-            $replace = substr($file64, 0, strpos($file64, ',')+1);
+            $replace = substr($file64, 0, strpos($file64, ',') + 1);
             $file = str_replace($replace, '', $file64);
             $file = str_replace(' ', '+', $file);
-            $filename = 'sop_'.Str::random(10).'.'.$ext;
-            Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+            $filename = 'sop_' . Str::random(10) . '.' . $ext;
+            Storage::disk('public')->put('files/' . $filename, base64_decode($file));
             /* END FILE UPLOAD */
 
-            $updatefile= Sop::findOrFail($id)->update([
-                'file'              => 'files/'.$filename,
+            $updatefile = Sop::findOrFail($id)->update([
+                'file'              => 'files/' . $filename,
             ]);
-        }        
+        }
 
-        if($request->filled('image')) {
-            $imgName='';
+        if ($request->filled('image')) {
+            $imgName = '';
             $baseString = explode(';base64,', $request->image);
             $image = base64_decode($baseString[1]);
             $image = imagecreatefromstring($image);
 
             $ext = explode('/', $baseString[0]);
             $ext = $ext[1];
-            $imgName = 'sop_'.uniqid().'.'.$ext;
-            if($ext=='png'){
-                imagepng($image,public_path().'/files/'.$imgName,8);
+            $imgName = 'sop_' . uniqid() . '.' . $ext;
+            if ($ext == 'png') {
+                imagepng($image, public_path() . '/files/' . $imgName, 8);
             } else {
-                imagejpeg($image,public_path().'/files/'.$imgName,20);
+                imagejpeg($image, public_path() . '/files/' . $imgName, 20);
             }
-            $updateimage= Sop::findOrFail($id)->update([
+            $updateimage = Sop::findOrFail($id)->update([
                 'image'        => $imgName,
             ]);
         }
@@ -333,7 +458,7 @@ class SOPController extends Controller
         // $course->file = 'files/'.$filename;
         // $course->save();
 
-        $course= Sop::findOrFail($id)->update([
+        $course = Sop::findOrFail($id)->update([
             'company_id'        => $request->company_id,
             'organization_id'   => $request->organization_id ?? null,
             'title'             => $request->title,
@@ -343,10 +468,13 @@ class SOPController extends Controller
         ]);
 
         // DB::commit();
-        return response()->json([
-            'success'=>$course,
-            'message'=>'update successfully'],
-        $this->successStatus);
+        return response()->json(
+            [
+                'success' => $course,
+                'message' => 'update successfully'
+            ],
+            $this->successStatus
+        );
     }
 
     /**

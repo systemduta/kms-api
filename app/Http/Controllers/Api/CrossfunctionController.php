@@ -27,7 +27,7 @@ class CrossfunctionController extends Controller
      */
     public function cfdown($id)
     {
-        $sop = DB::table('crossfunctions')->select('file')->where('id',$id)->first();
+        $sop = DB::table('crossfunctions')->select('file')->where('id', $id)->first();
         return response()->json(['data' => $sop->file]);
     }
 
@@ -39,13 +39,25 @@ class CrossfunctionController extends Controller
     public function index()
     {
         $auth       = auth()->user();
-        $lampiran   = Crossfunction::with(['company','organization','sop'])
-                    ->when($auth->role!=1, function ($q) use ($auth) {
-                        return $q->where('company_id', $auth->company_id);
-                    })
-                    ->orderBy('id', 'DESC')
-                    ->get();
-        return response()->json(['data' => $lampiran]);
+        $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+
+        // $lampiran   = Crossfunction::with(['company', 'organization', 'sop'])
+        //     ->when($auth->role != 1, function ($q) use ($auth) {
+        //         return $q->where('company_id', $auth->company_id);
+        //     })
+        //     ->orderBy('id', 'DESC')
+        //     ->get();
+        
+        // return response()->json(['data' => $lampiran]);
+
+        $query = Crossfunction::with(['company', 'organization', 'sop'])
+                ->orderBy('id','DESC');
+        
+        if (!$cek) {
+            $query->where('company_id',$auth->company_id);
+        }
+        return response()->json(['data' => $query->get()]);
+
     }
 
     /**
@@ -65,7 +77,7 @@ class CrossfunctionController extends Controller
      */
     public function status($id)
     {
-        $data = Crossfunction::where('id',$id)->first();
+        $data = Crossfunction::where('id', $id)->first();
         // dd($data->title);
 
         $st_sekarang = $data->status;
@@ -74,13 +86,13 @@ class CrossfunctionController extends Controller
             $sop = Crossfunction::find($id);
             $sop->status = 2;
             $sop->save();
-        }else{
+        } else {
             $sop = Crossfunction::find($id);
             $sop->status = 1;
             $sop->save();
         }
 
-        return response()->json(['message' => 'Data Update Successfully'],$this->successStatus);
+        return response()->json(['message' => 'Data Update Successfully'], $this->successStatus);
     }
 
     /**
@@ -98,13 +110,14 @@ class CrossfunctionController extends Controller
     public function store(Request $request)
     {
         // error_reporting(0);
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name'              => 'required',
+            'sop_id'              => 'required',
             'file'              => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()],400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
         $auth   = auth()->user();
@@ -112,11 +125,11 @@ class CrossfunctionController extends Controller
         /* START FILE UPLOAD */
         $file64 = $request->file;
         $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
+        $replace = substr($file64, 0, strpos($file64, ',') + 1);
         $file = str_replace($replace, '', $file64);
         $file = str_replace(' ', '+', $file);
-        $filename = 'sop_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
+        $filename = 'sop_' . Str::random(10) . '.' . $ext;
+        Storage::disk('public')->put('files/' . $filename, base64_decode($file));
         /* END FILE UPLOAD */
 
         try {
@@ -125,7 +138,7 @@ class CrossfunctionController extends Controller
                 'company_id'        => $auth->company_id,
                 'name'              => $request->name,
                 'sop_id'            => $request->sop_id,
-                'file'              => 'files/'.$filename,
+                'file'              => 'files/' . $filename,
             ]);
 
             DB::commit();
@@ -152,7 +165,7 @@ class CrossfunctionController extends Controller
      */
     public function show($id)
     {
-        $data = DB::table('crossfunctions')->where('id',$id)->first();
+        $data = DB::table('crossfunctions')->where('id', $id)->first();
         return response()->json(['success' => $data], $this->successStatus);
     }
 
@@ -183,30 +196,33 @@ class CrossfunctionController extends Controller
     {
         $title = $request->name;
         $description = $request->sop_id;
-        $image = '';
-
-        /* START FILE UPLOAD */
-        $file64 = $request->file;
-        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',')+1);
-        $file = str_replace($replace, '', $file64);
-        $file = str_replace(' ', '+', $file);
-        $filename = 'Crossfunction_'.Str::random(10).'.'.$ext;
-        Storage::disk('public')->put('files/'.$filename, base64_decode($file));
-        /* END FILE UPLOAD */
 
         $lampiran               = Crossfunction::find($id);
+        if ($request->has('file')) {
+            /* START FILE UPLOAD */
+            $file64 = $request->file;
+            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+            $replace = substr($file64, 0, strpos($file64, ',') + 1);
+            $file = str_replace($replace, '', $file64);
+            $file = str_replace(' ', '+', $file);
+            $filename = 'Crossfunction_' . Str::random(10) . '.' . $ext;
+            Storage::disk('public')->put('files/' . $filename, base64_decode($file));
+
+            $lampiran->file         = 'files/' . $filename;
+            /* END FILE UPLOAD */
+        }
+
         $lampiran->name         = $title;
         $lampiran->sop_id       = $description;
-        $lampiran->file         = 'files/'.$filename;
         $lampiran->save();
 
-
-        // DB::commit();
-        return response()->json([
-            'success'=>$lampiran,
-            'message'=>'update successfully'],
-        $this->successStatus);
+        return response()->json(
+            [
+                'success' => $lampiran,
+                'message' => 'update successfully'
+            ],
+            $this->successStatus
+        );
     }
 
     /**

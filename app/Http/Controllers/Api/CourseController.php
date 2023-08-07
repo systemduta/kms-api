@@ -42,54 +42,40 @@ class CourseController extends Controller
     public function allcourse($id)
     {
         $auth = auth()->user();
+        $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
         try {
             if ($id == 4) {
-                try {
                     $data = DB::table('courses')
-                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
-                        ->when($auth->role!=1, function ($q) use ($auth) {
-                            return $q->where('company_id', $auth->company_id);
-                        })
-                        ->where('type',4)
-                        ->select('courses.*','golongans.name as golongan_name')
-                        ->get();
-                    
-                    return response()->json(['data' => $data],$this->successStatus);
-                } catch (\Exception $e) {
-                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
-                }
+                            ->leftJoin('golongans','golongans.id','courses.golongan_id')
+                            ->where('type',4)
+                            ->select('courses.*','golongans.name as golongan_name');
+                    if (!$cek) {
+                        $data->where('company_id',$auth->company_id);
+                    }
+                    // $data->get();
+                    return response()->json(['data' => $data->get()],$this->successStatus);
             } elseif ($id == 1) {
-                try {
                     $data = DB::table('courses')
-                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
-                        ->when($auth->role!=1, function ($q) use ($auth) {
-                            return $q->where('company_id', $auth->company_id);
-                        })
-                        ->where('type',1)
-                        ->select('courses.*','golongans.name as golongan_name')
-                        ->get();
-                    
-                    return response()->json(['data' => $data],$this->successStatus);
-                } catch (\Exception $e) {
-                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
-                }
+                            ->leftJoin('golongans','golongans.id','courses.golongan_id')
+                            ->where('type',1)
+                            ->select('courses.*','golongans.name as golongan_name');
+                    if (!$cek) {
+                        $data->where('company_id',$auth->company_id);
+                    }
+                    // $data->get();
+                    return response()->json(['data' => $data->get()],$this->successStatus);
             } else {
-                try {
                     $data = DB::table('courses')
-                        ->leftjoin('golongans','golongans.id','courses.golongan_id')
-                        ->when($auth->role!=1, function ($q) use ($auth) {
-                            return $q->where('company_id', $auth->company_id);
-                        })
-                        ->where('type',2)
-                        ->select('courses.*','golongans.name as golongan_name')
-                        ->get();
-                    
-                    return response()->json(['data' => $data],$this->successStatus);
-                } catch (\Exception $e) {
-                    return response()->json(['message' => $e->getMessage()],$this->errorStatus);
-                }
+                            ->leftJoin('golongans','golongans.id','courses.golongan_id')
+                            ->where('type',2)
+                            ->select('courses.*','golongans.name as golongan_name');
+                    if (!$cek) {
+                        $data->where('company_id',$auth->company_id);
+                    }
+                    // $data->get();
+                    return response()->json(['data' => $data->get()],$this->successStatus);
             }
-        } catch (\Throwable $th) {
+        } catch (\Throwable $e) {
             return response()->json(['message' => $e->getMessage()],$this->errorStatus);
         }
     }
@@ -258,7 +244,6 @@ class CourseController extends Controller
             $course->save();
         }
        
-
         if($request->filled('image')) {
             $imgName='';
             $baseString = explode(';base64,', $request->image);
