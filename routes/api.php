@@ -104,6 +104,8 @@ Route::group([
             Route::delete('delete_user/{id}', 'UserController@delete');
             Route::post('logout', 'UserController@logout');
             Route::post('updatepass','UserController@resetPassword');
+            Route::get('totaluser','UserController@getTotalUsersByCompany');
+            Route::get('totaluserorg','UserController@getTotalUsersByOrganization');
             // Route::get('organization/list_by_company', 'OrganizationController@get_organization_by_company');
 
             //division

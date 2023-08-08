@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\Organization;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -15,6 +17,61 @@ class UserController extends Controller
 {
     public $successStatus = 200;
     public $errorStatus = 403;
+
+    public function getTotalUsersByOrganization()
+    {
+        try {
+            $auth = auth()->user(); // Assuming you have authentication set up
+            $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+
+            $organizationWithTotalUsers = Organization::select('organizations.name', \DB::raw('COUNT(users.id) AS total_users'))
+                ->join('users', 'organizations.id', '=', 'users.organization_id')
+                ->join('companies', 'companies.id', '=', 'users.company_id')
+                ->where('users.status', 1)
+                ->groupBy('organizations.id', 'organizations.name');
+            if (!$cek) {
+                $organizationWithTotalUsers->where('companies.id', $auth->company_id);
+            }
+
+            return response()->json([
+                'data'      => $organizationWithTotalUsers->get(),
+                'message'   => 'Successfully retrieved data',
+            ], $this->successStatus);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error',
+                'data' => $e->getMessage(),
+            ], $this->errorStatus);
+        }
+    }
+
+    public function getTotalUsersByCompany()
+    {
+        try {
+            $auth = auth()->user(); // Assuming you have authentication set up
+            $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
+            $excludedCompanyIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+            $companiesWithTotalUsers = Company::select('companies.name', \DB::raw('COUNT(users.id) AS total_users'))
+                ->join('users', 'companies.id', '=', 'users.company_id')
+                ->whereNotIn('companies.id', $excludedCompanyIds)
+                ->where('users.status', 1)
+                ->groupBy('companies.id', 'companies.name');
+            if (!$cek) {
+                $companiesWithTotalUsers->where('companies.id', $auth->company_id);
+            }
+
+            return response()->json([
+                'data'      => $companiesWithTotalUsers->get(),
+                'message'   => 'Successfully retrieved data',
+            ], $this->successStatus);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error',
+                'data' => $e->getMessage(),
+            ], $this->errorStatus);
+        }
+    }
 
     public function resetPassword(Request $request)
     {
