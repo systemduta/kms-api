@@ -177,7 +177,7 @@ class SOPController extends Controller
         $auth = auth()->user();
         $cek = DB::table('permissions')->where('user_id', $auth->id)->where('isSuperAdmin', 1)->first();
 
-        $query = Company::with(['company', 'organization'])
+        $query = Sop::with(['company', 'organization'])
             ->where('organization_id', $request->organization_id)
             ->orderBy('id', 'DESC');
 
