@@ -28,14 +28,21 @@ use Illuminate\Support\Facades\Mail;
 class MobileController extends Controller
 {
     public $successStatus = 200; // variabel ini akan dipanggil saat operasi sukses dilakukan
+
+    
     /**
-
-     * Code di bawah merupakan contoh dari sebuah method yang didefinisikan dalam sebuah class pada bahasa pemrograman PHP. Method ini bernama "firebase_token" dan menerima sebuah parameter bernama $request yang merupakan instance dari class Request.
-
-     * Method ini pertama-tama menggunakan Validator::make() untuk memvalidasi input yang diterima melalui parameter $request. Validator::make() akan memeriksa apakah input yang diterima memiliki tipe data string atau nullable. Jika terdapat input yang tidak memenuhi kriteria tersebut, maka akan dikembalikan response dengan pesan error.
-
-     * Setelah itu, method ini mengambil objek user yang sedang login saat ini dengan menggunakan fungsi auth(). Kemudian, method ini mengupdate token pada tabel "users" dengan menggunakan DB::table() dan fungsi where(). Setelah itu, method ini mengembalikan response dengan pesan berhasil update token firebase.
-
+     * route : 
+     *      Route::post('reset_password','MobileController@reset_password');
+     * 
+     * fungsi :
+     *  fungsi utama digunakan untuk melakukan reset password dengan terlebih dahulu mendapatkan email dari request user. 
+     * 
+     * logika: 
+     * line 52: pertama fungsi ini akan melakukan pengecekan request yang dikirim oleh user apakah ada email dan berbentuk email atau tidak. 
+     * line 55 - 65 : Kemudian akan melakukan pengecekan apakah ada user yang memiliki email yang sama dengan request user; jika ada maka akan memanggil fungsi sendVerificationEmail dengan diikuti parameter $user->id; jika tidak ada user yang memiliki email maka akan return tidak dapat menemukan email;
+     * 
+     * parameter wajib: 
+     *  - email
      */
 
     public function reset_password(Request $request)
@@ -60,6 +67,20 @@ class MobileController extends Controller
         }
     }
 
+    /**
+     * route: -
+     * fungsi: digunakan untuk melakukan pengiriman email ke user,
+     * 
+     * logika: 
+     *  - Pertama: mencari data user berdasarkan id di table 'users' (dengan menggunakan first() => maka data pertama yang ditemukan yang akan diambil)
+     *  - Kedua : akan melakukan update kolom 'verification_link_expiry' yang akan digunakan untuk membatasi waktu akses link selama 30 menit
+     *  - Ketiga : Akan membuat variabel $verificationlink yang isinya adalan route 'verify-email'
+     *  - Keempat : akan melakukan pengiriman email (sudah jelas)
+     * 
+     *  parameter wajib: 
+     *  id
+     */
+
     private function sendVerificationEmail($id)
     {
         $user = DB::table('users')->where('id', $id)->first();
@@ -75,6 +96,15 @@ class MobileController extends Controller
             $message->subject('Verifikasi Email');
         });
     }
+
+    /**
+     * route : Route::get('verify-email/{token}', 'MobileController@verifyEmail')->name('verify-email');
+     * 
+     * fungsi : digunakan untuk reset password user
+     * 
+     * logika : 
+     *  Setelah user menerima link reset maka ketika di klik maka akan menuju function ini, dengan parameter wajib adalah token; Setelah itu maka akan mencocokan data token dengan data yang ada di database (jika token tidak valid maka akan masuk ke view email error); Jika data ditemukan maka kemudian akan membandingkan expiredDate apakah masih dalam tenggat waktu 30 menit (jika tidak maka akan retrun error); kemudian jika kedua step sebelumnya terlewati dengan baik, maka akan mereset user dengan dengan password '12345678' dan return view success;
+     */
 
     public function verifyEmail($token)
     {
@@ -101,6 +131,16 @@ class MobileController extends Controller
 
         return view('emails.success', compact('user'));
     }
+
+    /**
+
+     * Code di bawah merupakan contoh dari sebuah method yang didefinisikan dalam sebuah class pada bahasa pemrograman PHP. Method ini bernama "firebase_token" dan menerima sebuah parameter bernama $request yang merupakan instance dari class Request.
+
+     * Method ini pertama-tama menggunakan Validator::make() untuk memvalidasi input yang diterima melalui parameter $request. Validator::make() akan memeriksa apakah input yang diterima memiliki tipe data string atau nullable. Jika terdapat input yang tidak memenuhi kriteria tersebut, maka akan dikembalikan response dengan pesan error.
+
+     * Setelah itu, method ini mengambil objek user yang sedang login saat ini dengan menggunakan fungsi auth(). Kemudian, method ini mengupdate token pada tabel "users" dengan menggunakan DB::table() dan fungsi where(). Setelah itu, method ini mengembalikan response dengan pesan berhasil update token firebase.
+
+     */
 
     public function firebase_token(Request $request)
     {
