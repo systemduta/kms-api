@@ -56,6 +56,28 @@
             width: 100%;
             height: 100%;
         }
+
+        /* Regular link style */
+        .link-with-hover {
+            background-color: transparent;
+            /* Set the initial background color */
+            transition: background-color 0.3s;
+            border: 2px solid transparent;
+            /* Add a transparent border */
+            border-radius: 10px;
+            /* Add border radius to round the corners */
+            display: inline-block;
+            /* Make sure the border works correctly */
+            padding: 10px;
+            /* Add some padding to the link */
+            /* Add a smooth transition effect */
+        }
+
+        /* Change background color on hover */
+        .link-with-hover:hover {
+            background-color: #c1e5f7;
+            /* Change to the color you want on hover */
+        }
     </style>
 </head>
 {{-- https://play.google.com/store/apps/details?id=com.fauzighozali.mgamobile&hl=en --}}
@@ -65,7 +87,8 @@
         <h1>Maesa Grow</h1><br>
         <center>
             <h2>v2 - 08/08/2023</h2><br>
-            <div>
+            <h2>new-calculation-Pas - 23/08/2023</h2><br>
+            <div class="link-with-hover">
                 <a href="https://play.google.com/store/apps/details?id=com.fauzighozali.mgamobile&hl=en"
                     target="_blank">
                     <img src="https://www.cdnlogo.com/logos/g/24/googleplay.svg" width="200" height="200">
