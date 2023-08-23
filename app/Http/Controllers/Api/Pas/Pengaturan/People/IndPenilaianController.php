@@ -91,23 +91,29 @@ class IndPenilaianController extends Controller
                 'id_3p' => 'required',
                 'kpi_id' => 'required',
                 'nilai' => 'required',
-                'grade' => 'required',
+                // 'grade' => 'required',
                 'desc' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
+            $cekmax = DB::table('pas_kpis')->where('id',$request->kpi_id)->first();
+            if ($request->nilai > $cekmax->max_nilai) {
+                return response()->json([
+                    'message' => 'Nilai tidak boleh lebih besar dari MAX NILAI kpi'
+                ], 403);
+            }
             $cek = DB::table('pas_ind_penilaians')
                 ->where('3p_id', $request->id_3p)
                 ->where('kpi_id', $request->kpi_id)
                 ->where('nilai', $request->nilai)
-                ->where('grade', $request->grade)
+                // ->where('grade', $request->grade)
                 ->count();
             if ($cek) {
                 return response()->json(
                     [
-                        'message' => 'Data Sama',
+                        'message' => 'Data Nilai Sama',
                     ],
                     403
                 );
@@ -116,7 +122,7 @@ class IndPenilaianController extends Controller
                     '3p_id' => $request->id_3p,
                     'kpi_id' => $request->kpi_id,
                     'nilai' => $request->nilai,
-                    'grade' => $request->grade,
+                    // 'grade' => $request->grade,
                     'desc' => $request->desc,
                 ]);
 
@@ -192,19 +198,39 @@ class IndPenilaianController extends Controller
                 'id_3p' => 'required',
                 'kpi_id' => 'required',
                 'nilai' => 'required',
-                'grade' => 'required',
+                // 'grade' => 'required',
                 'desc' => 'required',
             ]);
 
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
+            $cekmax = DB::table('pas_kpis')->where('id',$request->kpi_id)->first();
+            if ($request->nilai > $cekmax->max_nilai) {
+                return response()->json([
+                    'message' => 'Nilai tidak boleh lebih besar dari MAX NILAI kpi'
+                ], 403);
+            }
+            // $cek = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id_3p)
+            //     ->where('kpi_id', $request->kpi_id)
+            //     ->where('nilai', $request->nilai)
+            //     // ->where('grade', $request->grade)
+            //     ->count();
+            // if ($cek) {
+            //     return response()->json(
+            //         [
+            //             'message' => 'Data Nilai Sama',
+            //         ],
+            //         403
+            //     );
+            // }
 
             $InsertGetId = DB::table('pas_ind_penilaians')->where('id', $request->id)->update([
                 '3p_id' => $request->id_3p,
                 'kpi_id' => $request->kpi_id,
                 'nilai' => $request->nilai,
-                'grade' => $request->grade,
+                // 'grade' => $request->grade,
                 'desc' => $request->desc,
             ]);
 

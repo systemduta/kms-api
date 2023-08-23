@@ -45,7 +45,8 @@ Route::group([
     //mengatur login user dari mobile
     Route::post('login_mobile', 'MobileController@login_mobile');
 
-    //prefix digunakan untuk menambah "/web" di url api (untuk memisahkan antara web dan mobile)
+    //prefix digunakan untuk menambah "/web" di url api (untuk memisahkan antara web dan mobile). group dibawah digunakan untuk website
+    
     Route::group([
         'prefix' => 'web'
     ], function () {
@@ -327,13 +328,14 @@ Route::group([
         });
     });
 
+    //group dibawah digunakan untuk  mobile app
     Route::group([
         'prefix' => 'mobile'
     ], function () {
-        Route::resource('books', 'BookController');
-        Route::get('splash_screen', 'SplashScreenController@index');
+        Route::resource('books', 'BookController'); //tidak digunakan
+        Route::get('splash_screen', 'SplashScreenController@index'); //ini tidak digunakan
         
-        Route::post('reset_password','MobileController@reset_password');
+        Route::post('reset_password','MobileController@reset_password'); 
         Route::get('verify-email/{token}', 'MobileController@verifyEmail')->name('verify-email');
 
         Route::group(['middleware' => 'auth:api'], function () {
@@ -360,16 +362,13 @@ Route::group([
             Route::get('course_detail/{id}', 'MobileController@course_detail');
             Route::post('accept_course', 'MobileController@accept_course');
             Route::post('submit_question', 'MobileController@submit_question');
-            Route::post('submit_answer', 'MobileController@submit_answer');
-            Route::post('change_password', 'MobileController@change_password');
+            Route::post('submit_answer', 'MobileController@submit_answer'); 
+            Route::post('change_password', 'MobileController@change_password'); //untuk rubah password setelah login
 
+            Route::get('vhs', 'MobileController@list_vhs'); //tidak digunakan
+            Route::get('vhs_dashboard', 'VhsController@index'); //tidak digunakan
 
-            Route::get('vhs', 'MobileController@list_vhs');
-            Route::get('vhs_dashboard', 'VhsController@index');
-
-
-
-            //all
+            //all 1vhs
             Route::post('getvhs', 'MobileController@getVhs');
             Route::post('confirmpickip', 'MobileController@confirmPickUp');
             Route::post('getvhsmateri', 'MobileController@getMateri');
@@ -379,8 +378,7 @@ Route::group([
             Route::post('setanswervhs', 'MobileController@setAnswerVhs');
             Route::post('getotheranswers', 'MobileController@getOtherAnswers');
             Route::post('getvhspending', 'MobileController@getVhsPending');
-
-
+            Route::get('sertifall', 'MobileController@getSerti');
 
             //vhs_class
             // Route::post('getvhsclass','MobileController@getVhsClass');
@@ -401,7 +399,6 @@ Route::group([
 
             //serti vhs
             // Route::get('course_detail/{id}','MobileController@course_detail');
-            Route::get('sertifall', 'MobileController@getSerti');
         });
     });
 });

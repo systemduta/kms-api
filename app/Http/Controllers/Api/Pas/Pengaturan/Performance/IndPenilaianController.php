@@ -94,6 +94,31 @@ class IndPenilaianController extends Controller
                 return response()->json(['error' => $validator->errors()], 401);
             }
 
+            $cekmax = DB::table('pas_kpis')->where('id', $request->idKpi)->first();
+            if ($request->nilai > $cekmax->max_nilai) {
+                return response()->json([
+                    'message' => 'Nilai tidak boleh lebih besar dari MAX NILAI kpi'
+                ], 403);
+            }
+
+            $cek = DB::table('pas_ind_penilaians')
+                ->where('3p_id', $request->id3p)
+                ->where('kpi_id', $request->idKpi)
+                ->where('company_id', $request->idCompany)
+                ->where('division_id', $request->idDivisi)
+                ->where('nilai', $request->nilai)
+                // ->where('grade', $request->grade)
+                ->count();
+
+            if ($cek) {
+                return response()->json(
+                    [
+                        'message' => 'Data Nilai Sama',
+                    ],
+                    403
+                );
+            }
+
             $InsertGetId = DB::table('pas_ind_penilaians')->insertGetId([
                 '3p_id' => $request->id3p,
                 'kpi_id' => $request->idKpi,
@@ -182,6 +207,33 @@ class IndPenilaianController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
+
+            $cekmax = DB::table('pas_kpis')->where('id', $request->idKpi)->first();
+            if ($request->nilai > $cekmax->max_nilai) {
+                return response()->json([
+                    'message' => 'Nilai tidak boleh lebih besar dari MAX NILAI kpi'
+                ], 403);
+            }
+
+            // $cek = DB::table('pas_ind_penilaians')
+            //     ->where('3p_id', $request->id3p)
+            //     ->where('kpi_id', $request->idKpi)
+            //     ->where('company_id', $request->idCompany)
+            //     ->where('division_id', $request->idDivisi)
+            //     ->where('nilai', $request->nilai)
+            //     ->where(function ($query) use ($request) {
+            //         $query->where('desc', '!=', $request->desc)->orWhereNull('desc');
+            //     })
+            //     ->count();
+
+            // if ($cek) {
+            //     return response()->json(
+            //         [
+            //             'message' => 'Data Nilai Sama',
+            //         ],
+            //         403
+            //     );
+            // }
 
             $InsertGetId = DB::table('pas_ind_penilaians')->where('id', $request->id)->update([
                 '3p_id' => $request->id3p,

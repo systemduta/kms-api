@@ -29,41 +29,50 @@ class PeopleController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()], 401);
             }
-            $nilaiA = DB::table('pas_ind_penilaians')
+            $nilai  = DB::table('pas_ind_penilaians')
                     ->where('3p_id',$request->id3p)
                     ->where('kpi_id',$request->kpi_id)
-                    ->where(function ($query) {
-                        $query->where('grade', 'a')
-                            ->orWhere('grade', 'A');
-                    })
                     ->orderBy('nilai','desc')
                     ->get();
-            $nilaiB = DB::table('pas_ind_penilaians')
-                    ->where('3p_id',$request->id3p)
-                    ->where('kpi_id',$request->kpi_id)
-                    ->where(function ($query) {
-                        $query->where('grade', 'b')
-                            ->orWhere('grade', 'B');
-                    })
-                    ->orderBy('nilai','desc')
-                    ->get();
-            $nilaiC = DB::table('pas_ind_penilaians')
-                    ->where('3p_id',$request->id3p)
-                    ->where('kpi_id',$request->kpi_id)
-                    ->where(function ($query) {
-                        $query->where('grade', 'c')
-                            ->orWhere('grade', 'C');
-                    })
-                    ->orderBy('nilai','desc')
-                    ->get();
-            return response()->json(
-                [
-                    'nilaiA' => $nilaiA,
-                    'nilaiB' => $nilaiB,
-                    'nilaiC' => $nilaiC,
-                    'message' => 'success',
-                ]
-            );
+            return response()->json([
+                'message' => 'success',
+                'nilai' => $nilai,
+            ]);
+            // $nilaiA = DB::table('pas_ind_penilaians')
+            //         ->where('3p_id',$request->id3p)
+            //         ->where('kpi_id',$request->kpi_id)
+            //         ->where(function ($query) {
+            //             $query->where('grade', 'a')
+            //                 ->orWhere('grade', 'A');
+            //         })
+            //         ->orderBy('nilai','desc')
+            //         ->get();
+            // $nilaiB = DB::table('pas_ind_penilaians')
+            //         ->where('3p_id',$request->id3p)
+            //         ->where('kpi_id',$request->kpi_id)
+            //         ->where(function ($query) {
+            //             $query->where('grade', 'b')
+            //                 ->orWhere('grade', 'B');
+            //         })
+            //         ->orderBy('nilai','desc')
+            //         ->get();
+            // $nilaiC = DB::table('pas_ind_penilaians')
+            //         ->where('3p_id',$request->id3p)
+            //         ->where('kpi_id',$request->kpi_id)
+            //         ->where(function ($query) {
+            //             $query->where('grade', 'c')
+            //                 ->orWhere('grade', 'C');
+            //         })
+            //         ->orderBy('nilai','desc')
+            //         ->get();
+            // return response()->json(
+            //     [
+            //         'nilaiA' => $nilaiA,
+            //         'nilaiB' => $nilaiB,
+            //         'nilaiC' => $nilaiC,
+            //         'message' => 'success',
+            //     ]
+            // );
         } catch (\Exception $e) {
             return response()->json(
                 [
