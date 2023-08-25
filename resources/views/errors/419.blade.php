@@ -1,9 +1,15 @@
+{{-- @extends('errors::minimal')
+
+@section('title', __('Page Expired'))
+@section('code', '419')
+@section('message', __('Page Expired')) --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>503 - Internal Error</title>
+    <title>419 - Page Expired</title>
     <style>
         /**/
         :root {
@@ -247,9 +253,9 @@
 </head>
 
 <body class="loading">
-    <h1>404</h1>
-    <h2>Page Not Found <b>:(</b></h2>
-    <h2>Check your address or Contact Administrator </h2>
+    <h1>419</h1>
+    <h2>Page Expired <b>:(</b></h2>
+    <h2>Sorry, your session has expired. Please refresh and try again.</h2>
     <div class="gears">
         <div class="gear one">
             <div class="bar"></div>

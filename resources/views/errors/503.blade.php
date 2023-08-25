@@ -1,3 +1,9 @@
+{{-- @extends('errors::illustrated-layout')
+
+@section('title', __('Server Under Maintenance'))
+@section('code', '503')
+@section('message', __('Don`t worry. We`re working hard behind the scenes to get it running')) --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -247,9 +253,9 @@
 </head>
 
 <body class="loading">
-    <h1>404</h1>
-    <h2>Page Not Found <b>:(</b></h2>
-    <h2>Check your address or Contact Administrator </h2>
+    <h1>503</h1>
+    <h2>Server Under Maintenance <b>:(</b></h2>
+    <h2>Don't worry. We're working hard behind the scenes to get it running</h2>
     <div class="gears">
         <div class="gear one">
             <div class="bar"></div>

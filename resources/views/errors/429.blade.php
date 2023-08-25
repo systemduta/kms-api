@@ -1,9 +1,15 @@
+{{-- @extends('errors::minimal')
+
+@section('title', __('Too Many Requests'))
+@section('code', '429')
+@section('message', __('Too Many Requests')) --}}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>503 - Internal Error</title>
+    <title>429 - Too Many Requests</title>
     <style>
         /**/
         :root {
@@ -247,9 +253,8 @@
 </head>
 
 <body class="loading">
-    <h1>404</h1>
-    <h2>Page Not Found <b>:(</b></h2>
-    <h2>Check your address or Contact Administrator </h2>
+    <h1>429</h1>
+    <h2>Too Many Request Error <b>:(</b></h2>
     <div class="gears">
         <div class="gear one">
             <div class="bar"></div>
