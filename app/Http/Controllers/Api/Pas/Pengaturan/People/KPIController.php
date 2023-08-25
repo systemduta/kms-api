@@ -23,18 +23,23 @@ class KPIController extends Controller
     public function index_per_dimensi($id)
     {
         try {
-            $userData = auth()->user();
+            $userData = auth()->user();            
+            $cek = DB::table('permissions')->where('user_id', $userData->id)->where('isSuperAdmin', 1)->first();
             $datas = DB::table('pas_kpis')
                 ->join('pas_3p', 'pas_kpis.3p_id', '=', 'pas_3p.id')
                 ->join('pas_dimensis', 'pas_kpis.dimensi_id', '=', 'pas_dimensis.id')
                 ->leftjoin('companies', 'pas_kpis.company_id', '=', 'companies.id')
                 ->leftjoin('organizations', 'pas_kpis.division_id', '=', 'organizations.id')
-                ->when($userData->role!=1, function ($q) use ($userData) {
-                    return $q->where('pas_kpis.company_id', $userData->company_id);
-                })
+                // ->when($userData->role!=1, function ($q) use ($userData) {
+                //     return $q->where('pas_kpis.company_id', $userData->company_id);
+                // })
                 ->where('pas_kpis.dimensi_id', $id)
-                ->select('pas_kpis.id', 'pas_3p.name as name_3p', 'pas_dimensis.name as name_dimensi', 'companies.name as name_company','organizations.name as name_organization','pas_kpis.name','pas_kpis.max_nilai', 'pas_kpis.created_at', 'pas_kpis.updated_at')
-                ->get();
+                ->select('pas_kpis.id', 'pas_3p.name as name_3p', 'pas_dimensis.name as name_dimensi', 'companies.name as name_company','organizations.name as name_organization','pas_kpis.name','pas_kpis.max_nilai', 'pas_kpis.created_at', 'pas_kpis.updated_at');
+
+            if (!$cek) {
+                $datas->where('pas_kpis.company_id', $userData->company_id);
+            }
+            $datas = $datas->get();
             return response()->json(
                 [
                     'data' => $datas,

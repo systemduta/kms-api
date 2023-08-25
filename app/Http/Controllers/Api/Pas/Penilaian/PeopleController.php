@@ -134,26 +134,30 @@ class PeopleController extends Controller
 
             try {
                 DB::beginTransaction();
-
-                $bulan = Carbon::parse($absen['date'])->format('m');
-                $tahun = Carbon::parse($absen['date'])->format('Y');
+                $carbonDate = Carbon::createFromFormat('Y-m',$absen['date']);
+                // $bulan = Carbon::parse($absen['date'])->format('m');
+                $bulan = $carbonDate->format('m');
+                // $tahun = Carbon::parse($absen['date'])->format('Y');
+                $tahun = $carbonDate->format('Y');
                 $cekData = DB::table('pas_penilaian_absens')
                     ->where('user_id', $absen['user_id'])
                     ->where('dimensi_id', $absen['dimensi_id'])
                     ->whereMonth('date', $bulan)
                     ->whereYear('date', $tahun)
                     ->first();
-
                 if ($cekData) {
                     DB::rollBack();
                     return response()->json([
                         'message' => "User sudah dinilai pada bulan yang dipilih",
                     ], 422);
                 } else {
+                    $carbonDate->day=1;
+                    $date = $carbonDate->format('Y-m-d');
                     $InsertGetId = DB::table('pas_penilaian_absens')->insertGetId([
                         'user_id' => $absen['user_id'],
                         'dimensi_id' => $absen['dimensi_id'],
-                        'date' => $absen['date'],
+                        // 'date' => $absen['date'],
+                        'date' => $date,
                         'nilai' => $absen['nilaiAkhir'],
                         'max_nilai' => $absen['max_nilai'],
                     ]);
@@ -180,7 +184,8 @@ class PeopleController extends Controller
                         $InsertToFinalRecord = DB::table('pas_final_record_3ps')->insertGetId([
                             'user_id' => $final_record['user_id'],
                             'id_3p' => $final_record['id_3p'],
-                            'date' => $final_record['date'],
+                            // 'date' => $final_record['date'],
+                            'date' => $date,
                             'nilai' => $final_record['nilai'],
                         ]);
 
@@ -198,7 +203,8 @@ class PeopleController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -212,7 +218,8 @@ class PeopleController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -226,7 +233,8 @@ class PeopleController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -240,7 +248,8 @@ class PeopleController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];

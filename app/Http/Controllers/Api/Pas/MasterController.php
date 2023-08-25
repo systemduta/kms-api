@@ -19,7 +19,8 @@ class MasterController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getKpi(Request $request){
+    public function getKpi(Request $request)
+    {
         try {
             $validator = Validator::make($request->all(), [
                 'nameDimensi' => 'required',
@@ -27,7 +28,7 @@ class MasterController extends Controller
                 'idCompany' => 'required',
                 'idDivisi' => 'required',
             ]);
-    
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => $validator->errors(),
@@ -35,31 +36,31 @@ class MasterController extends Controller
                 ], 401);
             }
             $getIdDimensi = DB::table('pas_dimensis')
-                        ->where('name',$request->nameDimensi)
-                        ->first();
-            if ($request->id3p==1) {
+                ->where('name', $request->nameDimensi)
+                ->first();
+            if ($request->id3p == 1) {
                 $getKpi = DB::table('pas_kpis')
-                        ->where('3p_id',$request->id3p)
-                        ->where('dimensi_id',$getIdDimensi->id)
-                        ->get();
-            }else{
+                    ->where('3p_id', $request->id3p)
+                    ->where('dimensi_id', $getIdDimensi->id)
+                    ->get();
+            } else {
                 $getKpi = DB::table('pas_kpis')
-                ->where('3p_id',$request->id3p)
-                ->where('dimensi_id',$getIdDimensi->id)
-                ->where('company_id',$request->idCompany)
-                ->where('division_id',$request->idDivisi)
-                ->get();
+                    ->where('3p_id', $request->id3p)
+                    ->where('dimensi_id', $getIdDimensi->id)
+                    ->where('company_id', $request->idCompany)
+                    ->where('division_id', $request->idDivisi)
+                    ->get();
             }
-            
+
             return response()->json([
-                'datas'=>$getKpi,
-                'message'=>'sukses',
-            ],200);
+                'datas' => $getKpi,
+                'message' => 'sukses',
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
                 'statusCode' => 403,
-            ],403);
+            ], 403);
         }
     }
     public function finalsave(Request $request)
@@ -76,9 +77,13 @@ class MasterController extends Controller
                 'statusCode' => 401
             ], 401);
         }
-
-        $bulan = Carbon::parse($request->date)->format('m');
-        $tahun = Carbon::parse($request->date)->format('Y');
+        $carbonDate = Carbon::createFromFormat('Y-m', $request->date);
+        // $bulan = Carbon::parse($absen['date'])->format('m');
+        $bulan = $carbonDate->format('m');
+        // $tahun = Carbon::parse($absen['date'])->format('Y');
+        $tahun = $carbonDate->format('Y');
+        // $bulan = Carbon::parse($request->date)->format('m');
+        // $tahun = Carbon::parse($request->date)->format('Y');
 
         $cekData = DB::table('pas_final_skors')
             ->where('user_id', $request->user_id)
@@ -94,9 +99,12 @@ class MasterController extends Controller
 
         try {
             DB::beginTransaction();
+            $carbonDate->day = 1;
+            $date = $carbonDate->format('Y-m-d');
 
             $saveGetId = DB::table('pas_final_skors')->insertGetId([
-                'date' => $request->date,
+                // 'date' => $request->date,
+                'date' => $date,
                 'user_id' => $request->user_id,
                 'nilai' => $request->nilai,
             ]);

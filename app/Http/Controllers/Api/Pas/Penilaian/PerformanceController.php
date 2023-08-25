@@ -27,10 +27,10 @@ class PerformanceController extends Controller
             $p3 = DB::table('pas_3p')->where('id', $request->id3p)->first();
             $dimensi = DB::table('pas_dimensis')->where('3p_id', $request->id3p)->get();
             $kpi     = DB::table('pas_kpis')
-                    ->where('3p_id', $request->id3p)
-                    ->where('company_id', $request->idCompany)
-                    ->where('division_id', $request->idDivisi)
-                    ->get();
+                ->where('3p_id', $request->id3p)
+                ->where('company_id', $request->idCompany)
+                ->where('division_id', $request->idDivisi)
+                ->get();
 
             return response()->json(
                 [
@@ -70,9 +70,11 @@ class PerformanceController extends Controller
 
             try {
                 DB::beginTransaction();
-
-                $bulan = Carbon::parse($final_record['date'])->format('m');
-                $tahun = Carbon::parse($final_record['date'])->format('Y');
+                $carbonDate = Carbon::createFromFormat('Y-m', $final_record['date']);
+                // $bulan = Carbon::parse($absen['date'])->format('m');
+                $bulan = $carbonDate->format('m');
+                // $tahun = Carbon::parse($absen['date'])->format('Y');
+                $tahun = $carbonDate->format('Y');
 
                 $cekData = DB::table('pas_final_record_3ps')
                     ->where('user_id', $final_record['user_id'])
@@ -87,6 +89,8 @@ class PerformanceController extends Controller
                         'message' => "User sudah dinilai pada bulan yang dipilih",
                     ], 422);
                 } else {
+                    $carbonDate->day = 1;
+                    $date = $carbonDate->format('Y-m-d');
                     if (count($finance) > 0) {
                         $insertFinance = [];
                         foreach ($finance as $item) {
@@ -94,7 +98,8 @@ class PerformanceController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -108,7 +113,8 @@ class PerformanceController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -122,7 +128,8 @@ class PerformanceController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -136,7 +143,8 @@ class PerformanceController extends Controller
                                 'user_id' => $item['user_id'],
                                 'dimensi_id' => $item['dimensi_id'],
                                 'kpi_id' => $item['kpi_id'],
-                                'date' => $item['date'],
+                                // 'date' => $item['date'],
+                                'date' => $date,
                                 'nilai' => $item['value'],
                                 'max_nilai' => $item['max_nilai'],
                             ];
@@ -147,7 +155,8 @@ class PerformanceController extends Controller
                     $InsertToFinalRecord = DB::table('pas_final_record_3ps')->insertGetId([
                         'user_id' => $final_record['user_id'],
                         'id_3p' => $final_record['id_3p'],
-                        'date' => $final_record['date'],
+                        // 'date' => $final_record['date'],
+                        'date' => $date,
                         'nilai' => $final_record['nilai'],
                     ]);
 
@@ -168,7 +177,7 @@ class PerformanceController extends Controller
             } catch (\Exception $e) {
                 DB::rollBack();
                 return response()->json([
-                    'message' => 'Gagal masuk ke database [code: BR1-500]',
+                    'message' => 'Gagal masuk ke database [code: BR1-500] '+ $e->getMessage(),
                     'statusCode' => 500,
                 ], 500);
             }
