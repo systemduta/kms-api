@@ -47,17 +47,16 @@ class CrossfunctionController extends Controller
         //     })
         //     ->orderBy('id', 'DESC')
         //     ->get();
-        
+
         // return response()->json(['data' => $lampiran]);
 
         $query = Crossfunction::with(['company', 'organization', 'sop'])
-                ->orderBy('id','DESC');
-        
+            ->orderBy('id', 'DESC');
+
         if (!$cek) {
-            $query->where('company_id',$auth->company_id);
+            $query->where('company_id', $auth->company_id);
         }
         return response()->json(['data' => $query->get()]);
-
     }
 
     /**
@@ -142,6 +141,11 @@ class CrossfunctionController extends Controller
             ]);
 
             DB::commit();
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Menambahkan crossfunction'
+            ]);
         } catch (\Exception $exception) {
             DB::rollBack();
             throw new HttpException(500, $exception->getMessage(), $exception);
@@ -216,6 +220,12 @@ class CrossfunctionController extends Controller
         $lampiran->sop_id       = $description;
         $lampiran->save();
 
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Melakukan Update Crossfunction'
+        ]);
+
         return response()->json(
             [
                 'success' => $lampiran,
@@ -238,6 +248,11 @@ class CrossfunctionController extends Controller
     public function destroy($id)
     {
         Crossfunction::destroy($id);
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Menghapus Crossfunction'
+        ]);
         return response()->json([
             'message' => 'Data Berhasil di Hapus'
         ]);

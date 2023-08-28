@@ -60,7 +60,7 @@ class VhsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
         /* PREPARE VIDEO UPLOAD */
@@ -70,7 +70,7 @@ class VhsController extends Controller
         if ($request->hasFile('video')) {
             $video = $request->video;
             $video_path = 'files/vhs/video/';
-            $video_name = Str::random(20).'.'.$video->getClientOriginalExtension();
+            $video_name = Str::random(20) . '.' . $video->getClientOriginalExtension();
         }
         /* END PREPARE VIDEO UPLOAD */
 
@@ -86,18 +86,24 @@ class VhsController extends Controller
         $vhs->description = $request->description;
         $vhs->type = $request->type;
         $vhs->thumbnail = $thumbnail_name;
-        $vhs->video = $video_path.$video_name;
+        $vhs->video = $video_path . $video_name;
         $vhs->save();
 
         /* START VIDEO UPLOAD */
         if ($request->hasFile('video')) {
             try {
-                Storage::disk('public')->put($video_path.$video_name, file_get_contents($video));
-            } catch (Exception $e){
-                return response()->json(['error'=>$e->getMessage()], 401);
+                Storage::disk('public')->put($video_path . $video_name, file_get_contents($video));
+            } catch (Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 401);
             }
         }
         /* END VIDEO UPLOAD */
+
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Menambahkan data VHS'
+        ]);
 
         return response()->json(['data' => $vhs, 'message' => 'Data berhasil disimpan!'], 200);
     }
@@ -149,10 +155,16 @@ class VhsController extends Controller
     public function destroy($id)
     {
         $vhs = Vhs::find($id);
-        $video_path = public_path().'/files/'.$vhs->video;
-        $thumbnail_path = public_path().'/files/'.$vhs->thumbnail;
+        $video_path = public_path() . '/files/' . $vhs->video;
+        $thumbnail_path = public_path() . '/files/' . $vhs->thumbnail;
         $res = File::delete($video_path, $thumbnail_path);
         $vhs->delete();
+
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Menghapus data Vhs'
+        ]);
         return response()->json(['message' => 'delete successfully']);
     }
 }

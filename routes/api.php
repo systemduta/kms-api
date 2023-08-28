@@ -68,6 +68,11 @@ Route::group([
         /**middleware digunakan untuk pembatas. yang berarti hanya admin yang sudah login yang dapat masuk ke route ini 
          **/
         Route::group(['middleware' => 'auth:api'], function () {
+
+            //activity
+            Route::resource('activ','ActivController');
+            // Route::post('activ_store','ActivController@store');
+
             // Route::resource('setadmin','SetAdminController');
 
             //btach email

@@ -26,7 +26,7 @@ class CompanyController extends Controller
      *      untuk memperoleh data perusahaan yang ada saat ini. fungsi whereNotIn digunakan untuk pengecualian nama perusahaan agar tidak tampil di dalam response nantinya.
      */
     public function index()
-    { 
+    {
         $user = auth()->user();
         // dd($user);
         // $company = Company::query()
@@ -35,9 +35,8 @@ class CompanyController extends Controller
         //     })->get();
         // return response()->json(['data' => 'masuk'],403);
         return response()->json(
-            ['data' => Company::
-            whereNotIn('name',[
-                'MAESA HOLDING', 
+            ['data' => Company::whereNotIn('name', [
+                'MAESA HOLDING',
                 'ANUGERAH UTAMA MOTOR',
                 'BANK ARTHAYA',
                 'CUN MOTOR GROUP',
@@ -56,8 +55,8 @@ class CompanyController extends Controller
                 'HENNESSY CUISINE',
                 'WERKST MATERIAL HANDLING',
                 'PT. Prama Madya Parama'
-                ])
-                ->orderBy('id','ASC')->get()]
+            ])
+                ->orderBy('id', 'ASC')->get()]
         );
 
         // return response()->json(
@@ -67,8 +66,8 @@ class CompanyController extends Controller
 
     public function getCompany($id)
     {
-        $detailCompany =  Company::whereNotIn('name',[
-            'MAESA HOLDING', 
+        $detailCompany =  Company::whereNotIn('name', [
+            'MAESA HOLDING',
             'ANUGERAH UTAMA MOTOR',
             'BANK ARTHAYA',
             'CUN MOTOR GROUP',
@@ -87,15 +86,15 @@ class CompanyController extends Controller
             'HENNESSY CUISINE',
             'WERKST MATERIAL HANDLING',
             'PT. Prama Madya Parama'
-            ])->where('id',$id)->orderBy('id','ASC')->get();
+        ])->where('id', $id)->orderBy('id', 'ASC')->get();
         $listDivision = DB::table('companies')
-            ->join('organizations','organizations.company_id','=','companies.id')
-            ->where('companies.id',$id)
+            ->join('organizations', 'organizations.company_id', '=', 'companies.id')
+            ->where('companies.id', $id)
             ->get();
         return response()->json(
             [
-                'detailcompany' =>$detailCompany,
-                'listorganizations' =>$listDivision,
+                'detailcompany' => $detailCompany,
+                'listorganizations' => $listDivision,
             ]
         );
     }
@@ -103,19 +102,19 @@ class CompanyController extends Controller
     public function getDetail(Request $request)
     {
         try {
-            $datas=DB::table('users')
-                ->join('organizations','organizations.id','=','users.organization_id')
-                ->join('companies','companies.id','=','users.company_id')
-                ->where('organizations.id',$request->iddivision)
-                ->where('companies.id',$request->idcompany)
-                ->select('users.id','users.nik','users.name','users.status','users.email')
+            $datas = DB::table('users')
+                ->join('organizations', 'organizations.id', '=', 'users.organization_id')
+                ->join('companies', 'companies.id', '=', 'users.company_id')
+                ->where('organizations.id', $request->iddivision)
+                ->where('companies.id', $request->idcompany)
+                ->select('users.id', 'users.nik', 'users.name', 'users.status', 'users.email')
                 ->get();
             return response()->json(
-                    [
-                        'data' =>$datas,
-                        'message' =>'success',
-                    ]
-                );
+                [
+                    'data' => $datas,
+                    'message' => 'success',
+                ]
+            );
         } catch (\Exception $exception) {
             DB::rollBack();
             throw new HttpException(500, $exception->getMessage(), $exception);
@@ -146,13 +145,18 @@ class CompanyController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
         try {
-            $data= Company::create([
+            $data = Company::create([
                 'code'   => $request->code,
                 'name'   => $request->name,
+            ]);
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Menambahkan company baru'
             ]);
             return response()->json(
                 [
@@ -216,13 +220,18 @@ class CompanyController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error'=>$validator->errors()], 401);
+            return response()->json(['error' => $validator->errors()], 401);
         }
 
         try {
-            $data= Company::findOrFail($id)->update([
+            $data = Company::findOrFail($id)->update([
                 'code'   => $request->code,
                 'name'   => $request->name,
+            ]);
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Melakukan update company'
             ]);
             return response()->json(
                 [
@@ -233,7 +242,7 @@ class CompanyController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'message'   => $th->getMessage(),
-            ],500);
+            ], 500);
         }
     }
 
@@ -249,7 +258,11 @@ class CompanyController extends Controller
             $data = Company::findOrFail($id);
             if ($data) {
                 Company::destroy($id);
-
+                DB::table('activities')->insert([
+                    'user_id' => auth()->user()->id,
+                    'time' => Carbon::now(),
+                    'details' => 'Menghapus company'
+                ]);
                 return response()->json([
                     'message' => 'Success destroy data'
                 ]);
@@ -257,13 +270,14 @@ class CompanyController extends Controller
                 return response()->json(
                     [
                         'message' => 'cannot find id'
-                    ],403
+                    ],
+                    403
                 );
-            }    
+            }
         } catch (\Throwable $th) {
             return response()->json([
                 'message'   => $th->getMessage(),
-            ],500);
+            ], 500);
         }
     }
 }

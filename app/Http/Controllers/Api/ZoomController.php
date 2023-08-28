@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Jadwalvhs;
 use App\Models\ZoomsVhs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,33 +11,34 @@ use Illuminate\Support\Facades\Validator;
 
 class ZoomController extends Controller
 {
-    
+
     public $successStatus = 200; //jika data sukses di kirim maka akan ada response code 200
-    public $errorStatus =403;    //jika data gagal dikirim maka akan ada response code 403
+    public $errorStatus = 403;    //jika data gagal dikirim maka akan ada response code 403
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    
-     /**
-      * Ini adalah sebuah method bernama index yang mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel zooms_vhs dan jadwalvhs di database, menyatukannya, dan mengurutkannya berdasarkan id dari tabel zooms_vhs dari yang terbesar ke yang terkecil. Kemudian, data tersebut akan dikembalikan dalam bentuk JSON dengan key data. Jika terjadi exception (error), maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 500 (Internal Server Error).
-      */
+
+    /**
+     * Ini adalah sebuah method bernama index yang mengembalikan sebuah response dalam bentuk JSON. Method ini akan mengambil data dari tabel zooms_vhs dan jadwalvhs di database, menyatukannya, dan mengurutkannya berdasarkan id dari tabel zooms_vhs dari yang terbesar ke yang terkecil. Kemudian, data tersebut akan dikembalikan dalam bentuk JSON dengan key data. Jika terjadi exception (error), maka akan dikembalikan response dalam bentuk JSON dengan key error dan status kode HTTP 500 (Internal Server Error).
+     */
     public function index()
     {
         try {
-            $data=DB::table('zooms_vhs')
-                    ->join('jadwalvhs','jadwalvhs.id','zooms_vhs.jadwal_id')
-                    ->select('zooms_vhs.id as zoom_id','jadwalvhs.id as jadwalvhs_id','zooms_vhs.name as zoom_name','jadwalvhs.name as jadwalvhs_name','zooms_vhs.*','jadwalvhs.*')
-                    ->orderBy('zooms_vhs.id', 'desc')
-                    ->get();
+            $data = DB::table('zooms_vhs')
+                ->join('jadwalvhs', 'jadwalvhs.id', 'zooms_vhs.jadwal_id')
+                ->select('zooms_vhs.id as zoom_id', 'jadwalvhs.id as jadwalvhs_id', 'zooms_vhs.name as zoom_name', 'jadwalvhs.name as jadwalvhs_name', 'zooms_vhs.*', 'jadwalvhs.*')
+                ->orderBy('zooms_vhs.id', 'desc')
+                ->get();
             return response()->json(
                 [
                     'data' => $data
-                ]);
+                ]
+            );
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
-        }   
+        }
     }
 
     /**
@@ -49,8 +49,8 @@ class ZoomController extends Controller
     {
         try {
             // $user = auth()->user();  //memperoleh data user login
-            $data=DB::table('jadwalvhs')
-                ->select('id','name','batch','start')
+            $data = DB::table('jadwalvhs')
+                ->select('id', 'name', 'batch', 'start')
                 // ->when(($user && $user->role!=1), function ($q) use ($user) {
                 //         return $q->where('id', $user->company_id);
                 //     })
@@ -58,7 +58,8 @@ class ZoomController extends Controller
             return response()->json(
                 [
                     'data' => $data
-                ]);
+                ]
+            );
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -71,7 +72,6 @@ class ZoomController extends Controller
      */
     public function create()
     {
-        
     }
 
     /**
@@ -85,7 +85,7 @@ class ZoomController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'jadwal_id'             => 'required',
             'name'                  => 'required',
             'times'                 => 'required',
@@ -95,7 +95,7 @@ class ZoomController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()],400);
+            return response()->json(['error' => $validator->errors()], 400);
         }
 
 
@@ -116,6 +116,12 @@ class ZoomController extends Controller
             throw new HttpException(500, $exception->getMessage(), $exception);
         }
 
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Menambah data Zoom'
+        ]);
+
         return response()->json([
             'data'      => $JadwalGetId,
             'message'   => 'Data Berhasil disimpan!'
@@ -134,11 +140,11 @@ class ZoomController extends Controller
     public function show($id)
     {
         // $data = DB::table('jadwalvhs')->where('id',$id)->first();
-        $data=DB::table('zooms_vhs')
-                ->join('jadwalvhs','jadwalvhs.id','zooms_vhs.jadwal_id')
-                ->select('zooms_vhs.id as zoom_id','jadwalvhs.id as jadwalvhs_id','zooms_vhs.name as zoom_name','jadwalvhs.name as jadwalvhs_name','zooms_vhs.*','jadwalvhs.*')
-                ->where('zooms_vhs.id',$id)
-                ->first();
+        $data = DB::table('zooms_vhs')
+            ->join('jadwalvhs', 'jadwalvhs.id', 'zooms_vhs.jadwal_id')
+            ->select('zooms_vhs.id as zoom_id', 'jadwalvhs.id as jadwalvhs_id', 'zooms_vhs.name as zoom_name', 'jadwalvhs.name as jadwalvhs_name', 'zooms_vhs.*', 'jadwalvhs.*')
+            ->where('zooms_vhs.id', $id)
+            ->first();
         if ($data) {
             return response()->json(['success' => $data], $this->successStatus);
         } else {
@@ -169,15 +175,15 @@ class ZoomController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $jadwal_id=$request->jadwal_id;
-        $name=$request->name;
-        $times=$request->times;
-        $link=$request->link;
-        $meeting_id=$request->meeting_id;
-        $password=$request->password;
+        $jadwal_id = $request->jadwal_id;
+        $name = $request->name;
+        $times = $request->times;
+        $link = $request->link;
+        $meeting_id = $request->meeting_id;
+        $password = $request->password;
 
         try {
-            $zoom=ZoomsVhs::findOrfail($id)->update([
+            $zoom = ZoomsVhs::findOrfail($id)->update([
                 'jadwal_id'         => $jadwal_id,
                 'name'              => $name,
                 'times'             => $times,
@@ -185,14 +191,22 @@ class ZoomController extends Controller
                 'meeting_id'        => $meeting_id,
                 'password'          => $password,
             ]);
-         return response()->json([
-            'success'=>$zoom,
-            'message'=>'update successfully'],
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Mengupdate data zoom'
+            ]);
+            return response()->json(
+                [
+                    'success' => $zoom,
+                    'message' => 'update successfully'
+                ],
 
-        $this->successStatus);
+                $this->successStatus
+            );
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
-        }   
+        }
     }
 
 
@@ -209,6 +223,11 @@ class ZoomController extends Controller
     {
         try {
             ZoomsVhs::destroy($id);
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Menghapus data Zoom'
+            ]);
             return response()->json([
                 'message' => 'Data Berhasil di Hapus'
             ]);

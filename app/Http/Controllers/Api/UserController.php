@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Company;
 use App\Models\Organization;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -136,6 +137,12 @@ class UserController extends Controller
             if (!$cekPermision) {
                 return response()->json(['message' => 'Unauthorized - Akun tidak memiliki akses untuk masuk ke sistem'], 401);
             }
+
+            DB::table('activities')->insert([
+                'user_id' => $user->id,
+                'time' => Carbon::now(),
+                'details' => 'User login'
+            ]);
 
             $company = DB::table('companies')->where('id', $user->company_id)->first();
             $success = [
@@ -379,6 +386,11 @@ class UserController extends Controller
     public function delete($id)
     {
         $user = User::find($id);
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Melakukan hapus user'
+        ]);
         $user->delete();
         return response()->json(['message' => 'Delete Successfully']);
     }
@@ -388,6 +400,11 @@ class UserController extends Controller
      */
     public function logout(Request $request)
     {
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'User logout'
+        ]);
         auth()->user()->token()->revoke();
         return response()->json(['message' => 'Logout Success']);
     }
