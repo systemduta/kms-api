@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Organization;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -182,7 +183,7 @@ class SOPController extends Controller
             ->orderBy('id', 'DESC');
 
         if (!$cek) {
-            $query->where('company_id',$auth->company_id);
+            $query->where('company_id', $auth->company_id);
         }
 
         return response()->json(['data' => $query->get()]);
@@ -206,7 +207,7 @@ class SOPController extends Controller
         $query = Sop::orderBy('id', 'DESC');
 
         if (!$cek) {
-            $query->where('company_id',$auth->company_id);
+            $query->where('company_id', $auth->company_id);
         }
 
         return response()->json(['data' => $query->get()]);
@@ -330,6 +331,11 @@ class SOPController extends Controller
             }
 
             DB::commit();
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'User menambahkan SOP baru'
+            ]);
         } catch (\Exception $exception) {
             DB::rollBack();
             throw new HttpException(500, $exception->getMessage(), $exception);

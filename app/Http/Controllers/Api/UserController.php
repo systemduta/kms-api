@@ -253,6 +253,11 @@ class UserController extends Controller
             DB::table('users')->where('id', $userGetId)->update(['image' => $imgName]);
         }
         DB::commit();
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'Menambahkan user baru'
+        ]);
         return response()->json(['data' => $userGetId, 'message' => 'Data berhasil disimpan!'], $this->successStatus);
     }
 
@@ -370,6 +375,12 @@ class UserController extends Controller
         $user->resign_date = $request->resign_date;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->save();
+
+        DB::table('activities')->insert([
+            'user_id' => auth()->user()->id,
+            'time' => Carbon::now(),
+            'details' => 'update user baru '.$user->name
+        ]);
 
         return response()->json(
             [
