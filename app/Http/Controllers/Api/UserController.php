@@ -181,84 +181,93 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'image' => 'required',
-            'file' => 'required',
-            'name' => 'required',
-            'password' => 'required',
-            'company_id' => 'required',
-            'organization_id' => 'required',
-            'golongan_id' => 'required|exists:golongans,id',
-            'nik' => 'required',
-            'c_password' => 'required|same:password',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required',
+                'file' => 'required',
+                'name' => 'required',
+                'password' => 'required',
+                'company_id' => 'required',
+                'organization_id' => 'required',
+                'golongan_id' => 'required|exists:golongans,id',
+                'nik' => 'required',
+                'c_password' => 'required|same:password',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()], 401);
-        }
-
-        // return response()->json(['data' => $request->nik], $this->errorStatus);
-
-
-        /* START FILE UPLOAD */
-        $file64 = $request->file;
-        $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-        $replace = substr($file64, 0, strpos($file64, ',') + 1);
-        $file = str_replace($replace, '', $file64);
-        $file = str_replace(' ', '+', $file);
-        $filename = Str::random(10) . '.' . $ext;
-        Storage::disk('public')->put('files/' . $filename, base64_decode($file));
-        /* END FILE UPLOAD */
-
-        $username = "";
-        $company = DB::table('companies')->where('id', $request->company_id)->first();
-        $username = $username . $company->code;
-        $org = DB::table('organizations')->where('id', $request->organization_id)->first();
-        $username = $username . $org->code;
-        $username = $username . $request->nik;
-
-        $cek = DB::table('users')->where('nik', $request->nik)->count();
-        if ($cek > 0) return response()->json(['message' => 'NIK sudah terdaftar'], 500);
-
-        DB::beginTransaction();
-        $userGetId = DB::table('users')->insertGetId([
-            'name' => $request->name,
-            'password' => bcrypt($request->password),
-            'company_id' => $request->company_id,
-            'status' => $request->status,
-            'image' => '',
-            'file' => 'files/' . $filename,
-            'organization_id' => $request->organization_id,
-            'golongan_id' => $request->golongan_id,
-            'nik' => $request->nik,
-            'email' => $request->email,
-            'username' => $username,
-            'role' => 2
-        ]);
-
-        if ($request->filled('image')) {
-            $imgName = '';
-            $baseString = explode(';base64,', $request->image);
-            $image = base64_decode($baseString[1]);
-            $image = imagecreatefromstring($image);
-
-            $ext = explode('/', $baseString[0]);
-            $ext = $ext[1];
-            $imgName = 'user_' . uniqid() . '.' . $ext;
-            if ($ext == 'png') {
-                imagepng($image, public_path() . '/files/' . $imgName, 8);
-            } else {
-                imagejpeg($image, public_path() . '/files/' . $imgName, 20);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()], 401);
             }
-            DB::table('users')->where('id', $userGetId)->update(['image' => $imgName]);
+
+            // return response()->json(['data' => $request->nik], $this->errorStatus);
+
+
+            /* START FILE UPLOAD */
+            $file64 = $request->file;
+            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+            $replace = substr($file64, 0, strpos($file64, ',') + 1);
+            $file = str_replace($replace, '', $file64);
+            $file = str_replace(' ', '+', $file);
+            $filename = Str::random(10) . '.' . $ext;
+            Storage::disk('public')->put('files/' . $filename, base64_decode($file));
+            /* END FILE UPLOAD */
+
+            $username = "";
+            $company = DB::table('companies')->where('id', $request->company_id)->first();
+            $username = $username . $company->code;
+            $org = DB::table('organizations')->where('id', $request->organization_id)->first();
+            $username = $username . $org->code;
+            $username = $username . $request->nik;
+
+            $cek = DB::table('users')->where('nik', $request->nik)->count();
+            if ($cek > 0) return response()->json(['message' => 'NIK sudah terdaftar'], 500);
+
+            DB::beginTransaction();
+            $userGetId = DB::table('users')->insertGetId([
+                'name' => $request->name,
+                'password' => bcrypt($request->password),
+                'company_id' => $request->company_id,
+                'status' => $request->status,
+                'image' => '',
+                'file' => 'files/' . $filename,
+                'organization_id' => $request->organization_id,
+                'golongan_id' => $request->golongan_id,
+                'nik' => $request->nik,
+                'email' => $request->email,
+                'username' => $username,
+                'role' => 2
+            ]);
+
+            if ($request->filled('image')) {
+                $imgName = '';
+                $baseString = explode(';base64,', $request->image);
+                $image = base64_decode($baseString[1]);
+                $image = imagecreatefromstring($image);
+
+                $ext = explode('/', $baseString[0]);
+                $ext = $ext[1];
+                $imgName = 'user_' . uniqid() . '.' . $ext;
+                if ($ext == 'png') {
+                    imagepng($image, public_path() . '/files/' . $imgName, 8);
+                } else {
+                    imagejpeg($image, public_path() . '/files/' . $imgName, 20);
+                }
+                DB::table('users')->where('id', $userGetId)->update(['image' => $imgName]);
+            }
+            DB::commit();
+            DB::table('activities')->insert([
+                'user_id' => auth()->user()->id,
+                'time' => Carbon::now(),
+                'details' => 'Menambahkan user baru'
+            ]);
+            return response()->json(
+                ['data' => $userGetId, 'message' => 'Data berhasil disimpan!'],
+                $this->successStatus
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ]);
         }
-        DB::commit();
-        DB::table('activities')->insert([
-            'user_id' => auth()->user()->id,
-            'time' => Carbon::now(),
-            'details' => 'Menambahkan user baru'
-        ]);
-        return response()->json(['data' => $userGetId, 'message' => 'Data berhasil disimpan!'], $this->successStatus);
     }
 
     /**
@@ -379,7 +388,7 @@ class UserController extends Controller
         DB::table('activities')->insert([
             'user_id' => auth()->user()->id,
             'time' => Carbon::now(),
-            'details' => 'update user baru '.$user->name
+            'details' => 'update user baru ' . $user->name
         ]);
 
         return response()->json(

@@ -414,73 +414,63 @@ class SOPController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $title = $request->title;
-        $description = $request->description;
-        $companyid = $request->company_id;
-        $organizationid = $request->organization_id;
-        $image = '';
+        try {
+            $title = $request->title;
+            $description = $request->description;
+            $companyid = $request->company_id;
+            $organizationid = $request->organization_id;
+            $image = '';
 
-        if ($request->hasFile('file')) {
-            /* START FILE UPLOAD */
-            $file64 = $request->file;
-            $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
-            $replace = substr($file64, 0, strpos($file64, ',') + 1);
-            $file = str_replace($replace, '', $file64);
-            $file = str_replace(' ', '+', $file);
-            $filename = 'sop_' . Str::random(10) . '.' . $ext;
-            Storage::disk('public')->put('files/' . $filename, base64_decode($file));
-            /* END FILE UPLOAD */
+            $sopData = SOP::find($id);
 
-            $updatefile = Sop::findOrFail($id)->update([
-                'file'              => 'files/' . $filename,
-            ]);
-        }
-
-        if ($request->filled('image')) {
-            $imgName = '';
-            $baseString = explode(';base64,', $request->image);
-            $image = base64_decode($baseString[1]);
-            $image = imagecreatefromstring($image);
-
-            $ext = explode('/', $baseString[0]);
-            $ext = $ext[1];
-            $imgName = 'sop_' . uniqid() . '.' . $ext;
-            if ($ext == 'png') {
-                imagepng($image, public_path() . '/files/' . $imgName, 8);
-            } else {
-                imagejpeg($image, public_path() . '/files/' . $imgName, 20);
+            if ($request->hasFile('file')) {
+                /* START FILE UPLOAD */
+                $file64 = $request->file;
+                $ext = explode('/', explode(':', substr($file64, 0, strpos($file64, ';')))[1])[1];
+                $replace = substr($file64, 0, strpos($file64, ',') + 1);
+                $file = str_replace($replace, '', $file64);
+                $file = str_replace(' ', '+', $file);
+                $filename = 'sop_' . Str::random(10) . '.' . $ext;
+                Storage::disk('public')->put('files/' . $filename, base64_decode($file));
+                /* END FILE UPLOAD */
+                $sopData->file = 'files/' . $filename;
             }
-            $updateimage = Sop::findOrFail($id)->update([
-                'image'        => $imgName,
-            ]);
+
+            if ($request->filled('image')) {
+                $imgName = '';
+                $baseString = explode(';base64,', $request->image);
+                $image = base64_decode($baseString[1]);
+                $image = imagecreatefromstring($image);
+
+                $ext = explode('/', $baseString[0]);
+                $ext = $ext[1];
+                $imgName = 'sop_' . uniqid() . '.' . $ext;
+                if ($ext == 'png') {
+                    imagepng($image, public_path() . '/files/' . $imgName, 8);
+                } else {
+                    imagejpeg($image, public_path() . '/files/' . $imgName, 20);
+                }
+                $sopData->image = $imgName;
+            }
+
+            $sopData->title = $title;
+            $sopData->description = $description;
+            $sopData->company_id = $companyid;
+            $sopData->organization_id = $organizationid;
+            $sopData->save();
+
+            return response()->json(
+                [
+                    'success' => $sopData,
+                    'message' => 'update successfully'
+                ],
+                $this->successStatus
+            );
+        } catch (\Exception $e) {
+            return response()->json([
+                'message'   => $e->getMessage(),
+            ], 500);
         }
-
-        // $course = Sop::find($id);
-        // $course->title = $title;
-        // $course->description = $description;
-        // $course->company_id = $companyid;
-        // $course->organization_id = $organizationid;
-        // $course->image = $imgName;
-        // $course->file = 'files/'.$filename;
-        // $course->save();
-
-        $course = Sop::findOrFail($id)->update([
-            'company_id'        => $request->company_id,
-            'organization_id'   => $request->organization_id ?? null,
-            'title'             => $request->title,
-            // 'image'             => '',
-            'description'       => $request->description,
-            // 'file'              => 'files/'.$filename,
-        ]);
-
-        // DB::commit();
-        return response()->json(
-            [
-                'success' => $course,
-                'message' => 'update successfully'
-            ],
-            $this->successStatus
-        );
     }
 
     /**
@@ -496,10 +486,21 @@ class SOPController extends Controller
      */
     public function destroy($id)
     {
-        Sop::destroy($id);
-
-        return response()->json([
-            'message' => 'Data berhasil dihapus'
-        ]);
+        try {
+            $sop = SOP::find($id);
+            if (!$sop) {
+                return response()->json([
+                    'message' => 'data not found',
+                ], 500);
+            }
+            $sop->delete();
+            return response()->json([
+                'message' => 'Data berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
